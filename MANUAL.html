@@ -1,0 +1,485 @@
+<h1 id="finance-control-manual">FINANCE CONTROL MANUAL</h1>
+<p>This is a very basic program to control personal finances. It depends on Python 3 and was thought to be used only from the command line. It supports multiple accounts with possibly different currencies and transactions composed of multiple parcels, each with its different tags. Check the <a href="#usage">USAGE</a> section for a more complete overview of the program.</p>
+<p>Copyright (C) 2021 António Manuel Dias</p>
+<p>contact: ammdias@gmail.com</p>
+<p>website: <a href="https://ammdias.duckdns.org/downloads">AMMDIAS</a></p>
+<h3 id="changes-history">Changes history</h3>
+<ul>
+<li>0.1: Initial version</li>
+</ul>
+<h2 id="contents">CONTENTS</h2>
+<ul>
+<li><a href="#changes-history">Changes history</a></li>
+<li><a href="#foreword">FOREWORD</a>
+<ul>
+<li><a href="#text-conventions-used-in-this-manual">Text conventions used in this manual</a></li>
+</ul></li>
+<li><a href="#installation">INSTALLATION</a></li>
+<li><a href="#usage">USAGE</a>
+<ul>
+<li>[Command line]</li>
+<li><a href="#starting-and-quitting-the-program">Starting and quitting the program</a></li>
+<li><a href="#creating-and-opening-a-file">Creating and opening a file</a></li>
+<li><a href="#default-settings">Default settings</a></li>
+<li><a href="#getting-help">Getting help</a></li>
+<li><a href="#currencies">Currencies</a></li>
+<li><a href="#accounts-and-transactions">Accounts and Transactions</a></li>
+<li><a href="#advanced-usage">Advanced usage</a>
+<ul>
+<li><a href="#usage-in-ms-windows">Usage in MS Windows</a></li>
+<li><a href="#scripting">Scripting</a></li>
+</ul></li>
+</ul></li>
+<li><a href="#reference">REFERENCE</a>
+<ul>
+<li><a href="#add">add</a></li>
+<li><a href="#backup">backup</a></li>
+<li><a href="#bye">bye</a></li>
+<li><a href="#change">change</a></li>
+<li><a href="#close">close</a></li>
+<li><a href="#delete">delete</a></li>
+<li><a href="#help">help</a></li>
+<li><a href="#list">list</a></li>
+<li><a href="#open">open</a></li>
+<li><a href="#set">set</a></li>
+<li><a href="#show">show</a></li>
+<li><a href="#source">source</a></li>
+<li><a href="#trim">trim</a></li>
+<li><a href="#database-structure">Database structure</a></li>
+</ul></li>
+<li><a href="#license">LICENSE</a></li>
+</ul>
+<h2 id="foreword">FOREWORD</h2>
+<h3 id="text-conventions-used-in-this-manual">Text conventions used in this manual</h3>
+<h2 id="installation">INSTALLATION</h2>
+<p>The instructions below are for installation on a modern Linux system. They may work on other modern Unix-like systems like BSD derivatives, including MacOS, but that has not been tested and may require some tweaking. Try it at your own risk. For MS Windows installation, refer to the section <a href="#usage-in-ms-windows">Usage in MS Windows</a>.</p>
+<ol type="1">
+<li><p>Download and unzip the program’s compressed file in a directory of your choosing. To download the most recent version, check the <a href="https://github.com/ammdias/finctrl">AMMDIAS GitHub page</a>.</p></li>
+<li><p>Open a terminal in the directory where the program was uncompressed and run the installation script with Python 3:</p>
+<pre><code>  $ python3 INSTALL.py</code></pre>
+<p>You will be prompted for the installation directory — i.e. the directory under which the folder containing all the application files will be placed — and for the start link directory — i.e. the directory where the symbolic link for the program will be created.</p>
+<p>The default directories will install the program for the current user only and are suited for single-user systems. If you want to keep these settings, just press ENTER when prompted. The program will be installed in the directory <code>$HOME/.local/lib/FinCtrl</code> and the symbolic link <code>$HOME/.local/bin/finctrl</code> will be created. On most Linux systems the <code>$HOME/.local/bin</code> directory will be inserted in the execution PATH, if it exists. If it doesn’t, you will have to add it manually.</p>
+<p>If you want to install the program for all the users of the system, you should change the directories accordingly, e.g. <code>/usr/local/lib</code> for the installation directory and <code>/usr/local/bin</code> for the start link. Of course, you will need to run the installation script with administration privileges:</p>
+<pre><code>  $ sudo python3 INSTALL.py</code></pre>
+<p>If a previous installation exists on the selected directory, you will be asked if you want to overwrite it. Answer “<code>yes</code>” (or just “<code>y</code>”) if that is the case or “<code>no</code>”/“<code>n</code>” if not.</p></li>
+<li><p>Test that the installation was successful with the command:</p>
+<pre><code>$ finctrl</code></pre>
+<p>(this should open the program and present its default prompt)</p>
+<p>Now, enter the following commands:</p>
+<pre><code>FinCtrl &gt; help</code></pre>
+<p>(the program should present a list of all the available commands)</p>
+<pre><code>FinCtrl &gt; bye</code></pre>
+<p>(the program should close; you may also use the end-of-file command – CTRL-D in Linux – to close the program)</p></li>
+</ol>
+<h2 id="usage">USAGE</h2>
+<p>The purpose of this program is to control a user’s personal finances by means of a simple command line interface. The user may configure several <em>accounts</em> (e.g. a bank account, a savings account, the credit card account, etc.), each with its own <em>currency</em>. All operations on the accounts are entered as <em>transactions</em>, each of which may be composed of several <em>parcels</em>. This way, a supermarket bill may be split on its items, so that the user may have a more fine control over his or hers expenses. Each parcel may also be tagged with several tags, allowing the listing of the spendings (or earnings) by category.</p>
+<p>The data is stored in standard <a href="https://sqlite.org">SQLite</a> files (database structure documented in the <a href="#advanced-usage">Advanced Usage</a> section). One file should be fine for each user, but any number of them may be used if the user wants to split its accounts over several subjects.</p>
+<p>In this section I will try to give an overview of the program usage and its possibilities. I will do this in a <em>story-telling like</em> fashion, in each step describing a new feature and the way to use it. For the complete command reference, you should then refer to the appropriate <a href="#reference">REFERENCE</a> subsection.</p>
+<h3 id="command-line-interface">Command line interface</h3>
+<p>I assume that the user is familiarized with the <em>normal</em> way a command line interface works — basically, issuing commands at the prompt and reading the program’s answer, if any. Some notes:</p>
+<ol type="1">
+<li><p>Blank lines will have no effect (will just be ignored);</p></li>
+<li>If your system supports it, you will have command history in each session: press arrow up or <code>CTRL+P</code> for previous command / arrow down or <code>CTRL-N</code> for the next. The usual control key bindings may also work:
+<ul>
+<li><code>CTRL+A</code> to go to the beginning of the line;</li>
+<li><code>CTRL+E</code> to go to the end;</li>
+<li><code>CTRL+W</code> to delete previous word;</li>
+<li><code>CTRL+K</code> to delete from the cursor to the end of the line;</li>
+<li>etc.</li>
+</ul></li>
+<li><p>When entering a command longer than a screen line, you may split it over several lines by ending each line (except the last) with a single backslash: “<code>\</code>”. The promtp after that will change to a single colon (<code>:</code>) until you end the command. If you make a mistake while entering a multi-line command, just finish the line with three consecutive backslashes (<code>\\\</code>) to discard the whole command.</p>
+<pre><code>FinCtrl &gt; help \
+        : bye
+Quit Finance Control.
+
+FinCtrl &gt; help \
+        : something wrong \\\
+FinCtrl &gt;  </code></pre></li>
+<li><p>All commands are case-sensitive, so <code>bye</code> is different from <code>BYE</code> or <code>Bye</code> — the first will be recognised as a command and quit the program, but the others will originate an error message:</p>
+<pre><code> FinCtrl &gt; Bye
+ *** Error: (Syntax) &#39;Bye&#39; is not a recognized command.</code></pre></li>
+<li><p>Some commands or options have a shortcut version that may be used interchangeably. That will be indicated in the <a href="#reference">REFERENCE</a> section and in the online help by enveloping the optional letters in square brackets. For example, the <a href="#show">show</a> command may be entered as <code>show</code> or <code>sh</code>:</p>
+<pre><code>FinCtrl &gt; help show
+Show all data of a specific record:
+        &gt; sh[ow] settings|manual [inline]|copyright|license [inline]
+        &gt; sh[ow] curr[ency] NAME
+        &gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
+        &gt; sh[ow] tr[ansaction] TRANSACTION_ID
+
+FinCtrl &gt; show copyright
+Finance Control 0.1
+(C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
+(...)</code></pre>
+<p>or</p>
+<pre><code>FinCtrl &gt; sh copyright
+Finance Control 0.1
+(C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
+(...)</code></pre></li>
+<li><p>If a line of the output of a command is longer than the terminal width, it will be truncated and end with an ellipsis (<code>...</code>). If the output has more lines than fit in the terminal height then the output will be split in pages and at the end of each page you will have the option to go to the next page (enter <code>next</code> or <code>n</code>), go back to the previous (enter <code>previous</code> or <code>p</code>) or quit the presentation (enter <code>quit</code> or <code>q</code>).</p>
+<pre><code>FinCtrl &gt; show license inline
+
+### GNU GENERAL PUBLIC LICENSE
+
+Version 3, 29 June 2007
+
+Copyright (C) 2007 Free Software Foundation, Inc.
+&lt;https://fsf.org/&gt;
+
+Everyone is permitted to copy and distribute verbatim copies of this
+license document, but changing it is not allowed.
+
+Page 1 of 30. (N)ext / (P)revious / (Q)uit ? q
+
+FinCtrl &gt;</code></pre></li>
+</ol>
+<h3 id="starting-and-quitting-the-program">Starting and quitting the program</h3>
+<p>Assuming the program is correctly installed, to start the program just open a terminal and type:</p>
+<pre><code>$ finctrl</code></pre>
+<p>The prompt should change to the standard prompt:</p>
+<pre><code>FinCtrl &gt;</code></pre>
+<p>To close the program, use the <a href="#bye">bye</a> command:</p>
+<pre><code>FinCtrl &gt; bye
+Bye.</code></pre>
+<p>The program will exit and print a goodbye message and the prompt will change to the terminal’s prompt. Alternately, you may quit the program by typing the system’s end-of-file keyboard shortcut (CTRL-D in Linux) or <code>EOF</code>.</p>
+<h3 id="getting-help">Getting help</h3>
+<p>There are not many things you can do after starting the program – most require an open file to work upon. One thing one can do is open a file but we will cover that at the next subsection. Another is to show some information about the program itself and the syntax and purpose of each command — getting help.</p>
+<p>If we use the <a href="#help">help</a> command without arguments, the program will print all the available commands:</p>
+<pre><code>FinCtrl &gt; help
+
+Documented commands (type help &lt;topic&gt;):
+========================================
+EOF  backup  ch      close  delete  list  open  sh    source
+add  bye     change  del    help    ls    set   show  trim  </code></pre>
+<p>We may also obtain help on a specific command by typing <code>help</code> followed by the name of the command. For example, for the <a href="#show">show</a> command:</p>
+<pre><code>FinCtrl &gt; help show
+Show all data of a specific record:
+        &gt; sh[ow] settings|manual [inline]|copyright|license [inline]
+        &gt; sh[ow] curr[ency] NAME
+        &gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
+        &gt; sh[ow] tr[ansaction] TRANSACTION_ID</code></pre>
+<p>The program will print a brief description of the purpose of the command followed by a list of the command’s allowed syntax. In every syntax description, the text between square brackets (<code>[]</code>) is optional. Text in lower case letters is mandatory and must be entered as-is. Several options separated by vertical bars (the <em>pipe</em> character: <code>|</code>) mean that one (and only one) of them must be chosen. Finally, text in capital letters is information that must be provided or chosen by the user.</p>
+<p>The first syntax line of the example above explains how to use the <a href="#show">show</a> command to display some information pertaining to the program. The command may be written as <code>show</code> or <code>sh</code> (the bracketed <code>ow</code> is optional) and must be followed by only one of the options separated by vertical bars, <code>settings</code>, <code>manual</code>, <code>copyright</code> or <code>license</code>.</p>
+<p>For example, to show the program’s copyright information, we could type:</p>
+<pre><code>FinCtrl &gt; show copyright
+Finance Control 0.1
+(C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
+
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see &lt;http://www.gnu.org/licenses/&gt;.</code></pre>
+<p>Both the <code>manual</code> and <code>license</code> information will be shown on a new web browser window, assuming one is installed on your system:</p>
+<pre><code>FinCtrl &gt; sh manual
+The program&#39;s manual should be displayed in your browser.
+If this doesn&#39;t happen, please read the file &#39;MANUAL&#39;
+in the program&#39;s installation directory.</code></pre>
+<p>Finally, we could also show the current program settings, but as they are specific to each file (and kept in it), this command terminates with an error message:</p>
+<pre><code>FinCtrl &gt; sh settings
+*** Error: &#39;show&#39; command needs an open file.</code></pre>
+<p>The next section will cover how to work with files.</p>
+<h3 id="creating-and-opening-a-file">Creating and opening a file</h3>
+<p>As stated earlier, the program keeps all information in <a href="https://sqlite.org">SQLite</a> files. To open a file we use the <a href="#open">open</a> command:</p>
+<pre><code>FinCtrl &gt; open test.sqlite
+test.sqlite &gt; </code></pre>
+<p>The <a href="#open">open</a> command takes a single argument, the path to the file to be opened. If a relative path is given, the directory where the program was started is the base directory. The tilde (<code>~</code>) may be used as the replacement for the user’s home absolute path. For example, in my case, if I used the command <code>open ~/doc/accounting.sqlite</code> the opened file would be <code>/home/antonio/doc/accounting.sqlite</code>. This is standard Unix notation, but may also be used in other systems.</p>
+<p>I used the <code>.sqlite</code> extension because this way I can at a glance identify this as an SQLite file when I list my system’s directory, but the program doesn’t require any particular extension and you may even use files without one.</p>
+<p>If the file does not exist, it will be created with default settings (more about this in the subsection below). If it exists but is not a FinCtrl file, an error will be presented and the file will not be opened:</p>
+<pre><code>FinCtrl &gt; open testfile.txt
+*** Error: unable to open file. Reason:
+    file is not a database</code></pre>
+<p>To close the file, use the <a href="#close">close</a> command. All changes are automatically written to the file as they are made, so there is no need to do it manually.</p>
+<pre><code>test.sqlite &gt; close
+FinCtrl &gt; </code></pre>
+<p>There is no need to close the open file before quitting the program, as this will be done automatically. Also, when opening another file, the previous will be closed. In fact, the only reason to close a file is to return the program to its default behaviour before opening any file.</p>
+<p>It is also possible to immediately open a file when starting the program, passing its path as argument:</p>
+<pre><code>$ finctrl test.sqlite
+test.sqlite &gt;</code></pre>
+<p>You should have noticed that the prompt changes when a file is opened. The prompt is one of the program’s settings and is stored in each file. If no change has been made, the prompt will then be the file name.</p>
+<h3 id="default-settings">Default settings</h3>
+<p>Every open file has a set of default settings that govern the behaviour of some of the program’s operations. We can find the current file’s settings with the <a href="#show">show</a> <code>settings</code> command (a file must be already opened):</p>
+<pre><code>test.sqlite &gt; sh settings
+Prompt: test.sqlite &gt; 
+CSV files&#39; field separator: ;
+Default deposit text: Deposit
+Default withdrawal text: Withdrawal
+Default transfer text: Transfer
+Default currency: default</code></pre>
+<p>The settings are:</p>
+<ul>
+<li><em>Prompt</em>: the prompt to be displayed when the file is opened;</li>
+<li><em>CSV files’ field separator</em>: the character used to separate fields when exporting results to a CSV file;</li>
+<li><em>Default deposit, withdrawal and transfer text</em>: the text used as description for any of those operations if none is given when issuing the command;</li>
+<li><em>Default currency</em>: the name of the currency to be used for any new account if none is given when creating one.</li>
+</ul>
+<p>All the settings may be changed with the <a href="#set">set</a> command. For example, to change the prompt:</p>
+<pre><code>test.sqlite &gt; set prompt &#39;Test &gt; &#39;
+Test &gt; </code></pre>
+<p>Note that the new prompt is given between quotes. The reason for this is that it contains spaces and would be interpreted as two different arguments if not surrounded by quotes, which would result in an error:</p>
+<pre><code>Test &gt; set prompt Test &gt;
+*** Error: &#39;set prompt&#39; command takes a single argument:
+    &gt; set prompt TEXT</code></pre>
+<p>Single- or double-quotes may be used, but we must do this for every argument that includes spaces.</p>
+<p>After changing the prompt, this setting will be preserved in the file and will be used every time it is opened. The other settings may be changed the same way. To change the default currency, the name of an existing currency must be used, otherwise an error will be shown:</p>
+<pre><code>Test &gt; set currency euro
+*** Error: unable to set currency. Reason:
+    Currency not found.</code></pre>
+<h3 id="currencies">Currencies</h3>
+<p>In this program’s context, a currency is just a collection of settings to correctly display monetary amounts. We can list the configured currencies with the <a href="#list">list</a> <code>currencies</code> command:</p>
+<pre><code>Test &gt; list currencies
+Name    | Sort name | Symbol | Position | Decimal places | Decimal separator
+--------+-----------+--------+----------+----------------+------------------
+default |           |        | left     | 2              | .                </code></pre>
+<p>There is always at least one configured currency, named <code>default</code>. We can always check a currency settings with the <a href="#show">show</a> <code>currency</code> command:</p>
+<pre><code>Test &gt; sh curr default
+Name: default
+Short name: 
+Symbol: 
+Symbol position: left
+Decimal places: 2
+Decimal separator: .</code></pre>
+<p>These are the properties of a currency:</p>
+<ul>
+<li><em>Name</em>: the name for which the currency is know in the program. You will need this name every time you have to identify the currency, for example, to assign it to an account.</li>
+<li><em>Short name</em>: this is the abbreviation for the currency, like EUR for Euro or USD for United States Dollar. Currently it has no purpose in the program.</li>
+<li><em>Symbol</em>: the currency symbol, like ‘€’ for Euro. Currently it has no use in the program.</li>
+<li><em>Position</em>: the position of the symbol when writing an amount. Must be <code>left</code> or <code>right</code>. Currently it has no use in the program.</li>
+<li><em>Decimal places</em>: this indicates the precision of the currency. All amounts will be stored and displayed with this precision.</li>
+<li><em>Decimal separator</em>: this is the symbol used to split a currency amount integer and decimal parts. It will be used to display all currency quantities and to scan the quantities input by the user.</li>
+</ul>
+<p>If all your accounts are in the same currency, you may use the default and change its settings as you desire. If not or if you prefer to have the currency name correspond to its actual name, you must use the <a href="#add">add</a> <code>currency</code> command. Let’s add the Euro currency to the Test file:</p>
+<pre><code>Test &gt; add curr Euro short EUR symbol € position right
+Test &gt; </code></pre>
+<p>The only required argument is the name of the currency to add, all others are optional. If an argument is not given, the value from the <code>default</code> currency will be used. We may confirm this showing the properties of the currency we just added and comparing it to the default:</p>
+<pre><code>Test &gt; sh curr euro
+Name: Euro
+Short name: EUR
+Symbol: €
+Symbol position: right
+Decimal places: 2
+Decimal separator: .</code></pre>
+<p>To change one of the values, we use the <a href="#change">change</a> <code>currency</code> command:</p>
+<pre><code>Test &gt; ch curr euro decsep ,
+Test &gt;
+Test &gt; sh curr euro
+Name: Euro
+Short name: EUR
+Symbol: €
+Symbol position: right
+Decimal places: 2
+Decimal separator: ,
+Test &gt;</code></pre>
+<p>The euro decimal separator was changed to a comma.</p>
+<p>Finally, we may want to make the Euro currency the default to be used on any new account. For this, we use the <a href="#set">set</a> <code>currency</code> command:</p>
+<pre><code>Test &gt; set curr euro
+Test &gt; 
+Test &gt; sh settings
+Prompt: Test &gt; 
+CSV files&#39; field separator: ;
+Default deposit text: Deposit
+Default withdrawal text: Withdrawal
+Default transfer text: Transfer
+Default currency: Euro</code></pre>
+<h3 id="accounts-and-transactions">Accounts and Transactions</h3>
+<p>For the purpose of this program, accounts are the entities where money is stored. They will always have a balance, which is the total amount available, and a <em>current</em> balance, which is the amount available at the current date.</p>
+<blockquote>
+<p>add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME</p>
+</blockquote>
+<h3 id="advanced-usage">Advanced usage</h3>
+<ul>
+<li>backup</li>
+<li>trim</li>
+</ul>
+<h4 id="usage-in-ms-windows">Usage in MS Windows</h4>
+<h4 id="scripting">Scripting</h4>
+<h2 id="reference">REFERENCE</h2>
+<h3 id="add">add</h3>
+<pre><code>&gt; add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \\
+:                [decplaces NUMBER] [decsep CHARACTER]
+
+&gt; add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME]
+
+&gt; add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
+:             [descr TEXT] [date DATE] [tags LIST]
+
+
+&gt; add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
+:             [descr TEXT] [date DATE] [tags LIST]
+
+&gt; add tranfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
+:             from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID
+
+&gt; add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \\
+:                   [neg] [descr[iption] TEXT] [date DATE] \\
+:                   of AMOUNT | parcel &quot;TEXT AMOUNT [tags LIST]&quot;...
+
+&gt; add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \\
+:                  [descr[iption] TEXT] [date DATE] \\
+:                  of AMOUNT | parcel &quot;TEXT AMOUNT [tags LIST]&quot;...
+
+&gt; add parcel TEXT of AMOUNT on TRANSACTION_ID [tags LIST]
+
+&gt; add tag TEXT to PARCEL_ID</code></pre>
+<h3 id="backup">backup</h3>
+<pre><code>&gt; backup FILE</code></pre>
+<h3 id="bye">bye</h3>
+<pre><code>&gt; bye|EOF</code></pre>
+<h3 id="change">change</h3>
+<pre><code>&gt; ch[ange] curr[ency] NAME [short TEXT] \\
+:                        [symbol TEXT] [position LEFT|RIGHT] \\
+:                        [decplaces NUMBER] [decsep CHARACTER]
+
+&gt; ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID to TEXT
+
+&gt; ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT
+
+&gt; ch[ange] tr[ansaction] TRANSACTION_ID date to DATE
+
+&gt; ch[ange] tr[ansaction] TRANSACTION_ID acc[ount] \\
+:                      to ACCOUNT_NAME|ACCOUNT_ID
+
+&gt; ch[ange] parcel PARCEL_ID descr[iption] to TEXT
+
+&gt; ch[ange] parcel PARCEL_ID amount to AMOUNT
+
+&gt; ch[ange] tag TAG to TEXT</code></pre>
+<h3 id="close">close</h3>
+<pre><code>&gt; close</code></pre>
+<h3 id="delete">delete</h3>
+<pre><code>&gt; del[ete] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
+
+&gt; del[ete] tr[ansaction] TRANSACTION_ID
+
+&gt; del[ete] parcel PARCEL_ID
+
+&gt; del[ete] tag TEXT from PARCEL_ID
+
+&gt; del[ete] tag TEXT</code></pre>
+<h3 id="help">help</h3>
+<pre><code>&gt; help|? [COMMAND]</code></pre>
+<h3 id="list">list</h3>
+<pre><code>&gt; list|ls curr[encies] [NAME] [tofile FILE]
+
+&gt; list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]
+
+&gt; list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
+:                     [from DATE] [to DATE] [tofile FILE]
+
+&gt; list|ls parcels tagged LIST [from DATE] [to DATE] [tofile FILE]
+
+&gt; list|ls tags [tofile FILE]</code></pre>
+<h3 id="open">open</h3>
+<pre><code>&gt; open FILE</code></pre>
+<h3 id="set">set</h3>
+<pre><code>&gt; set echo ON|OFF
+
+&gt; set prompt TEXT
+
+&gt; set csvsep CHARACTER
+
+&gt; set curr[ency] NAME
+
+&gt; set withdrawal descr[iption] TEXT
+
+&gt; set deposit descr[iption] TEXT
+
+&gt; set transfer descr[iption] TEXT</code></pre>
+<h3 id="show">show</h3>
+<pre><code>&gt; sh[ow] manual|copyright|license
+
+&gt; sh[ow] settings
+
+&gt; sh[ow] curr[ency] NAME
+
+&gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
+
+&gt; sh[ow] tr[ansaction] TRANSACTION_ID</code></pre>
+<h3 id="source">source</h3>
+<pre><code>&gt; source FILE</code></pre>
+<h3 id="trim">trim</h3>
+<pre><code>&gt; trim storage upto DATE
+
+&gt; trim acc[ount] ACCOUNT_NAME|ACCOUNT_ID upto DATE</code></pre>
+<h3 id="database-structure">Database structure</h3>
+<pre><code>CREATE TABLE metadata (
+     key         text not null,
+     value       text not null,
+     primary key (key)
+);
+
+CREATE TABLE currencies (
+    name        text not null,
+    short_name  text,
+    symbol      text,
+    symbol_pos  text,
+    dec_places  integer,
+    dec_sep     text,
+    primary key (name)
+);
+CREATE TRIGGER del_currency before delete on currencies
+begin
+    delete from accounts where currency=old.name;
+end;
+
+CREATE TABLE accounts (
+    key         integer,
+    name        text not null,
+    balance     integer,
+    descr       text,
+    currency    text,
+    primary key (key),
+    foreign key (currency) references currencies(name)
+);
+CREATE TRIGGER del_account before delete on accounts
+begin
+    delete from transactions where account=old.key;
+end;
+
+CREATE TABLE transactions (
+    key         integer,
+    account     integer not null,
+    date        text,
+    descr       text,
+    amount      integer not null,
+    accbalance  integer not null,
+    primary key (key),
+    foreign key (account) references accounts(key)
+);
+CREATE TRIGGER del_transaction before delete on transactions
+begin
+    delete from parcels where trans=old.key;
+end;
+
+CREATE TABLE parcels (
+    key         integer,
+    trans       integer not null,
+    descr       text,
+    amount      integer not null,
+    primary key (key),
+    foreign key (trans) references transactions(key)
+);
+CREATE TRIGGER del_parcel after delete on parcels
+begin
+    delete from parceltags where parcel=old.key;
+end;
+
+CREATE TABLE parceltags (
+    parcel      integer not null,
+    tag         text not null,
+    primary key (parcel, tag),
+    foreign key (parcel) references parcels(key)
+);</code></pre>
+<h2 id="license">LICENSE</h2>
+<p>Copyright (C) 2021 António Manuel Dias</p>
+<p>contact: ammdias@gmail.com</p>
+<p>website: <a href="https://ammdias.duckdns.org/downloads">AMMDIAS</a></p>
+<p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
+<p>This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.</p>
+<p>You should have received a copy of the <a href="http://www.gnu.org/licenses">GNU General Public License</a> along with this program. If not, please check the site above.</p>
