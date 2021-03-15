@@ -445,7 +445,7 @@ Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.
 <li>250g butter, 1.39€</li>
 <li>200g black chocolate, 1.49€</li>
 </ul>
-<p>We will user the <code>add expense</code> command:</p>
+<p>We will use the <code>add expense</code> command:</p>
 <pre><code>Test &gt; add expense on bank descr Supermarket date 3/4 \
      : parcel &quot;eggs 0.85 tags food,grocery&quot; \
      : parcel &quot;&#39;baking flour&#39; 0.45 tags food,grocery&quot; \
@@ -579,8 +579,71 @@ ID | Name   | Description     | Balance
 ---+--------+-----------------+--------
  1 | Pocket | Money with me   |  127.73
  2 | Bank   | My bank account | 4930.01</code></pre>
+<p>The last general command to correct mistakes is the <a href="#delete">delete</a> command. We already covered both versions of the [delete tag] command above and although the remaining delete commands are very similar, there are some issues that must be mentioned for each one of them.</p>
+<p>[delete parcel] and [delete transaction] take the identification number of the item to remove and will remove it permanently from the database: there is no way to recover them other than entering all its data again! Previously I said that every transaction must have at least one parcel: well, that is generally true and logic but you <em>can</em> remove the last parcel from a transaction with the <code>delete transaction</code> command. The transaction will be empty and its total amount zero:</p>
+<pre><code>Test &gt; sh tr 3
+Account: Bank (id: 2)
+Description: Phone bill, Feb. 2021
+Total amount: -59.99
+Date: 2021-03-02
+Parcels:
+  (3) Phone bill, Feb. 2021: -59.99 (comms, phone)
+Test &gt; 
+Test &gt; del parcel 3
+Test &gt; sh tr 3
+Account: Bank (id: 2)
+Description: Phone bill, Feb. 2021
+Total amount: 0.00
+Date: 2021-03-02
+Parcels:
+Test &gt;</code></pre>
+<p>I don’t know how this could be useful, but… it’s possible. The only way to revert it now is to enter the data again. Nevertheless, the parcel id. will be different — it’s a new parcel:</p>
+<pre><code>Test &gt; add parcel &#39;Phone bill, Feb. 2021&#39; \
+     : of -59.99 to 3 tags &#39;comms, phone&#39;
+Test &gt; sh tr 3
+Account: Bank (id: 2)
+Description: Phone bill, Feb. 2021
+Total amount: -59.99
+Date: 2021-03-02
+Parcels:
+  (12) Phone bill, Feb. 2021: -59.99 (comms, phone)</code></pre>
+<p>[delete account] works in the same way, taking the account identification number or account name and removing the account permanently. However, extra care should be taken when using this command, as it will also remove all of the account’s transactions (and their parcels, of course). If you really want to remove an account, be sure that you don’t have any relevant information in its transactions!</p>
 <h3 id="listing-and-exporting-data">Listing and exporting data</h3>
+<p>In the previous sections of this manual we already covered various forms of the <a href="#list">list</a> command, like [list currencies] and [list accounts]. There is only one detail we didn’t mention: we may pass a currency ou account name, respectively, to list only that currency or account instead of all of them. In short, it’s just an alternative way of visualizing the data to the <a href="#show">show</a> command:</p>
+<pre><code>Test &gt; ls acc bank
+ID | Name | Description     | Balance
+---+------+-----------------+--------
+ 2 | Bank | My bank account | 4930.01</code></pre>
+<p>We also covered in some detail the [list transactions] command with both its filtering options, account and date. The two remaining list commands are related to tags: [list parcels tagged] and [list tags]. With the first you may list all parcels with certain tags:</p>
+<pre><code>Test &gt; ls parcels tagged grocery,dairy
+Id | Date       | Account | Trans | Description   | Ammount
+---+------------+---------+-------+---------------+--------
+ 6 | 2021-03-04 | Pocket  |     6 | eggs          |   -0.85
+ 7 | 2021-03-04 | Pocket  |     6 | baking flour  |   -0.45
+ 8 | 2021-03-04 | Pocket  |     6 | refined sugar |   -0.69
+ 9 | 2021-03-04 | Pocket  |     6 | butter        |   -1.39
+11 | 2021-03-04 | Pocket  |     6 | baking power  |   -0.85</code></pre>
+<p>This command may also be filtered by date, with the keywords <code>from</code> and <code>to</code>, like <code>list transactions</code>.</p>
+<p>[list tags] lists all tags in use and their <em>frequency</em> — the number of parcels tagged with each particular tag:</p>
+<pre><code>Test &gt; ls tags
+Tag        | Frequency
+-----------+----------
+carry-over |         1
+comms      |         1
+dairy      |         1
+food       |         6
+grocery    |         4
+phone      |         1
+sweets     |         1</code></pre>
+<p>Finally, all <a href="#list">list</a> commands accept one keyword argument, <code>tofile</code>, that directs the program to export the data to a <a href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a>. The keyword must be followed by the file name (same rules apply as to the <a href="#open">open</a> command). CSV files are very portable and supported by several applications and programming languages, if you desire to treat the exported data. The command below will export a list of the parcels with tag <code>food</code> to the file <code>food.csv</code> in the current directory:</p>
+<pre><code>Test &gt; ls parcels tagged food tofile food.csv</code></pre>
+<p>After this you could open the file, for example, with a spreadsheet application like LibreOffice.org Calc, Microsoft Office or even Google Docs. When opening the file, don’t forget to choose the field separator character. For example, when opening the file with Calc I am presented with this dialog:</p>
+<figure>
+<img src="food.csv.png" alt="LibreOffice.org Calc Open CSV dialog" /><figcaption>LibreOffice.org Calc Open CSV dialog</figcaption>
+</figure>
+<p>Notice that I changed the field separator to a semicolon (the default in this program) and cleared all other options. You may change the character used to separate the fields with the [set csvsep] command. LibreOffice.org has the nice feature of previewing the content as it will be imported, that allows us check if everything seems ok.</p>
 <h3 id="advanced-usage">Advanced usage</h3>
+<p>In the previous sections we covered the basic usage of Finance Control. Here we will skim over the last few bits that could facilitate the continued usage of the program.</p>
 <h4 id="scripting">Scripting</h4>
 <h4 id="backup-and-trim-the-database">Backup and trim the database</h4>
 <h4 id="usage-in-ms-windows">Usage in MS Windows</h4>

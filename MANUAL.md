@@ -1058,13 +1058,132 @@ an account's description:
      1 | Pocket | Money with me   |  127.73
      2 | Bank   | My bank account | 4930.01
 
+The last general command to correct mistakes is the [delete] command.  We
+already covered both versions of the [delete tag] command above and although
+the remaining delete commands are very similar, there are some issues that must
+be mentioned for each one of them.
 
+[delete parcel] and [delete transaction] take the identification number of the
+item to remove and will remove it permanently from the database: there is no
+way to recover them other than entering all its data again!  Previously I said
+that every transaction must have at least one parcel: well, that is generally
+true and logic but you *can* remove the last parcel from a transaction with
+the `delete transaction` command.  The transaction will be empty and its total
+amount zero:
 
+    Test > sh tr 3
+    Account: Bank (id: 2)
+    Description: Phone bill, Feb. 2021
+    Total amount: -59.99
+    Date: 2021-03-02
+    Parcels:
+      (3) Phone bill, Feb. 2021: -59.99 (comms, phone)
+    Test > 
+    Test > del parcel 3
+    Test > sh tr 3
+    Account: Bank (id: 2)
+    Description: Phone bill, Feb. 2021
+    Total amount: 0.00
+    Date: 2021-03-02
+    Parcels:
+    Test >
+
+I don't know how this could be useful, but... it's possible.  The only way to
+revert it now is to enter the data again.  Nevertheless, the parcel id. will be
+different --- it's a new parcel:
+
+    Test > add parcel 'Phone bill, Feb. 2021' \
+         : of -59.99 to 3 tags 'comms, phone'
+    Test > sh tr 3
+    Account: Bank (id: 2)
+    Description: Phone bill, Feb. 2021
+    Total amount: -59.99
+    Date: 2021-03-02
+    Parcels:
+      (12) Phone bill, Feb. 2021: -59.99 (comms, phone)
+
+[delete account] works in the same way, taking the account identification
+number or account name and removing the account permanently.  However, extra
+care should be taken when using this command, as it will also remove all of
+the account's transactions (and their parcels, of course).  If you really want
+to remove an account, be sure that you don't have any relevant information in
+its transactions!
 
 
 ### Listing and exporting data
 
+In the previous sections of this manual we already covered various forms of the
+[list] command, like [list currencies] and [list accounts].  There is only one
+detail we didn't mention: we may pass a currency ou account name, respectively,
+to list only that currency or account instead of all of them.  In short, it's
+just an alternative way of visualizing the data to the [show] command:
+
+    Test > ls acc bank
+    ID | Name | Description     | Balance
+    ---+------+-----------------+--------
+     2 | Bank | My bank account | 4930.01
+
+We also covered in some detail the [list transactions] command with both its
+filtering options, account and date.  The two remaining list commands are
+related to tags: [list parcels tagged] and [list tags].  With the first you may
+list all parcels with certain tags:
+
+    Test > ls parcels tagged grocery,dairy
+    Id | Date       | Account | Trans | Description   | Ammount
+    ---+------------+---------+-------+---------------+--------
+     6 | 2021-03-04 | Pocket  |     6 | eggs          |   -0.85
+     7 | 2021-03-04 | Pocket  |     6 | baking flour  |   -0.45
+     8 | 2021-03-04 | Pocket  |     6 | refined sugar |   -0.69
+     9 | 2021-03-04 | Pocket  |     6 | butter        |   -1.39
+    11 | 2021-03-04 | Pocket  |     6 | baking power  |   -0.85
+
+This command may also be filtered by date, with the keywords `from` and `to`,
+like `list transactions`.
+
+[list tags] lists all tags in use and their *frequency* --- the  number of
+parcels tagged with each particular tag:
+
+    Test > ls tags
+    Tag        | Frequency
+    -----------+----------
+    carry-over |         1
+    comms      |         1
+    dairy      |         1
+    food       |         6
+    grocery    |         4
+    phone      |         1
+    sweets     |         1
+
+Finally, all [list] commands accept one keyword argument, `tofile`, that
+directs the program to export the data to a 
+[CSV file](https://en.wikipedia.org/wiki/Comma-separated_values).  The keyword
+must be followed by the file name (same rules apply as to the [open] command).
+CSV files are very portable and supported by several applications and
+programming languages, if you desire to treat the exported data.  The command
+below will export a list of the parcels with tag `food` to the file `food.csv`
+in the current directory:
+
+    Test > ls parcels tagged food tofile food.csv
+
+After this you could open the file, for example, with a spreadsheet application
+like LibreOffice.org Calc, Microsoft Office or even Google Docs.  When opening
+the file, don't forget to choose the field separator character.  For example,
+when opening the file with Calc I am presented with this dialog:
+
+![LibreOffice.org Calc Open CSV dialog](food.csv.png)
+
+Notice that I changed the field separator to a semicolon (the default in this
+program) and cleared all other options.  You may change the character used to
+separate the fields with the [set csvsep] command.  LibreOffice.org has the
+nice feature of previewing the content as it will be imported, that allows us
+check if everything seems ok.
+
+
 ### Advanced usage
+
+In the previous sections we covered the basic usage of Finance Control.  Here
+we will skim over the last few bits that could facilitate the continued usage
+of the program.
 
 #### Scripting
 
