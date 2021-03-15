@@ -30,7 +30,11 @@ def yesno(question):
     """
     answer = ''
     while answer not in ('y', 'yes', 'n', 'no'):
-        answer = input(question + ' (y/n): ').strip().lower()
+        try:
+            answer = input(question + ' (y/n): ').strip().lower()
+        except EOFError:
+            print('No!')
+            break
 
     return answer in ('y', 'yes')
 
@@ -191,7 +195,11 @@ def paginate(header=[], data=[]):
         page, cmd = 0, ''
         while cmd not in ('q', 'quit'):
             print_page(page)
-            cmd = input(footer.format(page+1, pages)).strip().lower()
+            try:
+                cmd = input(footer.format(page+1, pages)).strip().lower()
+            except EOFError:
+                print('\nQuit!')
+                break;
             if cmd in ('n', 'next') and page < pages-1:
                 page += 1
             elif cmd in ('p', 'previous') and page > 0:

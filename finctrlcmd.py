@@ -225,7 +225,7 @@ class FinCtrlCmd(cmd.Cmd):
         > add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \\
         :                  [descr[iption] TEXT] [date DATE] \\
         :                  of AMOUNT | parcel "TEXT AMOUNT [tags LIST]" ...
-        > add parcel TEXT of AMOUNT on TRANSACTION_ID [tags LIST]
+        > add parcel TEXT of AMOUNT to TRANSACTION_ID [tags LIST]
         > add tag TEXT to PARCEL_ID
         """
         if self._store:
@@ -254,15 +254,16 @@ class FinCtrlCmd(cmd.Cmd):
     def do_change(self, arg):
         """Change a record in the current file:
         > ch[ange] curr[ency] NAME [short TEXT] \\
-        :                        [symbol TEXT] [position LEFT|RIGHT] \\
-        :                        [decplaces NUMBER] [decsep CHARACTER]
-        > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID to TEXT
+        :                     [symbol TEXT] [position LEFT|RIGHT] \\
+        :                     [decplaces NUMBER] [decsep CHARACTER]
+        > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID name to TEXT
+        > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID descr[iption] to TEXT
         > ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT
         > ch[ange] tr[ansaction] TRANSACTION_ID date to DATE
         > ch[ange] tr[ansaction] TRANSACTION_ID acc[ount] \\
         :                      to ACCOUNT_NAME|ACCOUNT_ID
         > ch[ange] parcel PARCEL_ID descr[iption] to TEXT
-        > ch[ange] parcel PARCEL_ID amm[ount] to AMOUNT
+        > ch[ange] parcel PARCEL_ID amount to AMOUNT
         > ch[ange] tag TAG to TEXT
         """
         if self._store:
@@ -490,8 +491,9 @@ class FinCtrlCmd(cmd.Cmd):
             raise Exception("'add account' syntax:\n"
             "    > add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME]")
         try:
-            curr = self._store.currency(kw.get('curr', kw.get('currency',
-                                                              'default')))
+            curr = kw.get('curr', kw.get('currency',
+                                         self._store.metadata('currency')))
+            curr = self._store.currency(curr)
             a = FinStore.Account()
             a.name = pos[0]
             a.descr = kw.get('descr', kw.get('description', ''))
@@ -566,24 +568,7 @@ class FinCtrlCmd(cmd.Cmd):
                   '    :     of AMOUNT | parcel "TEXT AMOUNT [tags LIST]" ... ')
 
         if 'of' not in kw:
-            if ('parcel' in kw or 'parcel' in mkw):
-                parcels = [kw['parcel']] if 'parcel' in kw else mkw['parcel']
-            else:
-                while True:
-                    print("Insert parcel:")
-                    descr = input("  Description: ").strip()
-                    if not descr:
-                        error("description is empty.")
-                        continue
-                    try:
-                        amm = float(input("  Ammount: "))
-                    except:
-                        error("Please enter a valid amount.")
-                        continue
-                    tags = f'tags "{input("  Tags: ")}"'
-                    parcels.append(f"'{descr}' {amm} {tags}")
-                    if not yesno("New parcel?"):
-                        break
+            parcels = [kw['parcel']] if 'parcel' in kw else mkw['parcel']
 
         self._addtr(kw, parcels=parcels, mul=mul)
 
@@ -603,17 +588,18 @@ class FinCtrlCmd(cmd.Cmd):
     def _add_parcel(self, args):
         """Add parcel.
         """
-        pos, kw, mkw = parse_args(args, 'on', 'of', 'tags')
-        if len(pos) != 1 or 'on' not in kw or 'of' not in kw or mkw:
+        pos, kw, mkw = parse_args(args, 'to', 'of', 'tags')
+        if len(pos) != 1 or 'to' not in kw or 'of' not in kw or mkw:
             raise Exception("'add parcel' syntax:\n"
-                  "    > add parcel TEXT of AMOUNT on TRANSACTION_ID [tags LIST]")
+                  "    > add parcel TEXT of AMOUNT to TRANSACTION_ID [tags LIST]")
         try:
             p = FinStore.Parcel()
-            p.trans= kw['on']
+            p.trans= kw['to']
             p.descr = pos[0]
             curr = self._store.transaction_currency(p.trans)
             p.amount = d2i(kw['of'], curr)
-            p.tags = parse_tags(kw['tags'])
+            if 'tags' in kw:
+                p.tags = parse_tags(kw['tags'])
             self._store.add_parcel(p)
         except Exception as e:
             error(f"unable to add parcel. Reason:\n    {e}")
@@ -683,7 +669,7 @@ class FinCtrlCmd(cmd.Cmd):
         """
         pos, kw, mkw = parse_args(args, 'from')
         if len(pos) != 1 or mkw:
-            raise Exception("'delete parcel' syntax\n"
+            raise Exception("'delete tag' syntax\n"
                             "    > del[ete] tag TEXT from PARCEL_ID\n"
                             "    > del[ete] tag TEXT")
         try:
@@ -725,16 +711,18 @@ class FinCtrlCmd(cmd.Cmd):
     def _change_account(self, args):
         """Change account.
         """
-        pos, kw, mkw = parse_args(args, 'name', 'descr', 'description')
-        if len(pos) != 1 or mkw or \
-           ('name' not in kw and 'descr' not in kw and 'description' not in kw):
+        pos, kw, mkw = parse_args(args, 'to')
+        if (len(pos) != 2 or mkw or 'to' not in kw or 
+                (pos[1] not in ('name', 'descr', 'description'))):
             raise Exception("'change account' syntax:\n"
-                  "    > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID \\\n"
-                  "    :                    name TEXT|descri[iption] TEXT")
+          "    > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID name to TEXT\n"
+          "    > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID descr[iption] to TEXT\n")
         try:
             acc = self._store.account(self._store.account_key(pos[0]))
-            acc.name = kw.get('name', acc.name)
-            acc.descr = kw.get('descr', kw.get('description', acc.descr))
+            if pos[1] == 'name':
+                acc.name = kw['to']
+            else:
+                acc.descr = kw['to']
             self._store.edt_account(acc)
         except Exception as e:
             error(f"unable to change account name. Reason:\n    {e}")
@@ -817,7 +805,8 @@ class FinCtrlCmd(cmd.Cmd):
         
         if lenargs:
             try:
-                data = open(os.path.join(sys.path[0], 'MANUAL')).read().splitlines()
+                data = open(os.path.join(sys.path[0],
+                                         'MANUAL.md')).read().splitlines()
                 paginate(data=data)
             except Exception as e:
                 raise Exception(f"Could not read file. Reason:\n    {e}")
@@ -848,7 +837,8 @@ class FinCtrlCmd(cmd.Cmd):
         
         if lenargs:
             try:
-                data = open(os.path.join(sys.path[0], 'LICENSE')).read().splitlines()
+                data = open(os.path.join(sys.path[0],
+                                         'LICENSE.md')).read().splitlines()
                 paginate(data=data)
             except Exception as e:
                 raise Exception(f"Could not read file. Reason:\n    {e}")
@@ -972,7 +962,7 @@ class FinCtrlCmd(cmd.Cmd):
         except Exception as e:
             error(f"unable to list currencies. Reason:\n    {e}")
 
-        headers = ['Name', 'Sort name', 'Symbol', 'Position',
+        headers = ['Name', 'Short name', 'Symbol', 'Position',
                            'Decimal places', 'Decimal separator']
         if 'tofile' in kw:
             export(os.path.expanduser(kw['tofile']), self.csvsep, data, headers)

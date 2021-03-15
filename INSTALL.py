@@ -2,8 +2,10 @@
 """Installation script for Finance Control application.
 """
 
-FILES = ('finctrlcmd.py', 'finctrl.py', 'finstore.py', 'finutil.py', 'sqlitestore.py',
-         'LICENSE', 'LICENSE.html', 'MANUAL', 'MANUAL.html', 'README', '__version__')
+FILES = ('finctrlcmd.py', 'finctrl.py', 'finstore.py', 'finutil.py',
+         'sqlitestore.py',
+         'LICENSE.md', 'LICENSE.html', 'MANUAL.md', 'MANUAL.html', 'README.md',
+         '__version__')
 APP_NAME = 'FinCtrl' # will be the name of installation directory
 START_SCRIPT = 'finctrl.py'
 LINK_NAME = 'finctrl'
@@ -129,7 +131,8 @@ except Exception as e:
 # copy default configuration files, if they don't already exist
 try:
     print('Creating configuration files directory, if necessary...')
-    os.makedirs(CONFIG_DIR, exist_ok=True)
+    if CONFIG_FILES:
+        os.makedirs(CONFIG_DIR, exist_ok=True)
     print('Copying necessary configuration files:')
     for i in CONFIG_FILES:
         if not os.path.exists(os.path.join(CONFIG_DIR, i)):

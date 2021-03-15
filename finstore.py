@@ -610,7 +610,8 @@ class FinStore(SQLiteStore):
         """Return list of unique tags.
         """
         return self._qry("select T,(select count() from parceltags where tag=T) "
-                         "from (select distinct tag as T from parceltags)")
+                         "from (select distinct tag as T from parceltags) "
+                         "order by T")
 
 
     def tags_by_parcel(self, parcel):
