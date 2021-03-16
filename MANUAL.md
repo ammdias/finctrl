@@ -2,16 +2,33 @@ FINANCE CONTROL MANUAL
 ======================
 
 This is a very basic program to control personal finances.  It depends on
-Python 3 and was thought to be used only from the command line.  It
+**Python 3** and was thought to be **used only from the command line**.  It
 supports multiple accounts with possibly different currencies and transactions
 composed of multiple parcels, each with its different tags.  Check the [USAGE]
 section for a more complete overview of the program.
+
+This is what the program IS NOT and CANNOT DO:
+
+* It will not contact your homebanking system;
+* It will not scan your bills and insert them automatically;
+* It will not produce beautiful (or even ugly) graphics;
+* It will not analyse your savings and make predictions on where you will be in
+  ten years;
+* It will not automatically add interest rates to your savings accounts or
+  loans.
+
+This is what it CAN DO:
+
+* Record your earnings and expenses exactly as you enter them;
+* List your earnings and expenses filtered by date, account and/or item tags;
+* Export your listings to CSV files that can be further processed in other
+  tools like spreasheet apllications.
 
 Copyright (C) 2021 António Manuel Dias
 
 contact: ammdias@gmail.com
 
-website: [AMMDIAS](https://ammdias.duckdns.org/downloads)
+website: [AMMDIAS GitHub](https://github.com/ammdias/finctrl)
 
 ### Changes history
 
@@ -1182,48 +1199,278 @@ check if everything seems ok.
 ### Advanced usage
 
 In the previous sections we covered the basic usage of Finance Control.  Here
-we will skim over the last few bits that could facilitate the continued usage
+we will skim over the last few bits that could facilitate the continuous usage
 of the program.
 
 #### Scripting
 
+Using a command line may become tedious and treacherous, especially when
+entering multi-line commands.  Imagine someone inserting a transaction with
+a long list of parcels and, at the last, discovering that there's an error in
+the first that will stop the command to be recognized by  the program.  It
+would frustrating!  To stop that from happening the program accepts commands
+from a separate text file, using the [source] command.
+
+The idea is simple: you prepare a simple-text file in your favourite editor,
+where you can review the commands and correct any mistake, and then use the
+[source] command to insert it into the database.  The commands in the text file
+must match **exactly** the commands you would enter at the program command line.
+This includes adding a backslash at the enf of lines of a multi-line command.
+
+Let's clarify this with a small example.  Create a text file with the content
+below and the name `test.txt`:
+
+    add expense on pocket \
+        descr "Supermarket" date 3/12 \
+        parcel "tomatoes 1.29 tags 'food,vegetables'" \
+        parcel "onions 0.99 tags 'food,vegetables'" \
+        parcel "lettuce 0.58 tags 'food,vegetables'" \
+        parcel "cucumber 0.29 tags 'food,vegetables'" \
+        parcel "'olive oil' 5.45 tags 'food,grocery'" \
+        parcel "'wine vinegar' 1.05 tags 'food,grocery'" \
+        parcel "salt 1.25 tags 'food,grocery'"
+    
+    add transfer of 60 from bank to pocket \
+        descr 'ATM withdrawal' date 3/12
+
+As you can see, these are just two commands, adding the expense of another trip
+to the supermarket and a ATM withdrawal.  After saving the file, open the
+program and the `test.sqlite` file we have been working on and then execute the
+[source] command:
+
+    Test > source test.txt
+    
+    add expense on pocket descr "Supermarket" date 3/12 parcel "tomatoes 1.29
+    tags 'food,vegetables'" parcel "onions 0.99 tags 'food,vegetables'" parcel
+    "lettuce 0.58 tags 'food,vegetables'" parcel "cucumber 0.29 tags 'food,
+    vegetables'" parcel "'olive oil' 5.45 tags 'food,grocery'" parcel "'wine
+    vinegar' 1.05 tags 'food,grocery'" parcel "salt 1.25 tags 'food,grocery'"
+    Transaction id: 7
+    
+    add transfer of 60 from bank to pocket descr 'ATM withdrawal' date 3/12
+    Transaction id: 8
+    Transaction id: 9 
+
+The commands are entered and *echoed* in the terminal (note the long line of
+the `add expense` command).  Transactions 7, 8 and 9 were added, as we may
+confirm list the transactions on the 12th of March:
+
+    Test > ls tr from 3/12
+    Account | Id | Date       | Description    | Total amount | Account balance
+    --------+----+------------+----------------+--------------+----------------
+    Pocket  |  9 | 2021-03-12 | ATM withdrawal |        60.00 |          176.83
+    Pocket  |  7 | 2021-03-12 | Supermarket    |       -10.90 |          116.83
+    Bank    |  8 | 2021-03-12 | ATM withdrawal |       -60.00 |         4870.01
+
+You could also [show] any of the transactions.
+
+If all your work on the program is just entering these commands, you could even
+pass it as an argument to the program itself.  Consider this simple example
+(save it as test-1.txt):
+
+    open test.sqlite
+    add deposit of 150 on bank descr 'Lottery prize' \
+        date 3/15
+    ls tr on bank from 2/1 to today tofile bank.csv
+
+First, note that we start by opening the database file, then add a transaction
+and finish by exporting the *Bank* account data to a `bank.csv` CSV file.  Now
+we can pass this to the program directly from the system prompt:
+
+    $ finctrl --source test-1.txt
+
+The `--source` (or just `-s`) option of the Finance Control program tells it to
+open the program, execute the commands in the file and finally quit the program.
+Check if the `bank.csv` file was created and that it is correct.  Of course,
+you could get the same effect redirecting the program's input stream to the
+file, if your operating system supports it:
+
+    $ finctrl < test-1.txt
+
+Passing the script this way would not print the executed commands on the
+terminal.  If you want that to happen, add "`set echo on`" to the top of the
+text file (see the [set echo] reference page for details on this command).
+
 #### Backup and trim the database
+
+After a good amount of time using the program, a lot of data will be colected
+and that could become a nuisance.  For example, that means you always have
+to filter listings on starting date, to ignore old data.  To overcome this
+problem you may use the [trim] command to remove old, unnecessary data.  This
+command has two forms: [trim account], that operates on a single account, and
+[trim storage], which will trim the complete database.
+
+Trim will remove all transactions (and their parcels, of corurse) from the first
+up to (and including) the date the user indicates, preserving the affected
+accounts balance.  If no transaction remains on an account, a *carry-over*
+transaction will be created with an amount identical to the account balance on
+that date.
+
+A good practice before using the `trim` command is to backup the database.  The
+easiest way to do this is just copying the file using the operating system's
+tools, but you may also do it from inside the program, with the [backup]
+command.  Let's see a practical example of the usage of these two commands with
+our little database.
+
+    Test > backup test-20210315.sqlite
+
+This command will backup the current database to the file passed as argument
+(same rules for the file name as in the [open] command).  We may immediately
+test the backup, opening it in the program:
+
+    Test > open test-20210315.sqlite
+    Test > ls acc
+    ID | Name   | Description     | Balance
+    ---+--------+-----------------+--------
+     1 | Pocket | Money with me   |  176.83
+     2 | Bank   | My bank account | 5020.01
+
+As this is a backup file, we should change its prompt so that when we open it
+we are immediately alerted that we are on the backup file and not in the main
+file.
+
+    Test > set prompt 'Test-20210315 > '
+    Test-20210315 > 
+
+We can now return to the main file and trim the database.
+
+    Test-20210315 > open test.sqlite
+    Test > ls tr
+    Account | Id | Date       | Description           | Total amount | Account balance
+    --------+----+------------+-----------------------+--------------+----------------
+    Pocket  |  9 | 2021-03-12 | ATM withdrawal        |        60.00 |          176.83
+    Pocket  |  7 | 2021-03-12 | Supermarket           |       -10.90 |          116.83
+    Pocket  |  6 | 2021-03-04 | Supermarket           |        -5.72 |          127.73
+    Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
+    Pocket  |  1 | 2021-03-01 | Initial amount        |       123.45 |          123.45
+    Bank    | 10 | 2021-03-15 | Lottery prize         |       150.00 |         5020.01
+    Bank    |  8 | 2021-03-12 | ATM withdrawal        |       -60.00 |         4870.01
+    Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
+    Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+
+Look at the transactions and see that the first, on both accounts, is on March
+1st and the last on March 12th in the *Pocket* account and on March 15th on the
+*Bank* account.  Let's trim the database up to March 12.
+
+    Test > trim storage upto 3/12
+    Test > ls tr
+    Account | Id | Date       | Description     | Total amount | Account balance
+    --------+----+------------+-----------------+--------------+----------------
+    Pocket  | 11 | 2021-03-12 | Trim carry-over |       176.83 |          176.83
+    Bank    | 10 | 2021-03-15 | Lottery prize   |       150.00 |         5020.01
+    Test > 
+
+As we can see, all transactions of the *Pocket* account were removed and a new
+one was created with the account's carry-over balance.  On the *Bank* account
+there was one remaining transaction and therefore no need to create the
+carry-over transaction.
 
 #### Usage in MS Windows
 
+As this program is pure Python 3, it may be run in any operating system where
+this language may be run, including Microsoft Windows, even though this system
+is not know for a very friendly environment for the users of command-line tools.
+Here I will provide some advice on how a Windows user could install and run the
+program but be advised that **I DID NOT TEST THIS**, so I may have missed some
+important detail.  Please contact me if that is the case.  In steps:
+
+
+1. Start by downloading and installing the most recent version of the [Python
+   language to your system](https://www.python.org/downloads/windows/).
+
+   When prompted, answer yes to the question about adding Python to your
+   system PATH.
+
+2. Download the most recent version of *Finance Control* from 
+   [AMMDIAS GitHub page](https://github.com/ammdias/finctrl) and uncompress it
+   in a directory of your choosing.
+
+3. Create a *batch file* to launch the program which will permit that you start
+   it without the need to open a command line first. Here is an example that
+   you may use to create your own:
+
+       :: Sample Windows batch file to execute the Finance Control program
+       :: on the file 'finctrl.sqlite'
+    
+       "C:\Program Files\Python\python.exe" ^
+         C:\Users\USER\Programs\finctrl\finctrl.py ^
+         C:\Users\USER\Documents\finctrl.sqlite
+      
+   On this batch file I assume that the Python executable is located in
+   
+       C:\Program File\Python\Python.exe
+       
+   (you must check its actual location), that the program folder is in
+   
+       C:\Users\USER\Programs\finctrl
+       
+       
+   (you should replace it with the path where you uncompressed the program) and
+   that the database will be located in
+   
+       C:\Users\USER\Documents\finctrl.sqlite
+       
+   (you should replace this with the path where you wish the database to reside)
+   
+4. To start the program just open the Windows Explorer on the folder where you
+   created the batch file and double click on it.  Provided everything is ok, a
+   terminal window should open and you should see the program's prompt:
+   
+       finctrl.sqlite >
+
+   Don't forget you can change the terminal window settings (color, font, height
+   and width) if you don't like the Windows default.
 
 
 REFERENCE
 ---------
 
 ### add
-    
-    > add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \\
-    :                [decplaces NUMBER] [decsep CHARACTER]
+
+#### add account
 
     > add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME]
 
+#### add currency
+    
+    > add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \\
+    :     [decplaces NUMBER] [decsep CHARACTER]
+
+#### add deposit
+
     > add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
-    :             [descr TEXT] [date DATE] [tags LIST]
+    :     [descr TEXT] [date DATE] [tags LIST]
 
-
-    > add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
-    :             [descr TEXT] [date DATE] [tags LIST]
-
-    > add tranfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
-    :             from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID
-
-    > add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \\
-    :                   [neg] [descr[iption] TEXT] [date DATE] \\
-    :                   of AMOUNT | parcel "TEXT AMOUNT [tags LIST]"...
+#### add expense
 
     > add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \\
-    :                  [descr[iption] TEXT] [date DATE] \\
-    :                  of AMOUNT | parcel "TEXT AMOUNT [tags LIST]"...
+    :     [descr[iption] TEXT] [date DATE] \\
+    :     of AMOUNT | parcel "TEXT AMOUNT [tags LIST]"...
+
+#### add parcel
 
     > add parcel TEXT of AMOUNT on TRANSACTION_ID [tags LIST]
 
+#### add tag
+
     > add tag TEXT to PARCEL_ID
+
+#### add transaction
+
+    > add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \\
+    :     [neg] [descr[iption] TEXT] [date DATE] \\
+    :     of AMOUNT | parcel "TEXT AMOUNT [tags LIST]"...
+
+#### add transfer
+
+    > add transfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
+    :     from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID
+    
+#### add withdrawal
+
+    > add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
+    :     [descr TEXT] [date DATE] [tags LIST]
 
 ### backup
 
@@ -1235,24 +1482,34 @@ REFERENCE
 
 ### change
 
-    > ch[ange] curr[ency] NAME [short TEXT] \\
-    :                        [symbol TEXT] [position LEFT|RIGHT] \\
-    :                        [decplaces NUMBER] [decsep CHARACTER]
+#### change account
 
     > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID to TEXT
+
+#### change currency
+
+    > ch[ange] curr[ency] NAME [short TEXT] \\
+    :          [symbol TEXT] [position LEFT|RIGHT] \\
+    :          [decplaces NUMBER] [decsep CHARACTER]
+
+#### change parcel
+
+    > ch[ange] parcel PARCEL_ID descr[iption] to TEXT
+
+    > ch[ange] parcel PARCEL_ID amount to AMOUNT
+
+#### change tag
+
+    > ch[ange] tag TAG to TEXT
+
+#### change transaction
 
     > ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT
 
     > ch[ange] tr[ansaction] TRANSACTION_ID date to DATE
 
     > ch[ange] tr[ansaction] TRANSACTION_ID acc[ount] \\
-    :                      to ACCOUNT_NAME|ACCOUNT_ID
-
-    > ch[ange] parcel PARCEL_ID descr[iption] to TEXT
-
-    > ch[ange] parcel PARCEL_ID amount to AMOUNT
-
-    > ch[ange] tag TAG to TEXT
+    :          to ACCOUNT_NAME|ACCOUNT_ID
 
 ### close
 
@@ -1260,11 +1517,19 @@ REFERENCE
 
 ### delete
 
+#### delete account
+
     > del[ete] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
+
+#### delete transaction
 
     > del[ete] tr[ansaction] TRANSACTION_ID
 
+#### delete parcel
+
     > del[ete] parcel PARCEL_ID
+
+#### delete tag
 
     > del[ete] tag TEXT from PARCEL_ID
 
@@ -1276,16 +1541,26 @@ REFERENCE
 
 ### list
 
-    > list|ls curr[encies] [NAME] [tofile FILE]
+#### list accounts
 
     > list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]
 
-    > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
-    :                     [from DATE] [to DATE] [tofile FILE]
+#### list currencies
+
+    > list|ls curr[encies] [NAME] [tofile FILE]
+
+#### list parcels
 
     > list|ls parcels tagged LIST [from DATE] [to DATE] [tofile FILE]
 
+#### list tags
+
     > list|ls tags [tofile FILE]
+
+#### list transactions
+
+    > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
+    :         [from DATE] [to DATE] [tofile FILE]
 
 ### open
 
@@ -1293,29 +1568,61 @@ REFERENCE
 
 ### set
 
-    > set echo ON|OFF
-
-    > set prompt TEXT
+#### set csvsep
 
     > set csvsep CHARACTER
 
+#### set currency
+
     > set curr[ency] NAME
 
-    > set withdrawal descr[iption] TEXT
+#### set deposit
 
     > set deposit descr[iption] TEXT
 
+#### set echo
+
+    > set echo ON|OFF
+
+#### set prompt
+
+    > set prompt TEXT
+
+#### set transfer
+
     > set transfer descr[iption] TEXT
+
+#### set withdrawal
+
+    > set withdrawal descr[iption] TEXT
 
 ### show
 
-    > sh[ow] manual|copyright|license
+#### show account
 
-    > sh[ow] settings
+    > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
+
+#### show copyright
+    
+    > sh[ow] copyright
+
+#### show currency
 
     > sh[ow] curr[ency] NAME
 
-    > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
+#### show license
+
+    > sh[ow] license
+
+#### show manual
+    
+    > sh[ow] manual
+
+#### show settings
+
+    > sh[ow] settings
+
+#### show transaction
 
     > sh[ow] tr[ansaction] TRANSACTION_ID
 
@@ -1325,11 +1632,18 @@ REFERENCE
 
 ### trim
 
+#### trim storage
+
     > trim storage upto DATE
+
+#### trim account
 
     > trim acc[ount] ACCOUNT_NAME|ACCOUNT_ID upto DATE
 
 ### Database structure
+
+Below is the instructions used to create the database on SQLite, which reflect
+its schema:
 
     CREATE TABLE metadata (
          key         text not null,
@@ -1346,11 +1660,7 @@ REFERENCE
         dec_sep     text,
         primary key (name)
     );
-    CREATE TRIGGER del_currency before delete on currencies
-    begin
-        delete from accounts where currency=old.name;
-    end;
-    
+
     CREATE TABLE accounts (
         key         integer,
         name        text not null,
@@ -1360,10 +1670,6 @@ REFERENCE
         primary key (key),
         foreign key (currency) references currencies(name)
     );
-    CREATE TRIGGER del_account before delete on accounts
-    begin
-        delete from transactions where account=old.key;
-    end;
     
     CREATE TABLE transactions (
         key         integer,
@@ -1375,10 +1681,6 @@ REFERENCE
         primary key (key),
         foreign key (account) references accounts(key)
     );
-    CREATE TRIGGER del_transaction before delete on transactions
-    begin
-        delete from parcels where trans=old.key;
-    end;
     
     CREATE TABLE parcels (
         key         integer,
@@ -1388,10 +1690,6 @@ REFERENCE
         primary key (key),
         foreign key (trans) references transactions(key)
     );
-    CREATE TRIGGER del_parcel after delete on parcels
-    begin
-        delete from parceltags where parcel=old.key;
-    end;
     
     CREATE TABLE parceltags (
         parcel      integer not null,
@@ -1399,6 +1697,26 @@ REFERENCE
         primary key (parcel, tag),
         foreign key (parcel) references parcels(key)
     );
+
+    CREATE TRIGGER del_currency before delete on currencies
+    begin
+        delete from accounts where currency=old.name;
+    end;
+    
+    CREATE TRIGGER del_account before delete on accounts
+    begin
+        delete from transactions where account=old.key;
+    end;
+    
+    CREATE TRIGGER del_transaction before delete on transactions
+    begin
+        delete from parcels where trans=old.key;
+    end;
+
+    CREATE TRIGGER del_parcel after delete on parcels
+    begin
+        delete from parceltags where parcel=old.key;
+    end;
 
 
 LICENSE

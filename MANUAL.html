@@ -1,8 +1,22 @@
 <h1 id="finance-control-manual">FINANCE CONTROL MANUAL</h1>
-<p>This is a very basic program to control personal finances. It depends on Python 3 and was thought to be used only from the command line. It supports multiple accounts with possibly different currencies and transactions composed of multiple parcels, each with its different tags. Check the <a href="#usage">USAGE</a> section for a more complete overview of the program.</p>
+<p>This is a very basic program to control personal finances. It depends on <strong>Python 3</strong> and was thought to be <strong>used only from the command line</strong>. It supports multiple accounts with possibly different currencies and transactions composed of multiple parcels, each with its different tags. Check the <a href="#usage">USAGE</a> section for a more complete overview of the program.</p>
+<p>This is what the program IS NOT and CANNOT DO:</p>
+<ul>
+<li>It will not contact your homebanking system;</li>
+<li>It will not scan your bills and insert them automatically;</li>
+<li>It will not produce beautiful (or even ugly) graphics;</li>
+<li>It will not analyse your savings and make predictions on where you will be in ten years;</li>
+<li>It will not automatically add interest rates to your savings accounts or loans.</li>
+</ul>
+<p>This is what it CAN DO:</p>
+<ul>
+<li>Record your earnings and expenses exactly as you enter them;</li>
+<li>List your earnings and expenses filtered by date, account and/or item tags;</li>
+<li>Export your listings to CSV files that can be further processed in other tools like spreasheet apllications.</li>
+</ul>
 <p>Copyright (C) 2021 António Manuel Dias</p>
 <p>contact: ammdias@gmail.com</p>
-<p>website: <a href="https://ammdias.duckdns.org/downloads">AMMDIAS</a></p>
+<p>website: <a href="https://github.com/ammdias/finctrl">AMMDIAS GitHub</a></p>
 <h3 id="changes-history">Changes history</h3>
 <ul>
 <li>0.1: Initial version</li>
@@ -96,7 +110,7 @@ FinCtrl &gt;  </code></pre></li>
 <pre><code> FinCtrl &gt; Bye
  *** Error: (Syntax) &#39;Bye&#39; is not a recognized command.</code></pre>
 <p>However, although the commands are case-sensitive, some arguments may be entered in any case, like account names or tags. Also, the answer to inline questions maybe given in lower or upper case. Examples of those are given throughout this manual.</p></li>
-<li><p>Some commands or options have a shortcut version that may be used interchangeably. That will be indicated in the <a href="#reference">REFERENCE</a> section and in the online help by enveloping the optional letters in square brackets. For example, the [show copyright] command may be entered as <code>show</code> or <code>sh</code>:</p>
+<li><p>Some commands or options have a shortcut version that may be used interchangeably. That will be indicated in the <a href="#reference">REFERENCE</a> section and in the online help by enveloping the optional letters in square brackets. For example, the <a href="#show-copyright">show copyright</a> command may be entered as <code>show</code> or <code>sh</code>:</p>
 <pre><code>FinCtrl &gt; show copyright
 Finance Control 0.1
 (C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
@@ -218,7 +232,7 @@ FinCtrl &gt; </code></pre>
 test.sqlite &gt;</code></pre>
 <p>You should have noticed that the prompt changes when a file is opened. The prompt is one of the program’s settings and is stored in each file. If no change has been made, the prompt will be the file name by default.</p>
 <h3 id="default-settings">Default settings</h3>
-<p>Every opened file has a set of default settings that govern the behaviour of some of the program’s operations. We can find the current file’s settings with the [show settings] command (a file must be already opened):</p>
+<p>Every opened file has a set of default settings that govern the behaviour of some of the program’s operations. We can find the current file’s settings with the <a href="#show-settings">show settings</a> command (a file must be already opened):</p>
 <pre><code>test.sqlite &gt; sh settings
 Prompt: test.sqlite &gt; 
 Field separator for CSV files: ;
@@ -246,12 +260,12 @@ Test &gt; </code></pre>
 *** Error: unable to set currency. Reason:
     Currency not found.</code></pre>
 <h3 id="currencies">Currencies</h3>
-<p>In this program’s context, a currency is just a collection of settings to correctly display and scan monetary amounts. We can list the configured currencies with the [list currencies] command:</p>
+<p>In this program’s context, a currency is just a collection of settings to correctly display and scan monetary amounts. We can list the configured currencies with the <a href="#list-currencies">list currencies</a> command:</p>
 <pre><code>Test &gt; list currencies
 Name    | Short name | Symbol | Position | Decimal places | Decimal separator
 --------+------------+--------+----------+----------------+------------------
 default |            |        | left     | 2              | .                </code></pre>
-<p>There is always at least one configured currency, named <code>default</code>. We can always check a currency settings with the [show currency] command:</p>
+<p>There is always at least one configured currency, named <code>default</code>. We can always check a currency settings with the <a href="#show-currency">show currency</a> command:</p>
 <pre><code>Test &gt; sh curr default
 Name: default
 Short name: 
@@ -268,7 +282,7 @@ Decimal separator: .</code></pre>
 <li><em>Decimal places</em>: this indicates the precision of the currency. All amounts will be stored and displayed with this precision. When entering an amount, only the decimal places configured in the respective currency will be stored — all remaining decimal places will be discarded.</li>
 <li><em>Decimal separator</em>: this is the symbol used to split a currency amount integer and decimal parts. It will be used to display all currency quantities and to scan the quantities input by the user.</li>
 </ul>
-<p>If all your accounts are in the same currency, you may use the default and change its settings as you desire. If not or if you prefer to have the currency name correspond to its actual name, you must use the [add currency] command. Let’s add the Euro currency to the Test file:</p>
+<p>If all your accounts are in the same currency, you may use the default and change its settings as you desire. If not or if you prefer to have the currency name correspond to its actual name, you must use the <a href="#add-currency">add currency</a> command. Let’s add the Euro currency to the Test file:</p>
 <pre><code>Test &gt; add curr Euro short EUR symbol € position right
 Test &gt; </code></pre>
 <p>The only required argument is the name of the currency to add, all others are optional. If an argument is not given, the corresponding value from the <code>default</code> currency will be used. We may confirm this showing the properties of the currency we just added and comparing it to the default:</p>
@@ -280,7 +294,7 @@ Symbol position: right
 Decimal places: 2
 Decimal separator: .</code></pre>
 <p>Notice that although the first letter of the actual name of the currency is in upper case we may use all lower case letters when identifying it to a command. The names of currencies and accounts are not case-sensitive.</p>
-<p>To change one of the values, we use the [change currency] command:</p>
+<p>To change one of the values, we use the <a href="#change-currency">change currency</a> command:</p>
 <pre><code>Test &gt; ch curr euro decsep ,
 Test &gt;
 Test &gt; sh curr euro
@@ -292,7 +306,7 @@ Decimal places: 2
 Decimal separator: ,
 Test &gt;</code></pre>
 <p>The euro decimal separator was changed to a comma.</p>
-<p>Finally, we may want to make the Euro currency the default to be used on any new account. For this we use the [set currency] command:</p>
+<p>Finally, we may want to make the Euro currency the default to be used on any new account. For this we use the <a href="#set-currency">set currency</a> command:</p>
 <pre><code>Test &gt; set curr euro
 Test &gt; 
 Test &gt; sh settings
@@ -303,10 +317,10 @@ Default withdrawal text: Withdrawal
 Default transfer text: Transfer
 Default currency: Euro</code></pre>
 <h3 id="accounts-and-transactions">Accounts and Transactions</h3>
-<p>For the purpose of this program, accounts are the entities where money is stored. They will always have a balance, which is the total amount available, and a <em>current</em> balance, which is the amount available at the current date. We can list the available accounts with the [list accounts] command:</p>
+<p>For the purpose of this program, accounts are the entities where money is stored. They will always have a balance, which is the total amount available, and a <em>current</em> balance, which is the amount available at the current date. We can list the available accounts with the <a href="#list-accounts">list accounts</a> command:</p>
 <pre><code>Test &gt; list accounts
 *** Error: Empty set</code></pre>
-<p>Because none is configured yet, we get an error. To add an account we use the appropriately named command [add account]. The only required argument to this command is the name of the account to be created, but we may also give it a description and the currency that the account is in. Let’s create two accounts, a <em>bank account</em> and a <em>pocket account</em>, for the money we have in coin:</p>
+<p>Because none is configured yet, we get an error. To add an account we use the appropriately named command <a href="#add-account">add account</a>. The only required argument to this command is the name of the account to be created, but we may also give it a description and the currency that the account is in. Let’s create two accounts, a <em>bank account</em> and a <em>pocket account</em>, for the money we have in coin:</p>
 <pre><code>Test &gt; add account Pocket
 Test &gt; add acc Bank descr &#39;My bank account&#39;
 Test &gt;
@@ -322,7 +336,7 @@ ID | Name   | Description     | Balance
 ---+--------+-----------------+--------
  1 | Pocket |                 |    0.00
  2 | Bank   | My bank account |    0.00</code></pre>
-<p>Every change we make on a currency will be reflected on all accounts using that currency. To find all the details about an account, we use the [show account] command:</p>
+<p>Every change we make on a currency will be reflected on all accounts using that currency. To find all the details about an account, we use the <a href="#show-account">show account</a> command:</p>
 <pre><code>Test &gt; show account bank
 Account ID: 2
 Name: Bank
@@ -344,7 +358,7 @@ Balance (current): 0.00 (---)</code></pre>
      : parcel &quot;&#39;Initial amount&#39; 123.45 tags &#39;carry-over&#39;&quot;
 Transaction id: 1
 Test &gt; </code></pre>
-<p>This is the use of the [add transaction] command in its full splendor, so let me explain it in detail. The first thing to notice is that it is a multi-line command: by placing a backslash character at the end of the first two lines I tell the program that the command is not complete and carries on to the next.</p>
+<p>This is the use of the <a href="#add-transaction">add transaction</a> command in its full splendor, so let me explain it in detail. The first thing to notice is that it is a multi-line command: by placing a backslash character at the end of the first two lines I tell the program that the command is not complete and carries on to the next.</p>
 <p>Also of notice is that I used no <em>positional arguments</em>: all user-provided data was entered by means of <em>keyword arguments</em>, some of which are required and others optional. The help page on this command is as follows:</p>
 <pre><code>&gt; add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \
 :                   [neg] [descr[iption] TEXT] [date DATE] \
@@ -356,21 +370,21 @@ Test &gt; </code></pre>
 <li><strong>date</strong>: the date on which the transaction will be effective;</li>
 <li><strong>parcel</strong>: the data of the single parcel of this transaction.</li>
 </ul>
-<p>The <strong>parcel</strong> argument is a bit complex and deserves a detailed explanation of its own. In fact, it is almost like a command within [add transaction] as its purpose is to add a parcel to it. If the transaction had multiple parcels, each one would have its own <strong>parcel</strong> argument.</p>
+<p>The <strong>parcel</strong> argument is a bit complex and deserves a detailed explanation of its own. In fact, it is almost like a command within <a href="#add-transaction">add transaction</a> as its purpose is to add a parcel to it. If the transaction had multiple parcels, each one would have its own <strong>parcel</strong> argument.</p>
 <p>This <em>pseudo-command</em> has two required positional arguments: <code>TEXT</code>, the description of the parcel (here the same as the transaction description, <em>Initial amount</em>), and <code>AMOUNT</code>, the amount of the parcel. It may also have a keyword argument, <code>tags</code>, which must be a comma-separated list of the tags to add to this parcel.</p>
-<p>A very important fact to not forget when adding a parcel on the [add transaction] command is that the whole parcel data must be within quotes. This is because the interpreter must perceive the complete data as a single argument. Forgetting the quotes will result in an error being reported. Because of this, if the parcel description or any of the tags have spaces, they must also be enveloped in quotes — the other kind of the quotes used for the complete parcel data. That is why the parcel description above is within single-quotes and the parcel data within double-quotes.</p>
+<p>A very important fact to not forget when adding a parcel on the <a href="#add-transaction">add transaction</a> command is that the whole parcel data must be within quotes. This is because the interpreter must perceive the complete data as a single argument. Forgetting the quotes will result in an error being reported. Because of this, if the parcel description or any of the tags have spaces, they must also be enveloped in quotes — the other kind of the quotes used for the complete parcel data. That is why the parcel description above is within single-quotes and the parcel data within double-quotes.</p>
 <p>The optional arguments not used in this example were:</p>
 <ul>
 <li><p><strong>neg</strong>: the only positional argument of the command, if used, would make all parcel amounts negative — this may be nice when entering a complex bill, for example, so that the user doesn’t need to keep adding the minus symbol to all the monetary values;</p></li>
 <li><p><strong>of</strong>: this argument could actually have been used here — it means that the transaction has only one parcel that will be added automatically with the amount and description of the whole transaction.</p></li>
 </ul>
-<p>An easier way to add an amount to an account would be to use the [add deposit] command. This is a shortcut to the previous command and takes this form:</p>
+<p>An easier way to add an amount to an account would be to use the <a href="#add-deposit">add deposit</a> command. This is a shortcut to the previous command and takes this form:</p>
 <pre><code>&gt; add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \
 :             [descr TEXT] [date DATE] [tags LIST]</code></pre>
 <p>Let’s use it to add the initial amount to the <em>Bank</em> account:</p>
 <pre><code>Test &gt; add deposit of 5000 on bank date 3/1
 Transaction id: 2</code></pre>
-<p>You should have noticed that each time we add a transaction, the program answers with the transaction identification. We need this number every time we have to refer the transaction, like when we want to see its details with the [show transaction] command:</p>
+<p>You should have noticed that each time we add a transaction, the program answers with the transaction identification. We need this number every time we have to refer the transaction, like when we want to see its details with the <a href="#show-transaction">show transaction</a> command:</p>
 <pre><code>Test &gt; sh tr 2
 Account: Bank (id: 2)
 Description: Deposit
@@ -379,13 +393,13 @@ Date: 2021-03-01
 Parcels:
   (2) Deposit: 5000.00</code></pre>
 <p>Note that the description of the transaction (and also the implied parcel) was set to <em>Deposit</em>. This is due to one of the <a href="#default-settings">default settings</a>, the <em>default deposit text</em>. We could have set a different transaction description with the <code>description</code> keyword and even add tags to the implied parcel using the <code>tags</code> keyword.</p>
-<p>Now that we have some transactions, we may list them all using the [list transactions] command:</p>
+<p>Now that we have some transactions, we may list them all using the <a href="#list-transactions">list transactions</a> command:</p>
 <pre><code>Test &gt; ls tr
 Account | Id | Date       | Description    | Total amount | Account balance
 --------+----+------------+----------------+--------------+----------------
 Pocket  |  1 | 2021-03-01 | Initial amount |       123.45 |          123.45
 Bank    |  2 | 2021-03-01 | Deposit        |      5000.00 |         5000.00</code></pre>
-<p>There is also a shortcut command to take some amount from an account, [add withdrawal]:</p>
+<p>There is also a shortcut command to take some amount from an account, <a href="#add-withdrawal">add withdrawal</a>:</p>
 <pre><code>Test &gt; add withdrawal on bank of 59.99 date 3/2 \
      : descr &#39;Phone bill, Feb. 2021&#39; tags phone,comms
 Transaction id: 3</code></pre>
@@ -403,7 +417,7 @@ Date: 2021-03-02
 Parcels:
   (3) Phone bill, Feb. 2021: -59.99 (comms, phone)</code></pre>
 <p>Here, we may also see that although the amount given to the command was positive (<em>59.99</em>), the transaction amount is negative. This is the purpose of having a shortcut command to describe a <em>deposit</em> and another to describe a <em>withdrawal</em>.</p>
-<p>There is one final shortcut transaction command, [add transfer], that moves an amount from one acount to another. If I took 10 Euro from my bank account on a ATM I could use this command to describe the operation:</p>
+<p>There is one final shortcut transaction command, <a href="#add-transfer">add transfer</a>, that moves an amount from one acount to another. If I took 10 Euro from my bank account on a ATM I could use this command to describe the operation:</p>
 <pre><code>Test &gt; add transfer of 10 from bank to pocket date 3/3 \
      : descr &#39;ATM withdrawal&#39;
 Transaction id: 4
@@ -437,7 +451,7 @@ Account | Id | Date       | Description           | Total amount | Account balan
 Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
 Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01</code></pre>
 <p>If the <code>from</code> date is omitted, the listing starts at the first transaction; if instead the <code>to</code> date is omitted, the listing ends in the most recent recorded transaction. As we have seen earlier, if we give no date interval, all transactions are listed. “<code>today</code>” (or “<code>now</code>”) are just shortcuts for the present date.</p>
-<p>We now have seen all the shortcut commands that allow us to add a single parcel transaction. To add transactions with multiple parcels we have two commands, [add expense] and the <code>add transaction</code> that we have covered above. They are basically the same, the only difference being that the former will automatically turn all parcel amounts to negative values, which is handy when you are adding some kind of bill. Of course, you could do the same with the <code>add transaction</code> command together with the <code>neg</code> argument. Let’s add the bill from the supermarket trip to buy the ingredients for the chocolate cake mentioned earlier:</p>
+<p>We now have seen all the shortcut commands that allow us to add a single parcel transaction. To add transactions with multiple parcels we have two commands, <a href="#add-expense">add expense</a> and the <code>add transaction</code> that we have covered above. They are basically the same, the only difference being that the former will automatically turn all parcel amounts to negative values, which is handy when you are adding some kind of bill. Of course, you could do the same with the <code>add transaction</code> command together with the <code>neg</code> argument. Let’s add the bill from the supermarket trip to buy the ingredients for the chocolate cake mentioned earlier:</p>
 <ul>
 <li>6 eggs, 0.85€</li>
 <li>1Kg baking flour, 0.45€</li>
@@ -471,8 +485,8 @@ Parcels:
   (9) butter: -1.39 (breakfast, food)
   (10) chocolate: -1.49 (food, sweets)</code></pre>
 <h3 id="correcting-mistakes">Correcting mistakes</h3>
-<p>It is human to err and that will probably happen a lot if you use this program. Therefore, the program offers two general commands to correct the mistakes the user can make, <a href="#change">change</a> and <a href="#delete">delete</a>, and two special commands that allow us to expand some transaction already entered, [add parcel] and [add tag]. We’ll start with these.</p>
-<p>If, when adding an expense, we forget a parcel it is possible to add it afterwards with the command [add parcel] — we only need to know the transaction identification. For example, when listing the last transaction of the section above we notice that the total amount is different from the amount on the receipt. Double-checking this we find that we forgot to add the baking power parcel. Let’s correct that adding that parcel to transaction 6:</p>
+<p>It is human to err and that will probably happen a lot if you use this program. Therefore, the program offers two general commands to correct the mistakes the user can make, <a href="#change">change</a> and <a href="#delete">delete</a>, and two special commands that allow us to expand some transaction already entered, <a href="#add-parcel">add parcel</a> and <a href="#add-tag">add tag</a>. We’ll start with these.</p>
+<p>If, when adding an expense, we forget a parcel it is possible to add it afterwards with the command <a href="#add-parcel">add parcel</a> — we only need to know the transaction identification. For example, when listing the last transaction of the section above we notice that the total amount is different from the amount on the receipt. Double-checking this we find that we forgot to add the baking power parcel. Let’s correct that adding that parcel to transaction 6:</p>
 <pre><code>Test &gt; add parcel &#39;baking powder&#39; of 0.85 to 6
 Test &gt; sh tr 6
 Account: Bank (id: 2)
@@ -486,10 +500,10 @@ Parcels:
   (9) butter: -1.39 (breakfast, food)
   (10) chocolate: -1.49 (food, sweets)
   (11) baking powder: 0.85</code></pre>
-<p>Oops, it seems I forgot to add the parcel tags and that the value must be negative like the others. No problem, we may also change that. First, we add the missing tags to parcel 11 (the baking powder as listed in the <code>show transaction</code> output) with the [add tag] command:</p>
+<p>Oops, it seems I forgot to add the parcel tags and that the value must be negative like the others. No problem, we may also change that. First, we add the missing tags to parcel 11 (the baking powder as listed in the <code>show transaction</code> output) with the <a href="#add-tag">add tag</a> command:</p>
 <pre><code>Test &gt; add tag food to 11
 Test &gt; add tag grocery to 11</code></pre>
-<p>And now we use the [change parcel] commando to change the amount of the same parcel:</p>
+<p>And now we use the <a href="#change-parcel">change parcel</a> commando to change the amount of the same parcel:</p>
 <pre><code>Test &gt; ch parcel 11 amount to -0.85</code></pre>
 <p>Printing the details on transaction 6 we can see that all is ok now:</p>
 <pre><code>Test &gt; sh tr 6
@@ -504,7 +518,7 @@ Parcels:
   (9) butter: -1.39 (breakfast, food)
   (10) chocolate: -1.49 (food, sweets)
   (11) baking powder: -0.85 (food, grocery)</code></pre>
-<p>The [change parcel] command may also be used to change a parcel’s description:</p>
+<p>The <a href="#change-parcel">change parcel</a> command may also be used to change a parcel’s description:</p>
 <pre><code>Test &gt; ch parcel 8 descr to &#39;refined sugar&#39;
 Test &gt; sh tr 6
 Account: Bank (id: 2)
@@ -532,12 +546,12 @@ Parcels:
   (9) butter: -1.39 (dairy, food)
   (10) chocolate: -1.49 (food, sweets)
   (11) baking power: -0.85 (food, grocery)</code></pre>
-<p>All parcels tagged with <em>breakfast</em> would now be tagged with <em>dairy</em> which may not be what you intended… If you what you intended was to remove the tag <em>breakfast</em> from parcel 9 only and to replace it with the tag dairy you could have used the [delete tag] command and then [add tag]:</p>
+<p>All parcels tagged with <em>breakfast</em> would now be tagged with <em>dairy</em> which may not be what you intended… If you what you intended was to remove the tag <em>breakfast</em> from parcel 9 only and to replace it with the tag dairy you could have used the <a href="#delete-tag">delete tag</a> command and then <a href="#add-tag">add tag</a>:</p>
 <pre><code>Test &gt; delete tag breakfast from 9
 Test &gt; add tag dairy to 9</code></pre>
 <p>(if you try this after the previous command it will fail, because parcel 9 is already tagged with <em>dairy</em>)</p>
-<p>[delete tag] without a parcel number will delete the referred tag from <strong>all parcels</strong>.</p>
-<p>Another variant of the <a href="#change">change</a> command is [change transaction] and it may be used, for example, to change a transaction description:</p>
+<p><a href="#delete-tag">delete tag</a> without a parcel number will delete the referred tag from <strong>all parcels</strong>.</p>
+<p>Another variant of the <a href="#change">change</a> command is <a href="#change-transaction">change transaction</a> and it may be used, for example, to change a transaction description:</p>
 <pre><code>Test &gt; ls tr
 Account | Id | Date       | Description           | Total amount | Account balance
 --------+----+------------+-----------------------+--------------+----------------
@@ -571,16 +585,16 @@ Pocket  |  1 | 2021-03-01 | Initial amount        |       123.45 |          123.
 Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
 Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
 Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00</code></pre>
-<p>On the first listing, transaction 6 (the supermarket bill) was on the <em>Bank</em> account and, after the [change transaction] command it is now on the <em>Pocket</em> account — all accounting operations were automatically done. Changing the date would be done in the same way.</p>
-<p>Changing accounts and currencies is similar, with the [change account] and [change currency] commands. The only things that cannot be changed is a currency’s name and an account’s currency. Here’s an example on how to change an account’s description:</p>
+<p>On the first listing, transaction 6 (the supermarket bill) was on the <em>Bank</em> account and, after the <a href="#change-transaction">change transaction</a> command it is now on the <em>Pocket</em> account — all accounting operations were automatically done. Changing the date would be done in the same way.</p>
+<p>Changing accounts and currencies is similar, with the <a href="#change-account">change account</a> and <a href="#change-currency">change currency</a> commands. The only things that cannot be changed is a currency’s name and an account’s currency. Here’s an example on how to change an account’s description:</p>
 <pre><code>Test &gt; ch acc pocket descr to &#39;Money with me&#39;
 Test &gt; ls acc
 ID | Name   | Description     | Balance
 ---+--------+-----------------+--------
  1 | Pocket | Money with me   |  127.73
  2 | Bank   | My bank account | 4930.01</code></pre>
-<p>The last general command to correct mistakes is the <a href="#delete">delete</a> command. We already covered both versions of the [delete tag] command above and although the remaining delete commands are very similar, there are some issues that must be mentioned for each one of them.</p>
-<p>[delete parcel] and [delete transaction] take the identification number of the item to remove and will remove it permanently from the database: there is no way to recover them other than entering all its data again! Previously I said that every transaction must have at least one parcel: well, that is generally true and logic but you <em>can</em> remove the last parcel from a transaction with the <code>delete transaction</code> command. The transaction will be empty and its total amount zero:</p>
+<p>The last general command to correct mistakes is the <a href="#delete">delete</a> command. We already covered both versions of the <a href="#delete-tag">delete tag</a> command above and although the remaining delete commands are very similar, there are some issues that must be mentioned for each one of them.</p>
+<p><a href="#delete-parcel">delete parcel</a> and <a href="#delete-transaction">delete transaction</a> take the identification number of the item to remove and will remove it permanently from the database: there is no way to recover them other than entering all its data again! Previously I said that every transaction must have at least one parcel: well, that is generally true and logic but you <em>can</em> remove the last parcel from a transaction with the <code>delete transaction</code> command. The transaction will be empty and its total amount zero:</p>
 <pre><code>Test &gt; sh tr 3
 Account: Bank (id: 2)
 Description: Phone bill, Feb. 2021
@@ -607,14 +621,14 @@ Total amount: -59.99
 Date: 2021-03-02
 Parcels:
   (12) Phone bill, Feb. 2021: -59.99 (comms, phone)</code></pre>
-<p>[delete account] works in the same way, taking the account identification number or account name and removing the account permanently. However, extra care should be taken when using this command, as it will also remove all of the account’s transactions (and their parcels, of course). If you really want to remove an account, be sure that you don’t have any relevant information in its transactions!</p>
+<p><a href="#delete-account">delete account</a> works in the same way, taking the account identification number or account name and removing the account permanently. However, extra care should be taken when using this command, as it will also remove all of the account’s transactions (and their parcels, of course). If you really want to remove an account, be sure that you don’t have any relevant information in its transactions!</p>
 <h3 id="listing-and-exporting-data">Listing and exporting data</h3>
-<p>In the previous sections of this manual we already covered various forms of the <a href="#list">list</a> command, like [list currencies] and [list accounts]. There is only one detail we didn’t mention: we may pass a currency ou account name, respectively, to list only that currency or account instead of all of them. In short, it’s just an alternative way of visualizing the data to the <a href="#show">show</a> command:</p>
+<p>In the previous sections of this manual we already covered various forms of the <a href="#list">list</a> command, like <a href="#list-currencies">list currencies</a> and <a href="#list-accounts">list accounts</a>. There is only one detail we didn’t mention: we may pass a currency ou account name, respectively, to list only that currency or account instead of all of them. In short, it’s just an alternative way of visualizing the data to the <a href="#show">show</a> command:</p>
 <pre><code>Test &gt; ls acc bank
 ID | Name | Description     | Balance
 ---+------+-----------------+--------
  2 | Bank | My bank account | 4930.01</code></pre>
-<p>We also covered in some detail the [list transactions] command with both its filtering options, account and date. The two remaining list commands are related to tags: [list parcels tagged] and [list tags]. With the first you may list all parcels with certain tags:</p>
+<p>We also covered in some detail the <a href="#list-transactions">list transactions</a> command with both its filtering options, account and date. The two remaining list commands are related to tags: [list parcels tagged] and <a href="#list-tags">list tags</a>. With the first you may list all parcels with certain tags:</p>
 <pre><code>Test &gt; ls parcels tagged grocery,dairy
 Id | Date       | Account | Trans | Description   | Ammount
 ---+------------+---------+-------+---------------+--------
@@ -624,7 +638,7 @@ Id | Date       | Account | Trans | Description   | Ammount
  9 | 2021-03-04 | Pocket  |     6 | butter        |   -1.39
 11 | 2021-03-04 | Pocket  |     6 | baking power  |   -0.85</code></pre>
 <p>This command may also be filtered by date, with the keywords <code>from</code> and <code>to</code>, like <code>list transactions</code>.</p>
-<p>[list tags] lists all tags in use and their <em>frequency</em> — the number of parcels tagged with each particular tag:</p>
+<p><a href="#list-tags">list tags</a> lists all tags in use and their <em>frequency</em> — the number of parcels tagged with each particular tag:</p>
 <pre><code>Test &gt; ls tags
 Tag        | Frequency
 -----------+----------
@@ -641,121 +655,239 @@ sweets     |         1</code></pre>
 <figure>
 <img src="food.csv.png" alt="LibreOffice.org Calc Open CSV dialog" /><figcaption>LibreOffice.org Calc Open CSV dialog</figcaption>
 </figure>
-<p>Notice that I changed the field separator to a semicolon (the default in this program) and cleared all other options. You may change the character used to separate the fields with the [set csvsep] command. LibreOffice.org has the nice feature of previewing the content as it will be imported, that allows us check if everything seems ok.</p>
+<p>Notice that I changed the field separator to a semicolon (the default in this program) and cleared all other options. You may change the character used to separate the fields with the <a href="#set-csvsep">set csvsep</a> command. LibreOffice.org has the nice feature of previewing the content as it will be imported, that allows us check if everything seems ok.</p>
 <h3 id="advanced-usage">Advanced usage</h3>
-<p>In the previous sections we covered the basic usage of Finance Control. Here we will skim over the last few bits that could facilitate the continued usage of the program.</p>
+<p>In the previous sections we covered the basic usage of Finance Control. Here we will skim over the last few bits that could facilitate the continuous usage of the program.</p>
 <h4 id="scripting">Scripting</h4>
+<p>Using a command line may become tedious and treacherous, especially when entering multi-line commands. Imagine someone inserting a transaction with a long list of parcels and, at the last, discovering that there’s an error in the first that will stop the command to be recognized by the program. It would frustrating! To stop that from happening the program accepts commands from a separate text file, using the <a href="#source">source</a> command.</p>
+<p>The idea is simple: you prepare a simple-text file in your favourite editor, where you can review the commands and correct any mistake, and then use the <a href="#source">source</a> command to insert it into the database. The commands in the text file must match <strong>exactly</strong> the commands you would enter at the program command line. This includes adding a backslash at the enf of lines of a multi-line command.</p>
+<p>Let’s clarify this with a small example. Create a text file with the content below and the name <code>test.txt</code>:</p>
+<pre><code>add expense on pocket \
+    descr &quot;Supermarket&quot; date 3/12 \
+    parcel &quot;tomatoes 1.29 tags &#39;food,vegetables&#39;&quot; \
+    parcel &quot;onions 0.99 tags &#39;food,vegetables&#39;&quot; \
+    parcel &quot;lettuce 0.58 tags &#39;food,vegetables&#39;&quot; \
+    parcel &quot;cucumber 0.29 tags &#39;food,vegetables&#39;&quot; \
+    parcel &quot;&#39;olive oil&#39; 5.45 tags &#39;food,grocery&#39;&quot; \
+    parcel &quot;&#39;wine vinegar&#39; 1.05 tags &#39;food,grocery&#39;&quot; \
+    parcel &quot;salt 1.25 tags &#39;food,grocery&#39;&quot;
+
+add transfer of 60 from bank to pocket \
+    descr &#39;ATM withdrawal&#39; date 3/12</code></pre>
+<p>As you can see, these are just two commands, adding the expense of another trip to the supermarket and a ATM withdrawal. After saving the file, open the program and the <code>test.sqlite</code> file we have been working on and then execute the <a href="#source">source</a> command:</p>
+<pre><code>Test &gt; source test.txt
+
+add expense on pocket descr &quot;Supermarket&quot; date 3/12 parcel &quot;tomatoes 1.29
+tags &#39;food,vegetables&#39;&quot; parcel &quot;onions 0.99 tags &#39;food,vegetables&#39;&quot; parcel
+&quot;lettuce 0.58 tags &#39;food,vegetables&#39;&quot; parcel &quot;cucumber 0.29 tags &#39;food,
+vegetables&#39;&quot; parcel &quot;&#39;olive oil&#39; 5.45 tags &#39;food,grocery&#39;&quot; parcel &quot;&#39;wine
+vinegar&#39; 1.05 tags &#39;food,grocery&#39;&quot; parcel &quot;salt 1.25 tags &#39;food,grocery&#39;&quot;
+Transaction id: 7
+
+add transfer of 60 from bank to pocket descr &#39;ATM withdrawal&#39; date 3/12
+Transaction id: 8
+Transaction id: 9 </code></pre>
+<p>The commands are entered and <em>echoed</em> in the terminal (note the long line of the <code>add expense</code> command). Transactions 7, 8 and 9 were added, as we may confirm list the transactions on the 12th of March:</p>
+<pre><code>Test &gt; ls tr from 3/12
+Account | Id | Date       | Description    | Total amount | Account balance
+--------+----+------------+----------------+--------------+----------------
+Pocket  |  9 | 2021-03-12 | ATM withdrawal |        60.00 |          176.83
+Pocket  |  7 | 2021-03-12 | Supermarket    |       -10.90 |          116.83
+Bank    |  8 | 2021-03-12 | ATM withdrawal |       -60.00 |         4870.01</code></pre>
+<p>You could also <a href="#show">show</a> any of the transactions.</p>
+<p>If all your work on the program is just entering these commands, you could even pass it as an argument to the program itself. Consider this simple example (save it as test-1.txt):</p>
+<pre><code>open test.sqlite
+add deposit of 150 on bank descr &#39;Lottery prize&#39; \
+    date 3/15
+ls tr on bank from 2/1 to today tofile bank.csv</code></pre>
+<p>First, note that we start by opening the database file, then add a transaction and finish by exporting the <em>Bank</em> account data to a <code>bank.csv</code> CSV file. Now we can pass this to the program directly from the system prompt:</p>
+<pre><code>$ finctrl --source test-1.txt</code></pre>
+<p>The <code>--source</code> (or just <code>-s</code>) option of the Finance Control program tells it to open the program, execute the commands in the file and finally quit the program. Check if the <code>bank.csv</code> file was created and that it is correct. Of course, you could get the same effect redirecting the program’s input stream to the file, if your operating system supports it:</p>
+<pre><code>$ finctrl &lt; test-1.txt</code></pre>
+<p>Passing the script this way would not print the executed commands on the terminal. If you want that to happen, add “<code>set echo on</code>” to the top of the text file (see the <a href="#set-echo">set echo</a> reference page for details on this command).</p>
 <h4 id="backup-and-trim-the-database">Backup and trim the database</h4>
+<p>After a good amount of time using the program, a lot of data will be colected and that could become a nuisance. For example, that means you always have to filter listings on starting date, to ignore old data. To overcome this problem you may use the <a href="#trim">trim</a> command to remove old, unnecessary data. This command has two forms: <a href="#trim-account">trim account</a>, that operates on a single account, and <a href="#trim-storage">trim storage</a>, which will trim the complete database.</p>
+<p>Trim will remove all transactions (and their parcels, of corurse) from the first up to (and including) the date the user indicates, preserving the affected accounts balance. If no transaction remains on an account, a <em>carry-over</em> transaction will be created with an amount identical to the account balance on that date.</p>
+<p>A good practice before using the <code>trim</code> command is to backup the database. The easiest way to do this is just copying the file using the operating system’s tools, but you may also do it from inside the program, with the <a href="#backup">backup</a> command. Let’s see a practical example of the usage of these two commands with our little database.</p>
+<pre><code>Test &gt; backup test-20210315.sqlite</code></pre>
+<p>This command will backup the current database to the file passed as argument (same rules for the file name as in the <a href="#open">open</a> command). We may immediately test the backup, opening it in the program:</p>
+<pre><code>Test &gt; open test-20210315.sqlite
+Test &gt; ls acc
+ID | Name   | Description     | Balance
+---+--------+-----------------+--------
+ 1 | Pocket | Money with me   |  176.83
+ 2 | Bank   | My bank account | 5020.01</code></pre>
+<p>As this is a backup file, we should change its prompt so that when we open it we are immediately alerted that we are on the backup file and not in the main file.</p>
+<pre><code>Test &gt; set prompt &#39;Test-20210315 &gt; &#39;
+Test-20210315 &gt; </code></pre>
+<p>We can now return to the main file and trim the database.</p>
+<pre><code>Test-20210315 &gt; open test.sqlite
+Test &gt; ls tr
+Account | Id | Date       | Description           | Total amount | Account balance
+--------+----+------------+-----------------------+--------------+----------------
+Pocket  |  9 | 2021-03-12 | ATM withdrawal        |        60.00 |          176.83
+Pocket  |  7 | 2021-03-12 | Supermarket           |       -10.90 |          116.83
+Pocket  |  6 | 2021-03-04 | Supermarket           |        -5.72 |          127.73
+Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
+Pocket  |  1 | 2021-03-01 | Initial amount        |       123.45 |          123.45
+Bank    | 10 | 2021-03-15 | Lottery prize         |       150.00 |         5020.01
+Bank    |  8 | 2021-03-12 | ATM withdrawal        |       -60.00 |         4870.01
+Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
+Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
+Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00</code></pre>
+<p>Look at the transactions and see that the first, on both accounts, is on March 1st and the last on March 12th in the <em>Pocket</em> account and on March 15th on the <em>Bank</em> account. Let’s trim the database up to March 12.</p>
+<pre><code>Test &gt; trim storage upto 3/12
+Test &gt; ls tr
+Account | Id | Date       | Description     | Total amount | Account balance
+--------+----+------------+-----------------+--------------+----------------
+Pocket  | 11 | 2021-03-12 | Trim carry-over |       176.83 |          176.83
+Bank    | 10 | 2021-03-15 | Lottery prize   |       150.00 |         5020.01
+Test &gt; </code></pre>
+<p>As we can see, all transactions of the <em>Pocket</em> account were removed and a new one was created with the account’s carry-over balance. On the <em>Bank</em> account there was one remaining transaction and therefore no need to create the carry-over transaction.</p>
 <h4 id="usage-in-ms-windows">Usage in MS Windows</h4>
+<p>As this program is pure Python 3, it may be run in any operating system where this language may be run, including Microsoft Windows, even though this system is not know for a very friendly environment for the users of command-line tools. Here I will provide some advice on how a Windows user could install and run the program but be advised that <strong>I DID NOT TEST THIS</strong>, so I may have missed some important detail. Please contact me if that is the case. In steps:</p>
+<ol type="1">
+<li><p>Start by downloading and installing the most recent version of the <a href="https://www.python.org/downloads/windows/">Python language to your system</a>.</p>
+<p>When prompted, answer yes to the question about adding Python to your system PATH.</p></li>
+<li><p>Download the most recent version of <em>Finance Control</em> from <a href="https://github.com/ammdias/finctrl">AMMDIAS GitHub page</a> and uncompress it in a directory of your choosing.</p></li>
+<li><p>Create a <em>batch file</em> to launch the program which will permit that you start it without the need to open a command line first. Here is an example that you may use to create your own:</p>
+<pre><code>:: Sample Windows batch file to execute the Finance Control program
+:: on the file &#39;finctrl.sqlite&#39;
+
+&quot;C:\Program Files\Python\python.exe&quot; ^
+  C:\Users\USER\Programs\finctrl\finctrl.py ^
+  C:\Users\USER\Documents\finctrl.sqlite</code></pre>
+<p>On this batch file I assume that the Python executable is located in</p>
+<pre><code>C:\Program File\Python\Python.exe</code></pre>
+<p>(you must check its actual location), that the program folder is in</p>
+<pre><code>C:\Users\USER\Programs\finctrl</code></pre>
+<p>(you should replace it with the path where you uncompressed the program) and that the database will be located in</p>
+<pre><code>C:\Users\USER\Documents\finctrl.sqlite</code></pre>
+<p>(you should replace this with the path where you wish the database to reside)</p></li>
+<li><p>To start the program just open the Windows Explorer on the folder where you created the batch file and double click on it. Provided everything is ok, a terminal window should open and you should see the program’s prompt:</p>
+<pre><code>finctrl.sqlite &gt;</code></pre>
+<p>Don’t forget you can change the terminal window settings (color, font, height and width) if you don’t like the Windows default.</p></li>
+</ol>
 <h2 id="reference">REFERENCE</h2>
 <h3 id="add">add</h3>
+<h4 id="add-account">add account</h4>
+<pre><code>&gt; add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME]</code></pre>
+<h4 id="add-currency">add currency</h4>
 <pre><code>&gt; add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \\
-:                [decplaces NUMBER] [decsep CHARACTER]
-
-&gt; add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME]
-
-&gt; add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
-:             [descr TEXT] [date DATE] [tags LIST]
-
-
-&gt; add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
-:             [descr TEXT] [date DATE] [tags LIST]
-
-&gt; add tranfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
-:             from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID
-
-&gt; add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \\
-:                   [neg] [descr[iption] TEXT] [date DATE] \\
-:                   of AMOUNT | parcel &quot;TEXT AMOUNT [tags LIST]&quot;...
-
-&gt; add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \\
-:                  [descr[iption] TEXT] [date DATE] \\
-:                  of AMOUNT | parcel &quot;TEXT AMOUNT [tags LIST]&quot;...
-
-&gt; add parcel TEXT of AMOUNT on TRANSACTION_ID [tags LIST]
-
-&gt; add tag TEXT to PARCEL_ID</code></pre>
+:     [decplaces NUMBER] [decsep CHARACTER]</code></pre>
+<h4 id="add-deposit">add deposit</h4>
+<pre><code>&gt; add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
+:     [descr TEXT] [date DATE] [tags LIST]</code></pre>
+<h4 id="add-expense">add expense</h4>
+<pre><code>&gt; add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \\
+:     [descr[iption] TEXT] [date DATE] \\
+:     of AMOUNT | parcel &quot;TEXT AMOUNT [tags LIST]&quot;...</code></pre>
+<h4 id="add-parcel">add parcel</h4>
+<pre><code>&gt; add parcel TEXT of AMOUNT on TRANSACTION_ID [tags LIST]</code></pre>
+<h4 id="add-tag">add tag</h4>
+<pre><code>&gt; add tag TEXT to PARCEL_ID</code></pre>
+<h4 id="add-transaction">add transaction</h4>
+<pre><code>&gt; add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \\
+:     [neg] [descr[iption] TEXT] [date DATE] \\
+:     of AMOUNT | parcel &quot;TEXT AMOUNT [tags LIST]&quot;...</code></pre>
+<h4 id="add-transfer">add transfer</h4>
+<pre><code>&gt; add transfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
+:     from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID</code></pre>
+<h4 id="add-withdrawal">add withdrawal</h4>
+<pre><code>&gt; add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
+:     [descr TEXT] [date DATE] [tags LIST]</code></pre>
 <h3 id="backup">backup</h3>
 <pre><code>&gt; backup FILE</code></pre>
 <h3 id="bye">bye</h3>
 <pre><code>&gt; bye|EOF</code></pre>
 <h3 id="change">change</h3>
+<h4 id="change-account">change account</h4>
+<pre><code>&gt; ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID to TEXT</code></pre>
+<h4 id="change-currency">change currency</h4>
 <pre><code>&gt; ch[ange] curr[ency] NAME [short TEXT] \\
-:                        [symbol TEXT] [position LEFT|RIGHT] \\
-:                        [decplaces NUMBER] [decsep CHARACTER]
+:          [symbol TEXT] [position LEFT|RIGHT] \\
+:          [decplaces NUMBER] [decsep CHARACTER]</code></pre>
+<h4 id="change-parcel">change parcel</h4>
+<pre><code>&gt; ch[ange] parcel PARCEL_ID descr[iption] to TEXT
 
-&gt; ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID to TEXT
-
-&gt; ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT
+&gt; ch[ange] parcel PARCEL_ID amount to AMOUNT</code></pre>
+<h4 id="change-tag">change tag</h4>
+<pre><code>&gt; ch[ange] tag TAG to TEXT</code></pre>
+<h4 id="change-transaction">change transaction</h4>
+<pre><code>&gt; ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT
 
 &gt; ch[ange] tr[ansaction] TRANSACTION_ID date to DATE
 
 &gt; ch[ange] tr[ansaction] TRANSACTION_ID acc[ount] \\
-:                      to ACCOUNT_NAME|ACCOUNT_ID
-
-&gt; ch[ange] parcel PARCEL_ID descr[iption] to TEXT
-
-&gt; ch[ange] parcel PARCEL_ID amount to AMOUNT
-
-&gt; ch[ange] tag TAG to TEXT</code></pre>
+:          to ACCOUNT_NAME|ACCOUNT_ID</code></pre>
 <h3 id="close">close</h3>
 <pre><code>&gt; close</code></pre>
 <h3 id="delete">delete</h3>
-<pre><code>&gt; del[ete] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
-
-&gt; del[ete] tr[ansaction] TRANSACTION_ID
-
-&gt; del[ete] parcel PARCEL_ID
-
-&gt; del[ete] tag TEXT from PARCEL_ID
+<h4 id="delete-account">delete account</h4>
+<pre><code>&gt; del[ete] acc[ount] ACCOUNT_NAME|ACCOUNT_ID</code></pre>
+<h4 id="delete-transaction">delete transaction</h4>
+<pre><code>&gt; del[ete] tr[ansaction] TRANSACTION_ID</code></pre>
+<h4 id="delete-parcel">delete parcel</h4>
+<pre><code>&gt; del[ete] parcel PARCEL_ID</code></pre>
+<h4 id="delete-tag">delete tag</h4>
+<pre><code>&gt; del[ete] tag TEXT from PARCEL_ID
 
 &gt; del[ete] tag TEXT</code></pre>
 <h3 id="help">help</h3>
 <pre><code>&gt; help|? [COMMAND]</code></pre>
 <h3 id="list">list</h3>
-<pre><code>&gt; list|ls curr[encies] [NAME] [tofile FILE]
-
-&gt; list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]
-
-&gt; list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
-:                     [from DATE] [to DATE] [tofile FILE]
-
-&gt; list|ls parcels tagged LIST [from DATE] [to DATE] [tofile FILE]
-
-&gt; list|ls tags [tofile FILE]</code></pre>
+<h4 id="list-accounts">list accounts</h4>
+<pre><code>&gt; list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]</code></pre>
+<h4 id="list-currencies">list currencies</h4>
+<pre><code>&gt; list|ls curr[encies] [NAME] [tofile FILE]</code></pre>
+<h4 id="list-parcels">list parcels</h4>
+<pre><code>&gt; list|ls parcels tagged LIST [from DATE] [to DATE] [tofile FILE]</code></pre>
+<h4 id="list-tags">list tags</h4>
+<pre><code>&gt; list|ls tags [tofile FILE]</code></pre>
+<h4 id="list-transactions">list transactions</h4>
+<pre><code>&gt; list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
+:         [from DATE] [to DATE] [tofile FILE]</code></pre>
 <h3 id="open">open</h3>
 <pre><code>&gt; open FILE</code></pre>
 <h3 id="set">set</h3>
-<pre><code>&gt; set echo ON|OFF
-
-&gt; set prompt TEXT
-
-&gt; set csvsep CHARACTER
-
-&gt; set curr[ency] NAME
-
-&gt; set withdrawal descr[iption] TEXT
-
-&gt; set deposit descr[iption] TEXT
-
-&gt; set transfer descr[iption] TEXT</code></pre>
+<h4 id="set-csvsep">set csvsep</h4>
+<pre><code>&gt; set csvsep CHARACTER</code></pre>
+<h4 id="set-currency">set currency</h4>
+<pre><code>&gt; set curr[ency] NAME</code></pre>
+<h4 id="set-deposit">set deposit</h4>
+<pre><code>&gt; set deposit descr[iption] TEXT</code></pre>
+<h4 id="set-echo">set echo</h4>
+<pre><code>&gt; set echo ON|OFF</code></pre>
+<h4 id="set-prompt">set prompt</h4>
+<pre><code>&gt; set prompt TEXT</code></pre>
+<h4 id="set-transfer">set transfer</h4>
+<pre><code>&gt; set transfer descr[iption] TEXT</code></pre>
+<h4 id="set-withdrawal">set withdrawal</h4>
+<pre><code>&gt; set withdrawal descr[iption] TEXT</code></pre>
 <h3 id="show">show</h3>
-<pre><code>&gt; sh[ow] manual|copyright|license
-
-&gt; sh[ow] settings
-
-&gt; sh[ow] curr[ency] NAME
-
-&gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
-
-&gt; sh[ow] tr[ansaction] TRANSACTION_ID</code></pre>
+<h4 id="show-account">show account</h4>
+<pre><code>&gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID</code></pre>
+<h4 id="show-copyright">show copyright</h4>
+<pre><code>&gt; sh[ow] copyright</code></pre>
+<h4 id="show-currency">show currency</h4>
+<pre><code>&gt; sh[ow] curr[ency] NAME</code></pre>
+<h4 id="show-license">show license</h4>
+<pre><code>&gt; sh[ow] license</code></pre>
+<h4 id="show-manual">show manual</h4>
+<pre><code>&gt; sh[ow] manual</code></pre>
+<h4 id="show-settings">show settings</h4>
+<pre><code>&gt; sh[ow] settings</code></pre>
+<h4 id="show-transaction">show transaction</h4>
+<pre><code>&gt; sh[ow] tr[ansaction] TRANSACTION_ID</code></pre>
 <h3 id="source">source</h3>
 <pre><code>&gt; source FILE</code></pre>
 <h3 id="trim">trim</h3>
-<pre><code>&gt; trim storage upto DATE
-
-&gt; trim acc[ount] ACCOUNT_NAME|ACCOUNT_ID upto DATE</code></pre>
+<h4 id="trim-storage">trim storage</h4>
+<pre><code>&gt; trim storage upto DATE</code></pre>
+<h4 id="trim-account">trim account</h4>
+<pre><code>&gt; trim acc[ount] ACCOUNT_NAME|ACCOUNT_ID upto DATE</code></pre>
 <h3 id="database-structure">Database structure</h3>
+<p>Below is the instructions used to create the database on SQLite, which reflect its schema:</p>
 <pre><code>CREATE TABLE metadata (
      key         text not null,
      value       text not null,
@@ -771,10 +903,6 @@ CREATE TABLE currencies (
     dec_sep     text,
     primary key (name)
 );
-CREATE TRIGGER del_currency before delete on currencies
-begin
-    delete from accounts where currency=old.name;
-end;
 
 CREATE TABLE accounts (
     key         integer,
@@ -785,10 +913,6 @@ CREATE TABLE accounts (
     primary key (key),
     foreign key (currency) references currencies(name)
 );
-CREATE TRIGGER del_account before delete on accounts
-begin
-    delete from transactions where account=old.key;
-end;
 
 CREATE TABLE transactions (
     key         integer,
@@ -800,10 +924,6 @@ CREATE TABLE transactions (
     primary key (key),
     foreign key (account) references accounts(key)
 );
-CREATE TRIGGER del_transaction before delete on transactions
-begin
-    delete from parcels where trans=old.key;
-end;
 
 CREATE TABLE parcels (
     key         integer,
@@ -813,17 +933,33 @@ CREATE TABLE parcels (
     primary key (key),
     foreign key (trans) references transactions(key)
 );
-CREATE TRIGGER del_parcel after delete on parcels
-begin
-    delete from parceltags where parcel=old.key;
-end;
 
 CREATE TABLE parceltags (
     parcel      integer not null,
     tag         text not null,
     primary key (parcel, tag),
     foreign key (parcel) references parcels(key)
-);</code></pre>
+);
+
+CREATE TRIGGER del_currency before delete on currencies
+begin
+    delete from accounts where currency=old.name;
+end;
+
+CREATE TRIGGER del_account before delete on accounts
+begin
+    delete from transactions where account=old.key;
+end;
+
+CREATE TRIGGER del_transaction before delete on transactions
+begin
+    delete from parcels where trans=old.key;
+end;
+
+CREATE TRIGGER del_parcel after delete on parcels
+begin
+    delete from parceltags where parcel=old.key;
+end;</code></pre>
 <h2 id="license">LICENSE</h2>
 <p>Copyright (C) 2021 António Manuel Dias</p>
 <p>contact: ammdias@gmail.com</p>
