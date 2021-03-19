@@ -12,7 +12,7 @@
 <ul>
 <li>Record your earnings and expenses exactly as you enter them;</li>
 <li>List your earnings and expenses filtered by date, account and/or item tags;</li>
-<li>Export your listings to CSV files that can be further processed in other tools like spreasheet apllications.</li>
+<li>Export your listings to CSV files that can be further processed in other tools like spreadsheet applications.</li>
 </ul>
 <p>Copyright (C) 2021 António Manuel Dias</p>
 <p>contact: ammdias@gmail.com</p>
@@ -83,7 +83,7 @@
 <p>(the program should close; you may also use the end-of-file command – CTRL-D in Linux – to close the program)</p></li>
 </ol>
 <h2 id="usage">USAGE</h2>
-<p>The purpose of this program is to control a user’s personal finances by means of a simple command line interface. The user may configure several <em>accounts</em> (e.g. a bank account, a savings account, the credit card account, etc.), each with its own <em>currency</em>. All operations on the accounts are entered as <em>transactions</em>, each of which may be composed of several <em>parcels</em>. This way, a supermarket bill may be split on its items, so that the user may have a more fine control over his or hers expenses. Each parcel may also be tagged with several tags, allowing the listing of the spendings (or earnings) by category.</p>
+<p>The purpose of this program is to control a user’s personal finances by means of a simple command line interface. The user may configure several <em>accounts</em> (e.g. a bank account, a savings account, the credit card account, etc.), each with its own <em>currency</em>. All operations on the accounts are entered as <em>transactions</em>, each of which may be composed of several <em>parcels</em>. This way, a supermarket bill may be split on its items, so that the user may have a more fine control over one’s expenses. Each parcel may also be tagged with several tags, allowing the listing of the spendings (or earnings) by category.</p>
 <p>The data is stored in standard <a href="https://sqlite.org">SQLite</a> files (database structure documented in the <a href="#advanced-usage">Advanced Usage</a> section). One file should be fine for each user, but any number of them may be used if the user wants to split its accounts over several subjects.</p>
 <p>In this section I will try to give an overview of the program usage and its possibilities. I will do this in a <em>story-telling like</em> fashion, in each step describing a new feature and the way to use it. For the complete command reference, you should then refer to the appropriate <a href="#reference">REFERENCE</a> subsection.</p>
 <h3 id="command-line-interface">Command line interface</h3>
@@ -96,10 +96,12 @@
 <li><code>CTRL+E</code> to go to the end;</li>
 <li><code>CTRL+W</code> to delete previous word;</li>
 <li><code>CTRL+K</code> to delete from the cursor to the end of the line;</li>
-<li>etc.</li>
 </ul></li>
-<li><p>When entering a command longer than a screen line, you may split it over several lines by ending each line (except the last) with a single backslash: “<code>\</code>”. The promtp after that will change to a single colon (<code>:</code>) until you end the command. If you make a mistake while entering a multi-line command, just finish the line with three consecutive backslashes (<code>\\\</code>) to discard the whole command.</p>
-<pre><code>FinCtrl &gt; help \
+<li><p>When entering a command longer than a screen line, you may split it over several lines by ending each line (except the last) with a single backslash: “<code>\</code>”. The prompt after that will change to a single colon (<code>:</code>) until you end the command. If you make a mistake while entering a multi-line command, just finish the line with three consecutive backslashes (<code>\\\</code>) to discard the whole command.</p>
+<pre><code>FinCtrl &gt; help bye
+Quit Finance Control.
+
+FinCtrl &gt; help \
         : bye
 Quit Finance Control.
 
@@ -109,8 +111,8 @@ FinCtrl &gt;  </code></pre></li>
 <li><p>All commands are case-sensitive, so <code>bye</code> is different from <code>BYE</code> or <code>Bye</code> — the first will be recognised as a command and quit the program, but the others will originate an error message:</p>
 <pre><code> FinCtrl &gt; Bye
  *** Error: (Syntax) &#39;Bye&#39; is not a recognized command.</code></pre>
-<p>However, although the commands are case-sensitive, some arguments may be entered in any case, like account names or tags. Also, the answer to inline questions maybe given in lower or upper case. Examples of those are given throughout this manual.</p></li>
-<li><p>Some commands or options have a shortcut version that may be used interchangeably. That will be indicated in the <a href="#reference">REFERENCE</a> section and in the online help by enveloping the optional letters in square brackets. For example, the <a href="#show-copyright">show copyright</a> command may be entered as <code>show</code> or <code>sh</code>:</p>
+<p>However, although the commands are case-sensitive, some arguments may be entered in any case, like account names or tags. Also, the answer to inline questions may be given in lower or upper case. Examples of those are given throughout this manual.</p></li>
+<li><p>Some commands or options have a shortcut version that may be used interchangeably. That will be indicated in the <a href="#reference">REFERENCE</a> section and in the online help by enveloping the optional characters in square brackets. For example, the <a href="#show-copyright">show copyright</a> command may be entered as <code>show</code> or <code>sh</code>:</p>
 <pre><code>FinCtrl &gt; show copyright
 Finance Control 0.1
 (C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
@@ -130,9 +132,9 @@ Show all data of a specific record:
 <li><p>Positional arguments must follow the order they are listed in the command help or <a href="#reference">REFERENCE</a> page. Keyword arguments may be entered in any order, immediately after the key word. Example:</p>
 <pre><code>&gt; command POS1 POS2 keyword_a ARG-A keyword_b ARG-B
 &gt; command keyword_b ARG-B POS1 keyword_a ARG-A POS2 </code></pre>
-<p>These commands would be valid and equivalent because the positional arguments are given in order (POS1 before POS2) and the keyword arguments (ARG-A and ARG-B) always follow the the respective keyword (keyword_a and keyword_b).</p></li>
+<p>These commands would be valid and equivalent because the positional arguments are given in order (POS1 before POS2) and the keyword arguments (ARG-A and ARG-B) always follow the respective keyword (keyword_a and keyword_b).</p></li>
 <li><p>Monetary amounts must consist of positive or negative integer or decimal values, using the decimal separator configured in the account they belong to. Examples: <code>123</code>, <code>123.24</code>, <code>-123.5</code>. Also, the decimal part may have at most the number of decimal places configured in the respective currency: the program will automatically truncate the remaining decimal places. See the <a href="#currencies">Currencies</a> section below for details on how to find or change an account’s decimal separator and number of decimal places.</p></li>
-<li><p>Dates must be provided in the general form YEAR-MONTH-DAY. The year may be ommited (the current year is implicit) or entered without the century (21st century is implicit). The field separator may be a dash (‘-’) or a forward slash (‘/’). Example: <code>2021-03-12</code>, <code>21-3-12</code> and <code>3/12</code> all refer to the March 12th of 2021 (assuming 2021 is the current year).</p>
+<li><p>Dates must be provided in the general form YEAR-MONTH-DAY. The year may be omitted (the current year is implicit) or entered without the century (21st century is implicit). The field separator may be a dash (‘-’) or a forward slash (‘/’). Example: <code>2021-03-12</code>, <code>21-3-12</code> and <code>3/12</code> all refer to the March 12th of 2021 (assuming 2021 is the current year).</p>
 <p>The words <code>today</code> or <code>now</code> may be used in replacement of the current date. Also, in all cases the date is optional, simply omitting it will imply the current date.</p></li>
 <li><p>Text values with spaces must be surrounded by single- or double-quotes. If a text value has either single- or double-quotes it must be surrounded by the other type of quotes.</p></li>
 <li>List values, used when entering tags, are text values separated by commas. Same rule applies as for text values: if any value of the list has spaces or quotes, the whole list must be surrounded by the other kind of quotes. Example:
@@ -242,15 +244,15 @@ Default transfer text: Transfer
 Default currency: default</code></pre>
 <p>The settings are:</p>
 <ul>
-<li><em>Prompt</em>: the prompt to be displayed when the file is opened;</li>
+<li><em>Prompt</em>: the prompt to be displayed when the file is open;</li>
 <li><em>Field separator for CSV files</em>: the character used to separate fields when exporting results to a CSV file;</li>
 <li><em>Default deposit</em>, <em>withdrawal</em> and <em>transfer text</em>: the text used as description for any of those operations if none is given when issuing the command;</li>
 <li><em>Default currency</em>: the name of the currency to be used for any new account if no other is given at the time of creation.</li>
 </ul>
-<p>All the settings may be changed with the repective <code>set</code> command. For example, to change the prompt:</p>
+<p>All the settings may be changed with the respective <a href="#set">set</a> command. For example, to change the prompt:</p>
 <pre><code>test.sqlite &gt; set prompt &#39;Test &gt; &#39;
 Test &gt; </code></pre>
-<p>Notice that the new prompt is given between quotes. The reason for this is that it contains spaces and would be interpreted as two different arguments if not surrounded by quotes, which would result in an error:</p>
+<p>Notice that the new prompt is given between quotes. The reason for this is that it contains spaces and would be interpreted as two different arguments if not enveloped in quotes, which would result in an error:</p>
 <pre><code>Test &gt; set prompt Test &gt;
 *** Error: &#39;set prompt&#39; command takes a single argument:
     &gt; set prompt TEXT</code></pre>
@@ -417,7 +419,7 @@ Date: 2021-03-02
 Parcels:
   (3) Phone bill, Feb. 2021: -59.99 (comms, phone)</code></pre>
 <p>Here, we may also see that although the amount given to the command was positive (<em>59.99</em>), the transaction amount is negative. This is the purpose of having a shortcut command to describe a <em>deposit</em> and another to describe a <em>withdrawal</em>.</p>
-<p>There is one final shortcut transaction command, <a href="#add-transfer">add transfer</a>, that moves an amount from one acount to another. If I took 10 Euro from my bank account on a ATM I could use this command to describe the operation:</p>
+<p>There is one final shortcut transaction command, <a href="#add-transfer">add transfer</a>, that moves an amount from one account to another. If I took 10 Euro from my bank account on a ATM I could use this command to describe the operation:</p>
 <pre><code>Test &gt; add transfer of 10 from bank to pocket date 3/3 \
      : descr &#39;ATM withdrawal&#39;
 Transaction id: 4
@@ -441,7 +443,7 @@ Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.
 <pre><code>Test &gt; ls tr on bank
 Account | Id | Date       | Description           | Total amount | Account balance
 --------+----+------------+-----------------------+--------------+----------------
-Bank    |  4 | 2021-03-03 | ATM withdraTest &gt; ls tr
+Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
 Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
 Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.00</code></pre>
 <p>Finally, although there is no need with so few transactions, we may also set a date interval on the transactions listed:</p>
@@ -467,7 +469,7 @@ Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.
      : parcel &quot;butter 1.39 tags food,breakfast&quot; \
      : parcel &quot;chocolate 1.49 tags food,sweets&quot;
 Transaction id: 6</code></pre>
-<p>To check if the transaction was inserted correctly, we can start to list the transactions of the corresponding account:</p>
+<p>To check if the transaction was inserted correctly, we can list the transactions of the corresponding account:</p>
 <pre><code>Test &gt; ls tr on bank from 3/4
 Account | Id | Date       | Description | Total amount | Account balance
 --------+----+------------+-------------+--------------+----------------
@@ -486,7 +488,7 @@ Parcels:
   (10) chocolate: -1.49 (food, sweets)</code></pre>
 <h3 id="correcting-mistakes">Correcting mistakes</h3>
 <p>It is human to err and that will probably happen a lot if you use this program. Therefore, the program offers two general commands to correct the mistakes the user can make, <a href="#change">change</a> and <a href="#delete">delete</a>, and two special commands that allow us to expand some transaction already entered, <a href="#add-parcel">add parcel</a> and <a href="#add-tag">add tag</a>. We’ll start with these.</p>
-<p>If, when adding an expense, we forget a parcel it is possible to add it afterwards with the command <a href="#add-parcel">add parcel</a> — we only need to know the transaction identification. For example, when listing the last transaction of the section above we notice that the total amount is different from the amount on the receipt. Double-checking this we find that we forgot to add the baking power parcel. Let’s correct that adding that parcel to transaction 6:</p>
+<p>If, when adding an expense, we forget a parcel it is possible to add it afterwards with the command <a href="#add-parcel">add parcel</a> — we only need to know the transaction identification. For example, when listing the last transaction of the section above we notice that the total amount is different from the amount on the receipt. Double-checking this we find that we forgot to add the baking powder parcel. Let’s correct that adding that parcel to transaction 6:</p>
 <pre><code>Test &gt; add parcel &#39;baking powder&#39; of 0.85 to 6
 Test &gt; sh tr 6
 Account: Bank (id: 2)
@@ -611,7 +613,7 @@ Total amount: 0.00
 Date: 2021-03-02
 Parcels:
 Test &gt;</code></pre>
-<p>I don’t know how this could be useful, but… it’s possible. The only way to revert it now is to enter the data again. Nevertheless, the parcel id. will be different — it’s a new parcel:</p>
+<p>I don’t know how this could be useful, but… it’s possible. The only way to revert it now is to enter the data again. Nevertheless, the parcel ID will be different — it’s a new parcel:</p>
 <pre><code>Test &gt; add parcel &#39;Phone bill, Feb. 2021&#39; \
      : of -59.99 to 3 tags &#39;comms, phone&#39;
 Test &gt; sh tr 3
@@ -623,14 +625,14 @@ Parcels:
   (12) Phone bill, Feb. 2021: -59.99 (comms, phone)</code></pre>
 <p><a href="#delete-account">delete account</a> works in the same way, taking the account identification number or account name and removing the account permanently. However, extra care should be taken when using this command, as it will also remove all of the account’s transactions (and their parcels, of course). If you really want to remove an account, be sure that you don’t have any relevant information in its transactions!</p>
 <h3 id="listing-and-exporting-data">Listing and exporting data</h3>
-<p>In the previous sections of this manual we already covered various forms of the <a href="#list">list</a> command, like <a href="#list-currencies">list currencies</a> and <a href="#list-accounts">list accounts</a>. There is only one detail we didn’t mention: we may pass a currency ou account name, respectively, to list only that currency or account instead of all of them. In short, it’s just an alternative way of visualizing the data to the <a href="#show">show</a> command:</p>
+<p>In the previous sections of this manual we already covered various forms of the <a href="#list">list</a> command, like <a href="#list-currencies">list currencies</a> and <a href="#list-accounts">list accounts</a>. There is only one detail we didn’t mention: we may pass a currency or account name, respectively, to list only that currency or account instead of all of them. In short, it’s just an alternative way of visualizing the data to the <a href="#show">show</a> command:</p>
 <pre><code>Test &gt; ls acc bank
 ID | Name | Description     | Balance
 ---+------+-----------------+--------
  2 | Bank | My bank account | 4930.01</code></pre>
-<p>We also covered in some detail the <a href="#list-transactions">list transactions</a> command with both its filtering options, account and date. The two remaining list commands are related to tags: [list parcels tagged] and <a href="#list-tags">list tags</a>. With the first you may list all parcels with certain tags:</p>
+<p>We also covered in some detail the <a href="#list-transactions">list transactions</a> command with both its filtering options, account and date. The two remaining list commands are related to tags: <a href="#list-parcels">list parcels</a> and <a href="#list-tags">list tags</a>. With the first you may list all parcels with certain tags:</p>
 <pre><code>Test &gt; ls parcels tagged grocery,dairy
-Id | Date       | Account | Trans | Description   | Ammount
+Id | Date       | Account | Trans | Description   | Amount
 ---+------------+---------+-------+---------------+--------
  6 | 2021-03-04 | Pocket  |     6 | eggs          |   -0.85
  7 | 2021-03-04 | Pocket  |     6 | baking flour  |   -0.45
@@ -649,7 +651,7 @@ food       |         6
 grocery    |         4
 phone      |         1
 sweets     |         1</code></pre>
-<p>Finally, all <a href="#list">list</a> commands accept one keyword argument, <code>tofile</code>, that directs the program to export the data to a <a href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a>. The keyword must be followed by the file name (same rules apply as to the <a href="#open">open</a> command). CSV files are very portable and supported by several applications and programming languages, if you desire to treat the exported data. The command below will export a list of the parcels with tag <code>food</code> to the file <code>food.csv</code> in the current directory:</p>
+<p>Finally, all <a href="#list">list</a> commands accept one keyword argument, <code>tofile</code>, that directs the program to export the data to a <a href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a>. The keyword must be followed by the file name (same rules apply as to the <a href="#open">open</a> command). CSV files are very portable and supported by several applications and programming languages, if you desire to process the exported data. The command below will export a list of the parcels with tag <code>food</code> to the file <code>food.csv</code> in the current directory:</p>
 <pre><code>Test &gt; ls parcels tagged food tofile food.csv</code></pre>
 <p>After this you could open the file, for example, with a spreadsheet application like LibreOffice.org Calc, Microsoft Office or even Google Docs. When opening the file, don’t forget to choose the field separator character. For example, when opening the file with Calc I am presented with this dialog:</p>
 <figure>
@@ -660,8 +662,8 @@ sweets     |         1</code></pre>
 <p>In the previous sections we covered the basic usage of Finance Control. Here we will skim over the last few bits that could facilitate the continuous usage of the program.</p>
 <h4 id="scripting">Scripting</h4>
 <p>Using a command line may become tedious and treacherous, especially when entering multi-line commands. Imagine someone inserting a transaction with a long list of parcels and, at the last, discovering that there’s an error in the first that will stop the command to be recognized by the program. It would frustrating! To stop that from happening the program accepts commands from a separate text file, using the <a href="#source">source</a> command.</p>
-<p>The idea is simple: you prepare a simple-text file in your favourite editor, where you can review the commands and correct any mistake, and then use the <a href="#source">source</a> command to insert it into the database. The commands in the text file must match <strong>exactly</strong> the commands you would enter at the program command line. This includes adding a backslash at the enf of lines of a multi-line command.</p>
-<p>Let’s clarify this with a small example. Create a text file with the content below and the name <code>test.txt</code>:</p>
+<p>The idea is simple: you prepare a simple-text file in your favourite editor, where you can review the commands and correct any mistake, and then use the <a href="#source">source</a> command to insert it into the database. The commands in the text file must match <strong>exactly</strong> the commands you would enter at the program command line. This includes adding a backslash at the end of lines of a multi-line command.</p>
+<p>Let’s clarify this with a small example. Create a text file with the content below and name it <code>test.txt</code>:</p>
 <pre><code>add expense on pocket \
     descr &quot;Supermarket&quot; date 3/12 \
     parcel &quot;tomatoes 1.29 tags &#39;food,vegetables&#39;&quot; \
@@ -674,7 +676,7 @@ sweets     |         1</code></pre>
 
 add transfer of 60 from bank to pocket \
     descr &#39;ATM withdrawal&#39; date 3/12</code></pre>
-<p>As you can see, these are just two commands, adding the expense of another trip to the supermarket and a ATM withdrawal. After saving the file, open the program and the <code>test.sqlite</code> file we have been working on and then execute the <a href="#source">source</a> command:</p>
+<p>As you can see, these are just two commands, adding the expense of another trip to the supermarket and an ATM withdrawal. After saving the file, open the program and the <code>test.sqlite</code> file we have been working on and then execute the <a href="#source">source</a> command:</p>
 <pre><code>Test &gt; source test.txt
 
 add expense on pocket descr &quot;Supermarket&quot; date 3/12 parcel &quot;tomatoes 1.29
@@ -702,12 +704,13 @@ add deposit of 150 on bank descr &#39;Lottery prize&#39; \
 ls tr on bank from 2/1 to today tofile bank.csv</code></pre>
 <p>First, note that we start by opening the database file, then add a transaction and finish by exporting the <em>Bank</em> account data to a <code>bank.csv</code> CSV file. Now we can pass this to the program directly from the system prompt:</p>
 <pre><code>$ finctrl --source test-1.txt</code></pre>
-<p>The <code>--source</code> (or just <code>-s</code>) option of the Finance Control program tells it to open the program, execute the commands in the file and finally quit the program. Check if the <code>bank.csv</code> file was created and that it is correct. Of course, you could get the same effect redirecting the program’s input stream to the file, if your operating system supports it:</p>
+<p>The <code>--source</code> (or just <code>-s</code>) option of the Finance Control program tells it to open the program, execute the commands in the file and finally quit the program (check if the <code>bank.csv</code> file was created and that it is correct).</p>
+<p>Of course, you could get the same effect redirecting the program’s input stream to the file, if your operating system supports it:</p>
 <pre><code>$ finctrl &lt; test-1.txt</code></pre>
 <p>Passing the script this way would not print the executed commands on the terminal. If you want that to happen, add “<code>set echo on</code>” to the top of the text file (see the <a href="#set-echo">set echo</a> reference page for details on this command).</p>
 <h4 id="backup-and-trim-the-database">Backup and trim the database</h4>
-<p>After a good amount of time using the program, a lot of data will be colected and that could become a nuisance. For example, that means you always have to filter listings on starting date, to ignore old data. To overcome this problem you may use the <a href="#trim">trim</a> command to remove old, unnecessary data. This command has two forms: <a href="#trim-account">trim account</a>, that operates on a single account, and <a href="#trim-storage">trim storage</a>, which will trim the complete database.</p>
-<p>Trim will remove all transactions (and their parcels, of corurse) from the first up to (and including) the date the user indicates, preserving the affected accounts balance. If no transaction remains on an account, a <em>carry-over</em> transaction will be created with an amount identical to the account balance on that date.</p>
+<p>After a good amount of time using the program, a lot of data will be collected and that could become a nuisance. For example, that means you always have to filter listings on starting date, to ignore old data. To overcome this problem you may use the <a href="#trim">trim</a> command to remove old, unnecessary data. This command has two forms: <a href="#trim-account">trim account</a>, that operates on a single account, and <a href="#trim-storage">trim storage</a>, which will trim the complete database.</p>
+<p>Trim will remove all transactions (and their parcels, of course) from the first up to (and including) the date the user indicates, preserving the affected accounts balance. If no transaction remains on an account, a <em>carry-over</em> transaction will be created with an amount identical to the account balance on that date.</p>
 <p>A good practice before using the <code>trim</code> command is to backup the database. The easiest way to do this is just copying the file using the operating system’s tools, but you may also do it from inside the program, with the <a href="#backup">backup</a> command. Let’s see a practical example of the usage of these two commands with our little database.</p>
 <pre><code>Test &gt; backup test-20210315.sqlite</code></pre>
 <p>This command will backup the current database to the file passed as argument (same rules for the file name as in the <a href="#open">open</a> command). We may immediately test the backup, opening it in the program:</p>
@@ -758,7 +761,7 @@ Test &gt; </code></pre>
   C:\Users\USER\Programs\finctrl\finctrl.py ^
   C:\Users\USER\Documents\finctrl.sqlite</code></pre>
 <p>On this batch file I assume that the Python executable is located in</p>
-<pre><code>C:\Program File\Python\Python.exe</code></pre>
+<pre><code>C:\Program Files\Python\Python.exe</code></pre>
 <p>(you must check its actual location), that the program folder is in</p>
 <pre><code>C:\Users\USER\Programs\finctrl</code></pre>
 <p>(you should replace it with the path where you uncompressed the program) and that the database will be located in</p>
@@ -882,10 +885,10 @@ Test &gt; </code></pre>
 <h3 id="source">source</h3>
 <pre><code>&gt; source FILE</code></pre>
 <h3 id="trim">trim</h3>
-<h4 id="trim-storage">trim storage</h4>
-<pre><code>&gt; trim storage upto DATE</code></pre>
 <h4 id="trim-account">trim account</h4>
 <pre><code>&gt; trim acc[ount] ACCOUNT_NAME|ACCOUNT_ID upto DATE</code></pre>
+<h4 id="trim-storage">trim storage</h4>
+<pre><code>&gt; trim storage upto DATE</code></pre>
 <h3 id="database-structure">Database structure</h3>
 <p>Below is the instructions used to create the database on SQLite, which reflect its schema:</p>
 <pre><code>CREATE TABLE metadata (

@@ -22,7 +22,7 @@ This is what it CAN DO:
 * Record your earnings and expenses exactly as you enter them;
 * List your earnings and expenses filtered by date, account and/or item tags;
 * Export your listings to CSV files that can be further processed in other
-  tools like spreasheet apllications.
+  tools like spreadsheet applications.
 
 Copyright (C) 2021 António Manuel Dias
 
@@ -141,8 +141,8 @@ a simple command line interface.  The user may configure several *accounts* (e.g
 a bank account, a savings account, the credit card account, etc.), each with its
 own *currency*.  All operations on the accounts are entered as *transactions*,
 each of which may be composed of several *parcels*.  This way, a supermarket bill
-may be split on its items, so that the user may have a more fine control over his
-or hers expenses.  Each parcel may also be tagged with several tags, allowing the
+may be split on its items, so that the user may have a more fine control over
+one's expenses.  Each parcel may also be tagged with several tags, allowing the
 listing of the spendings (or earnings) by category.
 
 The data is stored in standard [SQLite](https://sqlite.org) files (database
@@ -170,15 +170,17 @@ program's answer, if any.  Some notes:
       * `CTRL+E` to go to the end;
       * `CTRL+W` to delete previous word;
       * `CTRL+K` to delete from the cursor to the end of the line;
-      * etc.
 
 3. When entering a command longer than a screen line, you may split it over
    several lines by ending each line (except the last) with a single backslash:
-   "`\`".  The promtp after that will change to a single colon (`:`) until you
+   "`\`".  The prompt after that will change to a single colon (`:`) until you
    end the command.  If you make a mistake while entering a multi-line command,
    just finish the line with three consecutive backslashes (`\\\`) to discard
    the whole command. 
 
+       FinCtrl > help bye
+       Quit Finance Control.
+      
        FinCtrl > help \
                : bye
        Quit Finance Control.
@@ -196,13 +198,13 @@ program's answer, if any.  Some notes:
 
    However, although the commands are case-sensitive, some arguments may be
    entered in any case, like account names or tags.  Also, the answer to inline
-   questions maybe given in lower or upper case.  Examples of those are given
+   questions may be given in lower or upper case.  Examples of those are given
    throughout this manual.
 
 5. Some commands or options have a shortcut version that may be used
    interchangeably.  That will be indicated in the [REFERENCE] section and in
-   the online help by enveloping the optional letters in square brackets.  For
-   example, the [show copyright] command may be entered as `show` or `sh`:
+   the online help by enveloping the optional characters in square brackets.
+   For example, the [show copyright] command may be entered as `show` or `sh`:
 
        FinCtrl > show copyright
        Finance Control 0.1
@@ -235,7 +237,7 @@ program's answer, if any.  Some notes:
      
      These commands would be valid and equivalent because the positional
      arguments are given in order (POS1 before POS2) and the keyword arguments
-     (ARG-A and ARG-B) always follow the the respective keyword (keyword_a and
+     (ARG-A and ARG-B) always follow the respective keyword (keyword_a and
      keyword_b).
  
    * Monetary amounts must consist of positive or negative integer or decimal
@@ -248,7 +250,7 @@ program's answer, if any.  Some notes:
      number of decimal places.
      
    * Dates must be provided in the general form YEAR-MONTH-DAY.  The year may be
-     ommited (the current year is implicit) or entered without the century (21st
+     omitted (the current year is implicit) or entered without the century (21st
      century is implicit).  The field separator may be a dash ('-') or a
      forward slash ('/'). Example: `2021-03-12`, `21-3-12` and `3/12` all refer
      to the March 12th of 2021 (assuming 2021 is the current year).
@@ -462,7 +464,7 @@ the [show settings] command (a file must be already opened):
     
 The settings are:
 
-- *Prompt*: the prompt to be displayed when the file is opened;
+- *Prompt*: the prompt to be displayed when the file is open;
 - *Field separator for CSV files*: the character used to separate fields when
   exporting results to a CSV file;
 - *Default deposit*, *withdrawal* and *transfer text*: the text used as
@@ -471,7 +473,7 @@ The settings are:
 - *Default currency*: the name of the currency to be used for any new account if
   no other is given at the time of creation.
 
-All the settings may be changed with the repective `set` command.  For example,
+All the settings may be changed with the respective [set] command.  For example,
 to change the prompt:
 
     test.sqlite > set prompt 'Test > '
@@ -479,7 +481,7 @@ to change the prompt:
 
 Notice that the new prompt is given between quotes.  The reason for this is
 that it contains spaces and would be interpreted as two different arguments if
-not surrounded by quotes, which would result in an error:
+not enveloped in quotes, which would result in an error:
 
     Test > set prompt Test >
     *** Error: 'set prompt' command takes a single argument:
@@ -809,7 +811,7 @@ having a shortcut command to describe a *deposit* and another to describe a
 *withdrawal*.
 
 There is one final shortcut transaction command, [add transfer], that moves an
-amount from one acount to another.  If I took 10 Euro from my bank account on
+amount from one account to another.  If I took 10 Euro from my bank account on
 a ATM I could use this command to describe the operation:
 
     Test > add transfer of 10 from bank to pocket date 3/3 \
@@ -844,7 +846,7 @@ we may do that:
     Test > ls tr on bank
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Bank    |  4 | 2021-03-03 | ATM withdraTest > ls tr
+    Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
     Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
     Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.00
 
@@ -889,7 +891,7 @@ We will use the `add expense` command:
          : parcel "chocolate 1.49 tags food,sweets"
     Transaction id: 6
 
-To check if the transaction was inserted correctly, we can start to list the
+To check if the transaction was inserted correctly, we can list the
 transactions of the corresponding account:
 
     Test > ls tr on bank from 3/4
@@ -925,7 +927,7 @@ afterwards with the command [add parcel] --- we only need to know the
 transaction identification.  For example, when listing the last transaction of
 the section above we notice that the total amount is different from the amount
 on the receipt.  Double-checking this we find that we forgot to add the baking
-power parcel.  Let's correct that adding that parcel to transaction 6:
+powder parcel.  Let's correct that adding that parcel to transaction 6:
 
     Test > add parcel 'baking powder' of 0.85 to 6
     Test > sh tr 6
@@ -1106,7 +1108,7 @@ amount zero:
     Test >
 
 I don't know how this could be useful, but... it's possible.  The only way to
-revert it now is to enter the data again.  Nevertheless, the parcel id. will be
+revert it now is to enter the data again.  Nevertheless, the parcel ID will be
 different --- it's a new parcel:
 
     Test > add parcel 'Phone bill, Feb. 2021' \
@@ -1131,7 +1133,7 @@ its transactions!
 
 In the previous sections of this manual we already covered various forms of the
 [list] command, like [list currencies] and [list accounts].  There is only one
-detail we didn't mention: we may pass a currency ou account name, respectively,
+detail we didn't mention: we may pass a currency or account name, respectively,
 to list only that currency or account instead of all of them.  In short, it's
 just an alternative way of visualizing the data to the [show] command:
 
@@ -1142,11 +1144,11 @@ just an alternative way of visualizing the data to the [show] command:
 
 We also covered in some detail the [list transactions] command with both its
 filtering options, account and date.  The two remaining list commands are
-related to tags: [list parcels tagged] and [list tags].  With the first you may
+related to tags: [list parcels] and [list tags].  With the first you may
 list all parcels with certain tags:
 
     Test > ls parcels tagged grocery,dairy
-    Id | Date       | Account | Trans | Description   | Ammount
+    Id | Date       | Account | Trans | Description   | Amount
     ---+------------+---------+-------+---------------+--------
      6 | 2021-03-04 | Pocket  |     6 | eggs          |   -0.85
      7 | 2021-03-04 | Pocket  |     6 | baking flour  |   -0.45
@@ -1176,7 +1178,7 @@ directs the program to export the data to a
 [CSV file](https://en.wikipedia.org/wiki/Comma-separated_values).  The keyword
 must be followed by the file name (same rules apply as to the [open] command).
 CSV files are very portable and supported by several applications and
-programming languages, if you desire to treat the exported data.  The command
+programming languages, if you desire to process the exported data.  The command
 below will export a list of the parcels with tag `food` to the file `food.csv`
 in the current directory:
 
@@ -1215,10 +1217,10 @@ The idea is simple: you prepare a simple-text file in your favourite editor,
 where you can review the commands and correct any mistake, and then use the
 [source] command to insert it into the database.  The commands in the text file
 must match **exactly** the commands you would enter at the program command line.
-This includes adding a backslash at the enf of lines of a multi-line command.
+This includes adding a backslash at the end of lines of a multi-line command.
 
 Let's clarify this with a small example.  Create a text file with the content
-below and the name `test.txt`:
+below and name it `test.txt`:
 
     add expense on pocket \
         descr "Supermarket" date 3/12 \
@@ -1234,7 +1236,7 @@ below and the name `test.txt`:
         descr 'ATM withdrawal' date 3/12
 
 As you can see, these are just two commands, adding the expense of another trip
-to the supermarket and a ATM withdrawal.  After saving the file, open the
+to the supermarket and an ATM withdrawal.  After saving the file, open the
 program and the `test.sqlite` file we have been working on and then execute the
 [source] command:
 
@@ -1280,10 +1282,11 @@ we can pass this to the program directly from the system prompt:
     $ finctrl --source test-1.txt
 
 The `--source` (or just `-s`) option of the Finance Control program tells it to
-open the program, execute the commands in the file and finally quit the program.
-Check if the `bank.csv` file was created and that it is correct.  Of course,
-you could get the same effect redirecting the program's input stream to the
-file, if your operating system supports it:
+open the program, execute the commands in the file and finally quit the program
+(check if the `bank.csv` file was created and that it is correct).
+
+Of course, you could get the same effect redirecting the program's input stream
+to the file, if your operating system supports it:
 
     $ finctrl < test-1.txt
 
@@ -1293,14 +1296,14 @@ text file (see the [set echo] reference page for details on this command).
 
 #### Backup and trim the database
 
-After a good amount of time using the program, a lot of data will be colected
+After a good amount of time using the program, a lot of data will be collected
 and that could become a nuisance.  For example, that means you always have
 to filter listings on starting date, to ignore old data.  To overcome this
 problem you may use the [trim] command to remove old, unnecessary data.  This
 command has two forms: [trim account], that operates on a single account, and
 [trim storage], which will trim the complete database.
 
-Trim will remove all transactions (and their parcels, of corurse) from the first
+Trim will remove all transactions (and their parcels, of course) from the first
 up to (and including) the date the user indicates, preserving the affected
 accounts balance.  If no transaction remains on an account, a *carry-over*
 transaction will be created with an amount identical to the account balance on
@@ -1399,7 +1402,7 @@ important detail.  Please contact me if that is the case.  In steps:
       
    On this batch file I assume that the Python executable is located in
    
-       C:\Program File\Python\Python.exe
+       C:\Program Files\Python\Python.exe
        
    (you must check its actual location), that the program folder is in
    
@@ -1632,13 +1635,13 @@ REFERENCE
 
 ### trim
 
-#### trim storage
-
-    > trim storage upto DATE
-
 #### trim account
 
     > trim acc[ount] ACCOUNT_NAME|ACCOUNT_ID upto DATE
+
+#### trim storage
+
+    > trim storage upto DATE
 
 ### Database structure
 

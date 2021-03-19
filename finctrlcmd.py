@@ -57,7 +57,7 @@ class FinCtrlCmd(cmd.Cmd):
     #-------------------------------------------------------------------------
     # Setup and configuration methods
     def preloop(self):
-        """Reset multiline command state before starting the command loop
+        """Reset multiline command state before starting the command loop.
         """
         self._saved_prompt = None
         self._multilncmd = []
@@ -107,7 +107,7 @@ class FinCtrlCmd(cmd.Cmd):
     # Command methods
 
     def do_open(self, arg):
-        """Open a Finance Control file:
+        """Open a Finance Control database file:
         > open FILE
         """
         arg = os.path.expanduser(arg)
@@ -130,7 +130,7 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def do_close(self, arg):
-        """Close the open file.
+        """Close the current database file.
         > close
         """
         self._store = None
@@ -138,7 +138,7 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def do_backup(self, arg):
-        """Backup storage to a different file:
+        """Backup current database to a different file:
         > backup FILE
         """
         if not self._store:
@@ -167,8 +167,8 @@ class FinCtrlCmd(cmd.Cmd):
 
     def do_trim(self, arg):
         """Remove all records previous to a specific date:
-        > trim storage upto DATE
         > trim acc[ount] ACCOUNT_NAME|ACCOUNT_ID upto DATE
+        > trim storage upto DATE
         """
         if self._store:
             self._dispatch('trim', arg)
@@ -193,14 +193,14 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def do_set(self, arg):
-        """Set metadata on the current file:
-        > set echo ON|OFF
-        > set prompt TEXT
+        """Set metadata on the current database file:
         > set csvsep CHARACTER
         > set curr[ency] NAME
-        > set withdrawal descr[iption] TEXT
         > set deposit descr[iption] TEXT
+        > set echo ON|OFF
+        > set prompt TEXT
         > set transfer descr[iption] TEXT
+        > set withdrawal descr[iption] TEXT
         """
         if self._store or 'echo' in arg:
             self._dispatch('set', arg)
@@ -209,24 +209,24 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def do_add(self, arg):
-        """Insert data or a record on the current file:
+        """Insert data or a record on the current database file:
+        > add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME]
         > add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \\
         :                [decplaces NUMBER] [decsep CHARACTER]
-        > add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME]
         > add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
         :             [descr TEXT] [date DATE] [tags LIST]
-        > add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
-        :             [descr TEXT] [date DATE] [tags LIST]
-        > add tranfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
-        :             from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID
+        > add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \\
+        :               [descr[iption] TEXT] [date DATE] \\
+        :               of AMOUNT | parcel "TEXT AMOUNT [tags LIST]" ...
+        > add parcel TEXT of AMOUNT to TRANSACTION_ID [tags LIST]
+        > add tag TEXT to PARCEL_ID
         > add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \\
         :                   [neg] [descr[iption] TEXT] [date DATE] \\
         :                   of AMOUNT | parcel "TEXT AMOUNT [tags LIST]" ...
-        > add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \\
-        :                  [descr[iption] TEXT] [date DATE] \\
-        :                  of AMOUNT | parcel "TEXT AMOUNT [tags LIST]" ...
-        > add parcel TEXT of AMOUNT to TRANSACTION_ID [tags LIST]
-        > add tag TEXT to PARCEL_ID
+        > add transfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
+        :              from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID
+        > add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
+        :                [descr TEXT] [date DATE] [tags LIST]
         """
         if self._store:
             self._dispatch('add', arg)
@@ -235,12 +235,12 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def do_delete(self, arg):
-        """Remove data or a record from the current file:
+        """Remove data or a record from the current database file:
         > de[lete] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
-        > de[lete] tr[ansaction] TRANSACTION_ID
         > de[lete] parcel PARCEL_ID
         > de[lete] tag TEXT from PARCEL_ID
         > de[lete] tag TEXT
+        > de[lete] tr[ansaction] TRANSACTION_ID
         """
         if self._store:
             self._dispatch('delete', arg)
@@ -252,19 +252,19 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def do_change(self, arg):
-        """Change a record in the current file:
+        """Change a record in the current database file:
+        > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID descr[iption] to TEXT
+        > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID name to TEXT
         > ch[ange] curr[ency] NAME [short TEXT] \\
         :                     [symbol TEXT] [position LEFT|RIGHT] \\
         :                     [decplaces NUMBER] [decsep CHARACTER]
-        > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID name to TEXT
-        > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID descr[iption] to TEXT
-        > ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT
-        > ch[ange] tr[ansaction] TRANSACTION_ID date to DATE
+        > ch[ange] parcel PARCEL_ID amount to AMOUNT
+        > ch[ange] parcel PARCEL_ID descr[iption] to TEXT
+        > ch[ange] tag TAG to TEXT
         > ch[ange] tr[ansaction] TRANSACTION_ID acc[ount] \\
         :                      to ACCOUNT_NAME|ACCOUNT_ID
-        > ch[ange] parcel PARCEL_ID descr[iption] to TEXT
-        > ch[ange] parcel PARCEL_ID amount to AMOUNT
-        > ch[ange] tag TAG to TEXT
+        > ch[ange] tr[ansaction] TRANSACTION_ID date to DATE
+        > ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT
         """
         if self._store:
             self._dispatch('change', arg)
@@ -276,10 +276,10 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def do_show(self, arg):
-        """Show all data of a specific record:
-        > sh[ow] settings|manual [inline]|copyright|license [inline]
-        > sh[ow] curr[ency] NAME
+        """Show a specific record's data:
         > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
+        > sh[ow] curr[ency] NAME
+        > sh[ow] settings|manual [inline]|copyright|license [inline]
         > sh[ow] tr[ansaction] TRANSACTION_ID
         """
         if self._store or \
@@ -293,13 +293,13 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def do_list(self, arg):
-        """Show list of records according to parameters:
-        > list|ls curr[encies] [NAME] [tofile FILE]
+        """List database records:
         > list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]
-        > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
-        :                     [from DATE] [to DATE] [tofile FILE]
+        > list|ls curr[encies] [NAME] [tofile FILE]
         > list|ls parcels tagged LIST [from DATE] [to DATE] [tofile FILE]
         > list|ls tags [tofile FILE]
+        > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
+        :                     [from DATE] [to DATE] [tofile FILE]
         """
         if self._store:
             self._dispatch('list', arg)
@@ -344,7 +344,7 @@ class FinCtrlCmd(cmd.Cmd):
     # Work methods
 
     def _trim_storage(self, args):
-        """Trim storage up to a date.
+        """Trim database file up to a date.
         """
         pos, kw, mkw = parse_args(args, 'upto')
         if pos or 'upto' not in kw or mkw:
@@ -436,19 +436,19 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def _set_deposit(self, args):
-        """Set deposit.
+        """Set deposit default text.
         """
         self._setdescr('deposit', args)
 
 
     def _set_withdrawal(self, args):
-        """Set withdrawal.
+        """Set withdrawal default text.
         """
         self._setdescr('withdrawal', args)
 
 
     def _set_transfer(self, args):
-        """Set transfer.
+        """Set transfer default text.
         """
         self._setdescr('transfer', args)
 
@@ -586,7 +586,7 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def _add_parcel(self, args):
-        """Add parcel.
+        """Add parcel to an existing transaction.
         """
         pos, kw, mkw = parse_args(args, 'to', 'of', 'tags')
         if len(pos) != 1 or 'to' not in kw or 'of' not in kw or mkw:
@@ -606,7 +606,7 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def _add_tag(self, args):
-        """Add tag.
+        """Add tag to an existing parcel.
         """
         pos, kw, mkw = parse_args(args, 'to')
         if len(pos) != 1 or 'to' not in kw or mkw:
@@ -1057,7 +1057,7 @@ class FinCtrlCmd(cmd.Cmd):
         except Exception as e:
             error(f"unable to list parcels by tag. Reason:\n    {e}")
 
-        headers = ['Id', 'Date', 'Account', 'Trans', 'Description', 'Ammount']
+        headers = ['Id', 'Date', 'Account', 'Trans', 'Description', 'Amount']
         if 'tofile' in kw:
             export(os.path.expanduser(kw['tofile']), self.csvsep, data, headers)
         else:

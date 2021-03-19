@@ -51,7 +51,7 @@ This is what it CAN DO:
 * Record your earnings and expenses exactly as you enter them;
 * List your earnings and expenses filtered by date, account and/or item tags;
 * Export your listings to CSV files that can be further processed in other
-  tools like spreasheet apllications.
+  tools like spreadsheet applications.
 
 The following instructions are for Linux systems.  If you intend to use the
 program on another system, please refer to the included MANUAL.
