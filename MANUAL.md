@@ -2,10 +2,11 @@ FINANCE CONTROL MANUAL
 ======================
 
 This is a very basic program to control personal finances.  It depends on
-**Python 3** and was thought to be **used only from the command line**.  It
-supports multiple accounts with possibly different currencies and transactions
-composed of multiple parcels, each with its different tags.  Check the [USAGE]
-section for a more complete overview of the program.
+[Python 3](https://python.org) and was thought to be
+**used only from the command line**.  It supports multiple accounts with
+possibly different currencies and transactions composed of multiple parcels,
+each with its different tags.  Check the [USAGE] section for a more complete
+overview of the program.
 
 This is what the program IS NOT and CANNOT DO:
 
@@ -55,6 +56,7 @@ CONTENTS
     * [Backup and trim the database]
     * [Usage in MS Windows]
 * [REFERENCE]
+  * [Command's arguments reference]
   * [add]
   * [backup]
   * [bye]
@@ -221,8 +223,8 @@ program's answer, if any.  Some notes:
    This is explicitly stated in *help* text of the command:
 
        FinCtrl > help show
-       Show all data of a specific record:
-               > sh[ow] settings|manual [inline]|copyright|license [inline]
+       Show a specific record's data:
+               > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
                (...)
 
 6. Some commands will require information from the user, which must be provided
@@ -256,21 +258,19 @@ program's answer, if any.  Some notes:
      to the March 12th of 2021 (assuming 2021 is the current year).
 
      The words `today` or `now` may be used in replacement of the current date.
-     Also, in all cases the date is optional, simply omitting it will imply
-     the current date.
      
-   * Text values with spaces must be surrounded by single- or double-quotes.
-     If a text value has either single- or double-quotes it must be surrounded
-     by the other type of quotes.
+   * Text values with spaces must be enveloped by single- or double-quotes.
+     If a text value has single-quotes, use double-quotes to envelop it and
+     vece-versa.
      
    * List values, used when entering tags, are text values separated by commas.
      Same rule applies as for text values: if any value of the list has spaces
-     or quotes, the whole list must be surrounded by the other kind of quotes.
+     or quotes, the whole list must be enveloped by the other kind of quotes.
      Example:
      * `food,vegetables`
      * `'car, washing liquid'`
 
-6. If a line of the output of a command is longer than the terminal width, it
+7. If a line of the output of a command is longer than the terminal width, it
    will be truncated and end with an ellipsis (`...`).  If the output has more
    lines than fit in the terminal height then the output will be split in pages
    and at the end of each page you will have the option to go to the next page
@@ -334,13 +334,13 @@ available commands:
 We may also obtain help on a specific command by typing `help` followed by the
 name of the command.  For example, for the [show] command:
 
-    FinCtrl > help show
-    Show all data of a specific record:
-            > sh[ow] settings|manual [inline]|copyright|license [inline]
-            > sh[ow] curr[ency] NAME
-            > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
-            > sh[ow] tr[ansaction] TRANSACTION_ID
-
+FinCtrl > help show
+Show a specific record's data:
+        > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
+        > sh[ow] curr[ency] NAME
+        > sh[ow] settings|manual [inline]|copyright|license [inline]
+        > sh[ow] tr[ansaction] TRANSACTION_ID
+ 
 The program will print a brief description of the purpose of the command
 followed by a list of the command's allowed syntax. The following conventions
 apply to every command description:
@@ -348,15 +348,15 @@ apply to every command description:
 * Text between square brackets (`[]`) is optional --- you may enter it or not,
   as you wish;
 * Text in lower case letters is mandatory and must be entered as-is;
-* Several options separated by vertical bars (the *pipe* character: `|`) mean
-  that one (and only one) of them must be chosen;
+* Several options separated by vertical bars (the *pipe* character, '`|`') mean
+  that one and only one of them must be chosen;
 * Finally, text in capital letters is information that must be provided or
   chosen by the user --- check in the commands' [REFERENCE] section for the
   precise type of information required.
 
-The first syntax line of the example above explains how to use the [show]
+The third syntax line of the example above explains how to use the [show]
 command to display some information pertaining to the program.  The command may
-be written as `show` or `sh` (the bracketed `ow` is optional) and must be
+be written as `show` or `sh` (the bracketed '`ow`' is optional) and must be
 followed by only one of the options separated by vertical bars, `settings`,
 `manual`, `copyright` or `license`.
 
@@ -373,8 +373,8 @@ browser window, assuming a browser is installed on your system:
 
     FinCtrl > sh manual
     The program's manual should be displayed in your browser.
-    If this doesn't happen, please read the file 'MANUAL'
-    in the program's installation directory.
+    If this doesn't happen, please use the command:
+        > show manual inline
 
 The commands above take an optional argument, "`inline`", that directs the 
 program to print the manual or license in the terminal instead of a web browser:
@@ -384,7 +384,6 @@ program to print the manual or license in the terminal instead of a web browser:
     ======================
     
     This is a very basic program to control personal finances.  It depends on
-    Python 3 and was thought to be used only from the command line.  It
     (...)
 
 Finally, we could also show the current program settings, but as they are
@@ -407,7 +406,7 @@ As stated earlier, the program keeps all information in
 
 The [open] command takes a single argument, the path to the file to be opened.
 If a relative path is given, the directory where the program was started will
-be the base directory. The tilde (`~`) may be used as the replacement for the
+be the base directory. The tilde (`~`) may be used in substituition of the
 user's home absolute path.  For example, in my case, if I used the command
 `open ~/doc/accounting.sqlite` the opened file would be
 `/home/antonio/doc/accounting.sqlite`.  This is standard Unix notation, but may
@@ -464,7 +463,7 @@ the [show settings] command (a file must be already opened):
     
 The settings are:
 
-- *Prompt*: the prompt to be displayed when the file is open;
+- *Prompt*: the prompt to be displayed when the file is opened;
 - *Field separator for CSV files*: the character used to separate fields when
   exporting results to a CSV file;
 - *Default deposit*, *withdrawal* and *transfer text*: the text used as
@@ -473,7 +472,7 @@ The settings are:
 - *Default currency*: the name of the currency to be used for any new account if
   no other is given at the time of creation.
 
-All the settings may be changed with the respective [set] command.  For example,
+All settings may be changed with the respective [set] command.  For example,
 to change the prompt:
 
     test.sqlite > set prompt 'Test > '
@@ -487,8 +486,7 @@ not enveloped in quotes, which would result in an error:
     *** Error: 'set prompt' command takes a single argument:
         > set prompt TEXT
 
-Most errors that the user can make will, besides the error message, also show
-the proper syntax of the command.
+Most syntax error messages will also show the proper syntax of the command.
 
 After changing the prompt, this setting will be preserved in the file and will
 be used every time it is opened.  The other settings may be changed in the same
@@ -512,7 +510,7 @@ correctly display and scan monetary amounts.  We can list the configured
     default |            |        | left     | 2              | .                
 
 There is always at least one configured currency, named `default`.  We can
-always check a currency settings with the [show currency] command:
+check a currency settings with the [show currency] command:
 
     Test > sh curr default
     Name: default
@@ -529,10 +527,10 @@ These are the properties of a currency:
   assign it to an account.
 - *Short name*: this is the abbreviation for the currency, like EUR for Euro or
   USD for United States Dollar.  Currently it has no purpose in the program.
-- *Symbol*: the currency symbol, like '€' for Euro.  Currently it has no use in
+- *Symbol*: the currency symbol, like '€' for Euro.  Currently it is not used by
   the program.
 - *Position*: the position of the symbol when writing an amount. Must be `left`
-  or `right`. Currently it has no use in the program.
+  or `right`. Also with no current use in the program.
 - *Decimal places*: this indicates the precision of the currency.  All amounts
   will be stored and displayed with this precision.  When entering an amount,
   only the decimal places configured in the respective currency will be stored
@@ -541,7 +539,7 @@ These are the properties of a currency:
   integer and decimal parts.  It will be used to display all currency
   quantities and to scan the quantities input by the user.
 
-If all your accounts are in the same currency, you may use the default and
+If all your accounts are in the same currency, you may use the default and just 
 change its settings as you desire.  If not or if you prefer to have the
 currency name correspond to its actual name, you must use the [add currency]
 command.  Let's add the Euro currency to the Test file:
@@ -609,7 +607,7 @@ Because none is configured yet, we get an error.  To add an account we use the
 appropriately named command [add account].  The only required argument to this
 command is the name of the account to be created, but we may also give it a
 description and the currency that the account is in.  Let's create two accounts,
-a *bank account* and a *pocket account*, for the money we have in coin:
+a *bank account* and a *pocket account*, for the hard currency we have with us:
 
     Test > add account Pocket
     Test > add acc Bank descr 'My bank account'
@@ -695,9 +693,9 @@ follows:
     :                   [neg] [descr[iption] TEXT] [date DATE] \
     :                   of AMOUNT | parcel "TEXT AMOUNT [tags LIST]" ...
  
- We can see that the `on` argument is required as is either the `of` or
- `parcel` arguments.  `neg`, `description` and `date` are optional. Let me
- detail the arguments used above:
+ We can see that the `on` argument is required as is one (but not both) of the
+ arguments `of` or `parcel`.  `neg`, `description` and `date` are optional.
+ Let me detail the arguments used above:
  
 - **on**: the account on which the transaction will be added, in this case the
   *Pocket* account;
@@ -733,9 +731,8 @@ The optional arguments not used in this example were:
   parcel amounts negative --- this may be nice when entering a complex bill, for
   example, so that the user doesn't need to keep adding the minus symbol to all
   the monetary values;
-
 - **of**: this argument could actually have been used here --- it means that
-  the transaction has only one parcel that will be added automatically with the
+  the transaction has a single parcel that will be added automatically with the
   amount and description of the whole transaction.
 
 An easier way to add an amount to an account would be to use the [add deposit]
@@ -752,8 +749,8 @@ Let's use it to add the initial amount to the *Bank* account:
 
 You should have noticed that each time we add a transaction, the program
 answers with the transaction identification.  We need this number every time
-we have to refer the transaction, like when we want to see its details with the
-[show transaction] command:
+we have to refer to the transaction, like when we want to see its details with
+the [show transaction] command:
 
     Test > sh tr 2
     Account: Bank (id: 2)
@@ -863,7 +860,7 @@ If the `from` date is omitted, the listing starts at the first transaction; if
 instead the `to` date is omitted, the listing ends in the most recent recorded
 transaction. As we have seen earlier, if we give no date interval, all
 transactions are listed.  "`today`" (or "`now`") are just shortcuts for the
-present date.
+present date (remember that you may add transactions for future dates).
 
 We now have seen all the shortcut commands that allow us to add a single parcel
 transaction.  To add transactions with multiple parcels we have two commands,
@@ -925,9 +922,9 @@ start with these.
 If, when adding an expense, we forget a parcel it is possible to add it
 afterwards with the command [add parcel] --- we only need to know the
 transaction identification.  For example, when listing the last transaction of
-the section above we notice that the total amount is different from the amount
-on the receipt.  Double-checking this we find that we forgot to add the baking
-powder parcel.  Let's correct that adding that parcel to transaction 6:
+the section above we may notice that the total amount is different from the
+amount on the receipt.  Double-checking this we find that we forgot to add the
+baking powder parcel.  Let's correct that adding that parcel to transaction 6:
 
     Test > add parcel 'baking powder' of 0.85 to 6
     Test > sh tr 6
@@ -945,7 +942,7 @@ powder parcel.  Let's correct that adding that parcel to transaction 6:
 
 Oops, it seems I forgot to add the parcel tags and that the value must be
 negative like the others.  No problem, we may also change that.  First, we add
-the missing tags to parcel 11 (the baking powder as listed in the
+the missing tags to parcel 11 (the baking powder, as listed in the
 `show transaction` output) with the [add tag] command:
 
     Test > add tag food to 11
@@ -1009,11 +1006,11 @@ not be what you intended... If you what you intended was to remove the tag
 *breakfast* from parcel 9 only and to replace it with the tag dairy you could
 have used the [delete tag] command and then [add tag]:
 
-    Test > delete tag breakfast from 9
-    Test > add tag dairy to 9
-
 (if you try this after the previous command it will fail, because parcel 9 is
 already tagged with *dairy*)
+
+    Test > delete tag breakfast from 9
+    Test > add tag dairy to 9
 
 [delete tag] without a parcel number will delete the referred tag from
 **all parcels**.
@@ -1084,11 +1081,12 @@ be mentioned for each one of them.
 
 [delete parcel] and [delete transaction] take the identification number of the
 item to remove and will remove it permanently from the database: there is no
-way to recover them other than entering all its data again!  Previously I said
-that every transaction must have at least one parcel: well, that is generally
-true and logic but you *can* remove the last parcel from a transaction with
-the `delete transaction` command.  The transaction will be empty and its total
-amount zero:
+way to recover them other than entering all its data again!
+
+Previously I said that every transaction must have at least one parcel: well,
+that is generally true and logic but you *can* remove the last parcel from a
+transaction with the `delete transaction` command.  The transaction will be
+empty and its total amount zero:
 
     Test > sh tr 3
     Account: Bank (id: 2)
@@ -1264,7 +1262,7 @@ confirm list the transactions on the 12th of March:
     Pocket  |  7 | 2021-03-12 | Supermarket    |       -10.90 |          116.83
     Bank    |  8 | 2021-03-12 | ATM withdrawal |       -60.00 |         4870.01
 
-You could also [show] any of the transactions.
+You could also [show] any of the transactions to double-check their correctness.
 
 If all your work on the program is just entering these commands, you could even
 pass it as an argument to the program itself.  Consider this simple example
@@ -1417,8 +1415,10 @@ important detail.  Please contact me if that is the case.  In steps:
    (you should replace this with the path where you wish the database to reside)
    
 4. To start the program just open the Windows Explorer on the folder where you
-   created the batch file and double click on it.  Provided everything is ok, a
-   terminal window should open and you should see the program's prompt:
+   created the batch file and double click on it.  If you created the batch file
+   on the Desktop (you can do that, of course), you just need to double-click
+   its icon.  Provided everything is ok, a terminal window should open and you
+   should see the program's prompt:
    
        finctrl.sqlite >
 
@@ -1429,51 +1429,242 @@ important detail.  Please contact me if that is the case.  In steps:
 REFERENCE
 ---------
 
+### Command's arguments reference
+The command's arguments must follow these general rules:
+
+- **ACCOUNT_ID**: account identification number (see [list accounts]).
+
+- **ACCOUNT_NAME**: exact name of the account (see [list accounts]).  This
+  argument is *not* case-sensitive.
+
+- **AMOUNT**: an integer or decimal number.  The decimal part should be
+  separated from the integer by the decimal separator character configured in
+  the corresponding currency (see [show currency]).
+
+- **CHARACTER**: a single character.  This argument *is* case-sensitive and
+  cannot be a decimal digit (0-9).
+
+- **DATE**: date in the general format YEAR-MONTH-DAY.  The field separators
+  may be dashes ('-') or forward slashes ('/').  The year may be omitted (the
+  current year is implicit) or without the century (21st century is implicit).
+
+- **FILE**: path to the file to be opened or saved.  May be an absolute path or
+  relative to the directory where the program was started.  The tilde ('~')
+  will be replaced by the current user's home directory absolute path.
+  
+- **LEFT** / **RIGHT** / **ON** / **OFF**: exact text that should be entered.
+  This argument is *not* case-sensitive.
+  
+- **LIST**:  comma-separated list of text arguments.  If the arguments contain
+  spaces or quotes, the whole list must be enveloped in quotes (single or
+  double).
+
+- **NAME**: exact name of an existing currency, as entered in the database.
+  (see [list currencies]).  This argument is *not* case-sensitive.
+
+- **NUMBER**: integer number.
+
+- **TEXT**: sequence of characters.  Must be enveloped in quotes (single or
+  double) if it contains spaces or quotes.
+
+- **TRANSACTION_ID**: transaction identification number (see
+  [list transactions]).
+
+- **PARCEL_ID**: parcel identification number (see [show transaction]).
+
+  
 ### add
 
+`add` is a *meta-command* with several available forms.  Below are their
+descriptions:
+
 #### add account
+(shortcut: `add acc`)
+
+Adds an account to the database.
 
     > add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME]
 
+Arguments:
+
+- **TEXT** (*positional*): name for the new account.  Should be short and
+  without spaces, as it may be used for the account identification in other
+  commands.
+- **description** (*optional*): description of the new account.
+- **currency** (*optional*): name of the currency for the new account.  If not
+  provided, the default currency of the database will be used
+  (see [show settings]).
+
 #### add currency
-    
-    > add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \\
+(shorcut: `add curr`)
+
+Adds a currency to the database.
+
+    > add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \
     :     [decplaces NUMBER] [decsep CHARACTER]
+
+Arguments:
+
+- **TEXT** (*positional*): name for the new currency.  Should be short and
+  without spaces as it will be used to identify the currency in other commands.
+- **short** (*optional*): short name for the currency, like 'EUR' for Euro or
+  'USD' for United States Dollar. Currently not used in the program.
+- **symbol** (*optional*): symbol of the currency, like '€' for Euro or '$' for
+  Dollar. Currently not used in the program.
+- **position** (*optional*): position of the currency symbol relative
+  the digits when printing an amount in the currency.  Currently not used in
+  the program.
+- **decplaces** (*optional*): number of decimal places for the currency.  This
+  is the precision that will be used when storing and displaying amounts in the
+  currency (all other digits will be discarded).
+- **decsep** (*optional*): character used to separate the integer from the
+  decimal part of amounts in the currency.  It will be used to print currency
+  amounts as well to scan amounts input by the user.
+
+All optional arguments not provided, with the exception of the short name, will
+be copied from the currency named `default`.
 
 #### add deposit
 
-    > add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
-    :     [descr TEXT] [date DATE] [tags LIST]
+Adds a single-parcel transaction to the database.
+
+    > add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \
+    :     [descr[iption] TEXT] [date DATE] [tags LIST]
+
+Arguments:
+
+- **of**: total amount of the transaction.  Will be the amount of the single
+  parcel.
+- **on**: account on which the transaction will be added (see
+  [list accounts]).
+- **description** (*optional*): description of the transaction and parcel.  If
+  not provided the *default deposit text* will be used (see [show settings]).
+- **date** (*optional*): the date the transaction is effective.  If not
+  provided, the current date will be used.
+- **tags** (*optional*): list of tags to be added to the single parcel.
 
 #### add expense
+(shortcut: `add exp`)
 
-    > add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \\
-    :     [descr[iption] TEXT] [date DATE] \\
+Adds a negative transaction to the database.  All amounts provided will be
+multiplied by `-1` before being added to the database.
+
+    > add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \
+    :     [descr[iption] TEXT] [date DATE] \
     :     of AMOUNT | parcel "TEXT AMOUNT [tags LIST]"...
+
+Arguments:
+
+- **on**: name or identification of the account on which the transaction will
+  be added (see [list accounts]).
+- **description** (*optional*): description of the transaction.
+- **date** (*optional*): date on which the transaction will be effective. If
+  not provided the current date will be used.
+- **of**: amount of the single parcel transaction to be added.  If provided,
+  the user may not provide any parcel.
+- **parcel**: description of one parcel to be added to this transaction.
+  Transactions may have any number of parcels.  The parcel description must be
+  enveloped in quotes (single or double).  The parcel description must have
+  these arguments:
+  - **TEXT** (*positional*): the description of this parcel;
+  - **AMOUNT** (*positional*): the amount of this parcel;
+  - **tags** (*optional*): list of tags to be added to this parcel.
 
 #### add parcel
 
+Adds a parcel to an existing transaction.
+
     > add parcel TEXT of AMOUNT on TRANSACTION_ID [tags LIST]
+
+Arguments:
+
+- **TEXT** (*positional*): description of the parcel to be added.
+- **of**: amount of the parcel to be added.
+- **on**: identification of the transaction on which the parcel will be added
+  (see [list transactions]).
+- **tags** (*optional*): list of tags to be added to this parcel.
 
 #### add tag
 
+Adds a tag to an existing parcel.
+
     > add tag TEXT to PARCEL_ID
 
-#### add transaction
+Arguments:
 
-    > add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \\
-    :     [neg] [descr[iption] TEXT] [date DATE] \\
+- **TEXT** (*positional*): the tag to add.
+- **to**: identification of the parcel to which the tag will be added (see
+  [show transaction]).
+
+#### add transaction
+(shortcut: `add tr`)
+
+Adds a transaction to the database.
+
+    > add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \
+    :     [neg] [descr[iption] TEXT] [date DATE] \
     :     of AMOUNT | parcel "TEXT AMOUNT [tags LIST]"...
 
+Arguments:
+
+- **on**: name or identification of the account on which the transaction will
+  be added (see [list accounts]).
+- **neg** (*positional*, *optional*): indication that all amounts should be
+  multiplied by `-1` before being added to the database.
+- **description** (*optional*): description of the transaction.
+- **date** (*optional*): date on which the transaction will be effective.  If
+  not provided, the current date will be used.
+- **of**: amount of the single parcel transaction to be added.  If provided,
+  the user may not provide any extra parcel.
+- **parcel**: description of one parcel to be added to this transaction.
+  Transactions may have any number of parcels.  The parcel description must be
+  enveloped in quotes (single or double).  The parcel description must have
+  these arguments:
+  - **TEXT** (*positional*): the description of this parcel;
+  - **AMOUNT** (*positional*): the amount of this parcel;
+  - **tags** (*optional*): list of tags to be added to this parcel.
+
 #### add transfer
+
+Adds two transactions to the database.  The first removes the amount from an
+account and the second adds it to the other account, effectively transfering
+it from one to the other.
 
     > add transfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
     :     from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID
     
+Arguments:
+
+- **of**: total amount of the transaction.  Will be the amount of the single
+  parcel of each transaction, being multiplied by `-1` on the first.
+- **description** (*optional*): description of the transaction and parcels.  If
+  not provided the *default transfer text* will be used (see [show settings]).
+- **date** (*optional*): the date the transactions are effective.  If not
+  provided, the current date will be used.
+- **tags** (*optional*): list of tags to be added to the parcels.
+- **from**: account from which the amount will be withdrawan (see
+  [list accounts]).
+- **to**: account on which the amount will be deposited (see [list accounts]).
+
 #### add withdrawal
+
+Adds a single-parcel negative transaction to the database.  The amount will be
+multiplied by `-1` before being added to the database.
 
     > add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
     :     [descr TEXT] [date DATE] [tags LIST]
+
+Arguments:
+
+- **of**: total amount of the transaction.  Will be the amount of the single
+  parcel.  Will be multiplied by `-1` before being added to the database.
+- **on**: account on which the transaction will be added (see
+  [list accounts]).
+- **description** (*optional*): description of the transaction and parcel.  If
+  not provided the *default withdrawal text* will be used (see [show settings]).
+- **date** (*optional*): the date the transaction is effective.  If not
+  provided, the current date will be used.
+- **tags** (*optional*): list of tags to be added to the single parcel.
 
 ### backup
 
@@ -1484,6 +1675,9 @@ REFERENCE
     > bye|EOF
 
 ### change
+
+`change` is a *meta-command* with several available forms.  Below are their
+descriptions:
 
 #### change account
 
@@ -1520,6 +1714,9 @@ REFERENCE
 
 ### delete
 
+`delete` is a *meta-command* with several available forms.  Below are their
+descriptions:
+
 #### delete account
 
     > del[ete] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
@@ -1543,6 +1740,9 @@ REFERENCE
     > help|? [COMMAND]
 
 ### list
+
+`list` is a *meta-command* with several available forms.  Below are their
+descriptions:
 
 #### list accounts
 
@@ -1570,6 +1770,9 @@ REFERENCE
     > open FILE
 
 ### set
+
+`set` is a *meta-command* with several available forms.  Below are their
+descriptions:
 
 #### set csvsep
 
@@ -1600,6 +1803,9 @@ REFERENCE
     > set withdrawal descr[iption] TEXT
 
 ### show
+
+`show` is a *meta-command* with several available forms.  Below are their
+descriptions:
 
 #### show account
 
@@ -1635,6 +1841,9 @@ REFERENCE
 
 ### trim
 
+`trim` is a *meta-command* with several available forms.  Below are their
+descriptions:
+
 #### trim account
 
     > trim acc[ount] ACCOUNT_NAME|ACCOUNT_ID upto DATE
@@ -1645,7 +1854,7 @@ REFERENCE
 
 ### Database structure
 
-Below is the instructions used to create the database on SQLite, which reflect
+Below are the instructions used to create the database on SQLite, which reflect
 its schema:
 
     CREATE TABLE metadata (

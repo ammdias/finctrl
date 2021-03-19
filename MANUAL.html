@@ -1,5 +1,5 @@
 <h1 id="finance-control-manual">FINANCE CONTROL MANUAL</h1>
-<p>This is a very basic program to control personal finances. It depends on <strong>Python 3</strong> and was thought to be <strong>used only from the command line</strong>. It supports multiple accounts with possibly different currencies and transactions composed of multiple parcels, each with its different tags. Check the <a href="#usage">USAGE</a> section for a more complete overview of the program.</p>
+<p>This is a very basic program to control personal finances. It depends on <a href="https://python.org">Python 3</a> and was thought to be <strong>used only from the command line</strong>. It supports multiple accounts with possibly different currencies and transactions composed of multiple parcels, each with its different tags. Check the <a href="#usage">USAGE</a> section for a more complete overview of the program.</p>
 <p>This is what the program IS NOT and CANNOT DO:</p>
 <ul>
 <li>It will not contact your homebanking system;</li>
@@ -45,6 +45,7 @@
 </ul></li>
 <li><a href="#reference">REFERENCE</a>
 <ul>
+<li><a href="#commands-arguments-reference">Command’s arguments reference</a></li>
 <li><a href="#add">add</a></li>
 <li><a href="#backup">backup</a></li>
 <li><a href="#bye">bye</a></li>
@@ -124,8 +125,8 @@ Finance Control 0.1
 (...)</code></pre>
 <p>This is explicitly stated in <em>help</em> text of the command:</p>
 <pre><code>FinCtrl &gt; help show
-Show all data of a specific record:
-        &gt; sh[ow] settings|manual [inline]|copyright|license [inline]
+Show a specific record&#39;s data:
+        &gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
         (...)</code></pre></li>
 <li><p>Some commands will require information from the user, which must be provided following these general rules:</p>
 <ul>
@@ -135,9 +136,9 @@ Show all data of a specific record:
 <p>These commands would be valid and equivalent because the positional arguments are given in order (POS1 before POS2) and the keyword arguments (ARG-A and ARG-B) always follow the respective keyword (keyword_a and keyword_b).</p></li>
 <li><p>Monetary amounts must consist of positive or negative integer or decimal values, using the decimal separator configured in the account they belong to. Examples: <code>123</code>, <code>123.24</code>, <code>-123.5</code>. Also, the decimal part may have at most the number of decimal places configured in the respective currency: the program will automatically truncate the remaining decimal places. See the <a href="#currencies">Currencies</a> section below for details on how to find or change an account’s decimal separator and number of decimal places.</p></li>
 <li><p>Dates must be provided in the general form YEAR-MONTH-DAY. The year may be omitted (the current year is implicit) or entered without the century (21st century is implicit). The field separator may be a dash (‘-’) or a forward slash (‘/’). Example: <code>2021-03-12</code>, <code>21-3-12</code> and <code>3/12</code> all refer to the March 12th of 2021 (assuming 2021 is the current year).</p>
-<p>The words <code>today</code> or <code>now</code> may be used in replacement of the current date. Also, in all cases the date is optional, simply omitting it will imply the current date.</p></li>
-<li><p>Text values with spaces must be surrounded by single- or double-quotes. If a text value has either single- or double-quotes it must be surrounded by the other type of quotes.</p></li>
-<li>List values, used when entering tags, are text values separated by commas. Same rule applies as for text values: if any value of the list has spaces or quotes, the whole list must be surrounded by the other kind of quotes. Example:
+<p>The words <code>today</code> or <code>now</code> may be used in replacement of the current date.</p></li>
+<li><p>Text values with spaces must be enveloped by single- or double-quotes. If a text value has single-quotes, use double-quotes to envelop it and vece-versa.</p></li>
+<li>List values, used when entering tags, are text values separated by commas. Same rule applies as for text values: if any value of the list has spaces or quotes, the whole list must be enveloped by the other kind of quotes. Example:
 <ul>
 <li><code>food,vegetables</code></li>
 <li><code>'car, washing liquid'</code></li>
@@ -179,20 +180,15 @@ Documented commands (type help &lt;topic&gt;):
 EOF  backup  ch      close  delete  list  open  sh    source
 add  bye     change  del    help    ls    set   show  trim  </code></pre>
 <p>We may also obtain help on a specific command by typing <code>help</code> followed by the name of the command. For example, for the <a href="#show">show</a> command:</p>
-<pre><code>FinCtrl &gt; help show
-Show all data of a specific record:
-        &gt; sh[ow] settings|manual [inline]|copyright|license [inline]
-        &gt; sh[ow] curr[ency] NAME
-        &gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
-        &gt; sh[ow] tr[ansaction] TRANSACTION_ID</code></pre>
+<p>FinCtrl &gt; help show Show a specific record’s data: &gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID &gt; sh[ow] curr[ency] NAME &gt; sh[ow] settings|manual [inline]|copyright|license [inline] &gt; sh[ow] tr[ansaction] TRANSACTION_ID</p>
 <p>The program will print a brief description of the purpose of the command followed by a list of the command’s allowed syntax. The following conventions apply to every command description:</p>
 <ul>
 <li>Text between square brackets (<code>[]</code>) is optional — you may enter it or not, as you wish;</li>
 <li>Text in lower case letters is mandatory and must be entered as-is;</li>
-<li>Several options separated by vertical bars (the <em>pipe</em> character: <code>|</code>) mean that one (and only one) of them must be chosen;</li>
+<li>Several options separated by vertical bars (the <em>pipe</em> character, ‘<code>|</code>’) mean that one and only one of them must be chosen;</li>
 <li>Finally, text in capital letters is information that must be provided or chosen by the user — check in the commands’ <a href="#reference">REFERENCE</a> section for the precise type of information required.</li>
 </ul>
-<p>The first syntax line of the example above explains how to use the <a href="#show">show</a> command to display some information pertaining to the program. The command may be written as <code>show</code> or <code>sh</code> (the bracketed <code>ow</code> is optional) and must be followed by only one of the options separated by vertical bars, <code>settings</code>, <code>manual</code>, <code>copyright</code> or <code>license</code>.</p>
+<p>The third syntax line of the example above explains how to use the <a href="#show">show</a> command to display some information pertaining to the program. The command may be written as <code>show</code> or <code>sh</code> (the bracketed ‘<code>ow</code>’ is optional) and must be followed by only one of the options separated by vertical bars, <code>settings</code>, <code>manual</code>, <code>copyright</code> or <code>license</code>.</p>
 <p>For example, to show the program’s copyright information, as we have seen in previous section, we could type:</p>
 <pre><code>FinCtrl &gt; show copyright
 Finance Control 0.1
@@ -201,15 +197,14 @@ Finance Control 0.1
 <p>Both the <code>manual</code> and <code>license</code> information will be shown on a new web browser window, assuming a browser is installed on your system:</p>
 <pre><code>FinCtrl &gt; sh manual
 The program&#39;s manual should be displayed in your browser.
-If this doesn&#39;t happen, please read the file &#39;MANUAL&#39;
-in the program&#39;s installation directory.</code></pre>
+If this doesn&#39;t happen, please use the command:
+    &gt; show manual inline</code></pre>
 <p>The commands above take an optional argument, “<code>inline</code>”, that directs the program to print the manual or license in the terminal instead of a web browser:</p>
 <pre><code>FinCtrl &gt; sh manual inline
 FINANCE CONTROL MANUAL
 ======================
 
 This is a very basic program to control personal finances.  It depends on
-Python 3 and was thought to be used only from the command line.  It
 (...)</code></pre>
 <p>Finally, we could also show the current program settings, but as they are specific to each file (and kept in it), this command terminates with an error message:</p>
 <pre><code>FinCtrl &gt; sh settings
@@ -219,7 +214,7 @@ Python 3 and was thought to be used only from the command line.  It
 <p>As stated earlier, the program keeps all information in <a href="https://sqlite.org">SQLite</a> files. To open a file we use the <a href="#open">open</a> command:</p>
 <pre><code>FinCtrl &gt; open test.sqlite
 test.sqlite &gt; </code></pre>
-<p>The <a href="#open">open</a> command takes a single argument, the path to the file to be opened. If a relative path is given, the directory where the program was started will be the base directory. The tilde (<code>~</code>) may be used as the replacement for the user’s home absolute path. For example, in my case, if I used the command <code>open ~/doc/accounting.sqlite</code> the opened file would be <code>/home/antonio/doc/accounting.sqlite</code>. This is standard Unix notation, but may also be used in other systems.</p>
+<p>The <a href="#open">open</a> command takes a single argument, the path to the file to be opened. If a relative path is given, the directory where the program was started will be the base directory. The tilde (<code>~</code>) may be used in substituition of the user’s home absolute path. For example, in my case, if I used the command <code>open ~/doc/accounting.sqlite</code> the opened file would be <code>/home/antonio/doc/accounting.sqlite</code>. This is standard Unix notation, but may also be used in other systems.</p>
 <p>I used the <code>.sqlite</code> extension because this way I can at a glance identify this as an SQLite file when I list my system’s directory, but the program doesn’t require any particular extension and you may even use files without one.</p>
 <p>If the file does not exist, it will be created with default settings (more about this in the subsection below). If it exists but is not a Finance Control file, an error will be presented and the file will not be opened:</p>
 <pre><code>FinCtrl &gt; open testfile.txt
@@ -244,19 +239,19 @@ Default transfer text: Transfer
 Default currency: default</code></pre>
 <p>The settings are:</p>
 <ul>
-<li><em>Prompt</em>: the prompt to be displayed when the file is open;</li>
+<li><em>Prompt</em>: the prompt to be displayed when the file is opened;</li>
 <li><em>Field separator for CSV files</em>: the character used to separate fields when exporting results to a CSV file;</li>
 <li><em>Default deposit</em>, <em>withdrawal</em> and <em>transfer text</em>: the text used as description for any of those operations if none is given when issuing the command;</li>
 <li><em>Default currency</em>: the name of the currency to be used for any new account if no other is given at the time of creation.</li>
 </ul>
-<p>All the settings may be changed with the respective <a href="#set">set</a> command. For example, to change the prompt:</p>
+<p>All settings may be changed with the respective <a href="#set">set</a> command. For example, to change the prompt:</p>
 <pre><code>test.sqlite &gt; set prompt &#39;Test &gt; &#39;
 Test &gt; </code></pre>
 <p>Notice that the new prompt is given between quotes. The reason for this is that it contains spaces and would be interpreted as two different arguments if not enveloped in quotes, which would result in an error:</p>
 <pre><code>Test &gt; set prompt Test &gt;
 *** Error: &#39;set prompt&#39; command takes a single argument:
     &gt; set prompt TEXT</code></pre>
-<p>Most errors that the user can make will, besides the error message, also show the proper syntax of the command.</p>
+<p>Most syntax error messages will also show the proper syntax of the command.</p>
 <p>After changing the prompt, this setting will be preserved in the file and will be used every time it is opened. The other settings may be changed in the same way. To change the default currency, the name of an existing currency must be used, otherwise an error will be shown:</p>
 <pre><code>Test &gt; set currency euro
 *** Error: unable to set currency. Reason:
@@ -267,7 +262,7 @@ Test &gt; </code></pre>
 Name    | Short name | Symbol | Position | Decimal places | Decimal separator
 --------+------------+--------+----------+----------------+------------------
 default |            |        | left     | 2              | .                </code></pre>
-<p>There is always at least one configured currency, named <code>default</code>. We can always check a currency settings with the <a href="#show-currency">show currency</a> command:</p>
+<p>There is always at least one configured currency, named <code>default</code>. We can check a currency settings with the <a href="#show-currency">show currency</a> command:</p>
 <pre><code>Test &gt; sh curr default
 Name: default
 Short name: 
@@ -279,12 +274,12 @@ Decimal separator: .</code></pre>
 <ul>
 <li><em>Name</em>: the name for which the currency is know in the program. You will need this name every time you have to identify the currency, for example, to assign it to an account.</li>
 <li><em>Short name</em>: this is the abbreviation for the currency, like EUR for Euro or USD for United States Dollar. Currently it has no purpose in the program.</li>
-<li><em>Symbol</em>: the currency symbol, like ‘€’ for Euro. Currently it has no use in the program.</li>
-<li><em>Position</em>: the position of the symbol when writing an amount. Must be <code>left</code> or <code>right</code>. Currently it has no use in the program.</li>
+<li><em>Symbol</em>: the currency symbol, like ‘€’ for Euro. Currently it is not used by the program.</li>
+<li><em>Position</em>: the position of the symbol when writing an amount. Must be <code>left</code> or <code>right</code>. Also with no current use in the program.</li>
 <li><em>Decimal places</em>: this indicates the precision of the currency. All amounts will be stored and displayed with this precision. When entering an amount, only the decimal places configured in the respective currency will be stored — all remaining decimal places will be discarded.</li>
 <li><em>Decimal separator</em>: this is the symbol used to split a currency amount integer and decimal parts. It will be used to display all currency quantities and to scan the quantities input by the user.</li>
 </ul>
-<p>If all your accounts are in the same currency, you may use the default and change its settings as you desire. If not or if you prefer to have the currency name correspond to its actual name, you must use the <a href="#add-currency">add currency</a> command. Let’s add the Euro currency to the Test file:</p>
+<p>If all your accounts are in the same currency, you may use the default and just change its settings as you desire. If not or if you prefer to have the currency name correspond to its actual name, you must use the <a href="#add-currency">add currency</a> command. Let’s add the Euro currency to the Test file:</p>
 <pre><code>Test &gt; add curr Euro short EUR symbol € position right
 Test &gt; </code></pre>
 <p>The only required argument is the name of the currency to add, all others are optional. If an argument is not given, the corresponding value from the <code>default</code> currency will be used. We may confirm this showing the properties of the currency we just added and comparing it to the default:</p>
@@ -322,7 +317,7 @@ Default currency: Euro</code></pre>
 <p>For the purpose of this program, accounts are the entities where money is stored. They will always have a balance, which is the total amount available, and a <em>current</em> balance, which is the amount available at the current date. We can list the available accounts with the <a href="#list-accounts">list accounts</a> command:</p>
 <pre><code>Test &gt; list accounts
 *** Error: Empty set</code></pre>
-<p>Because none is configured yet, we get an error. To add an account we use the appropriately named command <a href="#add-account">add account</a>. The only required argument to this command is the name of the account to be created, but we may also give it a description and the currency that the account is in. Let’s create two accounts, a <em>bank account</em> and a <em>pocket account</em>, for the money we have in coin:</p>
+<p>Because none is configured yet, we get an error. To add an account we use the appropriately named command <a href="#add-account">add account</a>. The only required argument to this command is the name of the account to be created, but we may also give it a description and the currency that the account is in. Let’s create two accounts, a <em>bank account</em> and a <em>pocket account</em>, for the hard currency we have with us:</p>
 <pre><code>Test &gt; add account Pocket
 Test &gt; add acc Bank descr &#39;My bank account&#39;
 Test &gt;
@@ -365,7 +360,7 @@ Test &gt; </code></pre>
 <pre><code>&gt; add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \
 :                   [neg] [descr[iption] TEXT] [date DATE] \
 :                   of AMOUNT | parcel &quot;TEXT AMOUNT [tags LIST]&quot; ...</code></pre>
-<p>We can see that the <code>on</code> argument is required as is either the <code>of</code> or <code>parcel</code> arguments. <code>neg</code>, <code>description</code> and <code>date</code> are optional. Let me detail the arguments used above:</p>
+<p>We can see that the <code>on</code> argument is required as is one (but not both) of the arguments <code>of</code> or <code>parcel</code>. <code>neg</code>, <code>description</code> and <code>date</code> are optional. Let me detail the arguments used above:</p>
 <ul>
 <li><strong>on</strong>: the account on which the transaction will be added, in this case the <em>Pocket</em> account;</li>
 <li><strong>description</strong>: the description of this transaction that will be shown when listing transactions, in this case <em>Initial amount</em> which, because it has a space, must be enveloped in quotes;</li>
@@ -377,8 +372,8 @@ Test &gt; </code></pre>
 <p>A very important fact to not forget when adding a parcel on the <a href="#add-transaction">add transaction</a> command is that the whole parcel data must be within quotes. This is because the interpreter must perceive the complete data as a single argument. Forgetting the quotes will result in an error being reported. Because of this, if the parcel description or any of the tags have spaces, they must also be enveloped in quotes — the other kind of the quotes used for the complete parcel data. That is why the parcel description above is within single-quotes and the parcel data within double-quotes.</p>
 <p>The optional arguments not used in this example were:</p>
 <ul>
-<li><p><strong>neg</strong>: the only positional argument of the command, if used, would make all parcel amounts negative — this may be nice when entering a complex bill, for example, so that the user doesn’t need to keep adding the minus symbol to all the monetary values;</p></li>
-<li><p><strong>of</strong>: this argument could actually have been used here — it means that the transaction has only one parcel that will be added automatically with the amount and description of the whole transaction.</p></li>
+<li><strong>neg</strong>: the only positional argument of the command, if used, would make all parcel amounts negative — this may be nice when entering a complex bill, for example, so that the user doesn’t need to keep adding the minus symbol to all the monetary values;</li>
+<li><strong>of</strong>: this argument could actually have been used here — it means that the transaction has a single parcel that will be added automatically with the amount and description of the whole transaction.</li>
 </ul>
 <p>An easier way to add an amount to an account would be to use the <a href="#add-deposit">add deposit</a> command. This is a shortcut to the previous command and takes this form:</p>
 <pre><code>&gt; add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \
@@ -386,7 +381,7 @@ Test &gt; </code></pre>
 <p>Let’s use it to add the initial amount to the <em>Bank</em> account:</p>
 <pre><code>Test &gt; add deposit of 5000 on bank date 3/1
 Transaction id: 2</code></pre>
-<p>You should have noticed that each time we add a transaction, the program answers with the transaction identification. We need this number every time we have to refer the transaction, like when we want to see its details with the <a href="#show-transaction">show transaction</a> command:</p>
+<p>You should have noticed that each time we add a transaction, the program answers with the transaction identification. We need this number every time we have to refer to the transaction, like when we want to see its details with the <a href="#show-transaction">show transaction</a> command:</p>
 <pre><code>Test &gt; sh tr 2
 Account: Bank (id: 2)
 Description: Deposit
@@ -452,7 +447,7 @@ Account | Id | Date       | Description           | Total amount | Account balan
 --------+----+------------+-----------------------+--------------+----------------
 Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
 Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01</code></pre>
-<p>If the <code>from</code> date is omitted, the listing starts at the first transaction; if instead the <code>to</code> date is omitted, the listing ends in the most recent recorded transaction. As we have seen earlier, if we give no date interval, all transactions are listed. “<code>today</code>” (or “<code>now</code>”) are just shortcuts for the present date.</p>
+<p>If the <code>from</code> date is omitted, the listing starts at the first transaction; if instead the <code>to</code> date is omitted, the listing ends in the most recent recorded transaction. As we have seen earlier, if we give no date interval, all transactions are listed. “<code>today</code>” (or “<code>now</code>”) are just shortcuts for the present date (remember that you may add transactions for future dates).</p>
 <p>We now have seen all the shortcut commands that allow us to add a single parcel transaction. To add transactions with multiple parcels we have two commands, <a href="#add-expense">add expense</a> and the <code>add transaction</code> that we have covered above. They are basically the same, the only difference being that the former will automatically turn all parcel amounts to negative values, which is handy when you are adding some kind of bill. Of course, you could do the same with the <code>add transaction</code> command together with the <code>neg</code> argument. Let’s add the bill from the supermarket trip to buy the ingredients for the chocolate cake mentioned earlier:</p>
 <ul>
 <li>6 eggs, 0.85€</li>
@@ -488,7 +483,7 @@ Parcels:
   (10) chocolate: -1.49 (food, sweets)</code></pre>
 <h3 id="correcting-mistakes">Correcting mistakes</h3>
 <p>It is human to err and that will probably happen a lot if you use this program. Therefore, the program offers two general commands to correct the mistakes the user can make, <a href="#change">change</a> and <a href="#delete">delete</a>, and two special commands that allow us to expand some transaction already entered, <a href="#add-parcel">add parcel</a> and <a href="#add-tag">add tag</a>. We’ll start with these.</p>
-<p>If, when adding an expense, we forget a parcel it is possible to add it afterwards with the command <a href="#add-parcel">add parcel</a> — we only need to know the transaction identification. For example, when listing the last transaction of the section above we notice that the total amount is different from the amount on the receipt. Double-checking this we find that we forgot to add the baking powder parcel. Let’s correct that adding that parcel to transaction 6:</p>
+<p>If, when adding an expense, we forget a parcel it is possible to add it afterwards with the command <a href="#add-parcel">add parcel</a> — we only need to know the transaction identification. For example, when listing the last transaction of the section above we may notice that the total amount is different from the amount on the receipt. Double-checking this we find that we forgot to add the baking powder parcel. Let’s correct that adding that parcel to transaction 6:</p>
 <pre><code>Test &gt; add parcel &#39;baking powder&#39; of 0.85 to 6
 Test &gt; sh tr 6
 Account: Bank (id: 2)
@@ -502,7 +497,7 @@ Parcels:
   (9) butter: -1.39 (breakfast, food)
   (10) chocolate: -1.49 (food, sweets)
   (11) baking powder: 0.85</code></pre>
-<p>Oops, it seems I forgot to add the parcel tags and that the value must be negative like the others. No problem, we may also change that. First, we add the missing tags to parcel 11 (the baking powder as listed in the <code>show transaction</code> output) with the <a href="#add-tag">add tag</a> command:</p>
+<p>Oops, it seems I forgot to add the parcel tags and that the value must be negative like the others. No problem, we may also change that. First, we add the missing tags to parcel 11 (the baking powder, as listed in the <code>show transaction</code> output) with the <a href="#add-tag">add tag</a> command:</p>
 <pre><code>Test &gt; add tag food to 11
 Test &gt; add tag grocery to 11</code></pre>
 <p>And now we use the <a href="#change-parcel">change parcel</a> commando to change the amount of the same parcel:</p>
@@ -549,9 +544,9 @@ Parcels:
   (10) chocolate: -1.49 (food, sweets)
   (11) baking power: -0.85 (food, grocery)</code></pre>
 <p>All parcels tagged with <em>breakfast</em> would now be tagged with <em>dairy</em> which may not be what you intended… If you what you intended was to remove the tag <em>breakfast</em> from parcel 9 only and to replace it with the tag dairy you could have used the <a href="#delete-tag">delete tag</a> command and then <a href="#add-tag">add tag</a>:</p>
+<p>(if you try this after the previous command it will fail, because parcel 9 is already tagged with <em>dairy</em>)</p>
 <pre><code>Test &gt; delete tag breakfast from 9
 Test &gt; add tag dairy to 9</code></pre>
-<p>(if you try this after the previous command it will fail, because parcel 9 is already tagged with <em>dairy</em>)</p>
 <p><a href="#delete-tag">delete tag</a> without a parcel number will delete the referred tag from <strong>all parcels</strong>.</p>
 <p>Another variant of the <a href="#change">change</a> command is <a href="#change-transaction">change transaction</a> and it may be used, for example, to change a transaction description:</p>
 <pre><code>Test &gt; ls tr
@@ -596,7 +591,8 @@ ID | Name   | Description     | Balance
  1 | Pocket | Money with me   |  127.73
  2 | Bank   | My bank account | 4930.01</code></pre>
 <p>The last general command to correct mistakes is the <a href="#delete">delete</a> command. We already covered both versions of the <a href="#delete-tag">delete tag</a> command above and although the remaining delete commands are very similar, there are some issues that must be mentioned for each one of them.</p>
-<p><a href="#delete-parcel">delete parcel</a> and <a href="#delete-transaction">delete transaction</a> take the identification number of the item to remove and will remove it permanently from the database: there is no way to recover them other than entering all its data again! Previously I said that every transaction must have at least one parcel: well, that is generally true and logic but you <em>can</em> remove the last parcel from a transaction with the <code>delete transaction</code> command. The transaction will be empty and its total amount zero:</p>
+<p><a href="#delete-parcel">delete parcel</a> and <a href="#delete-transaction">delete transaction</a> take the identification number of the item to remove and will remove it permanently from the database: there is no way to recover them other than entering all its data again!</p>
+<p>Previously I said that every transaction must have at least one parcel: well, that is generally true and logic but you <em>can</em> remove the last parcel from a transaction with the <code>delete transaction</code> command. The transaction will be empty and its total amount zero:</p>
 <pre><code>Test &gt; sh tr 3
 Account: Bank (id: 2)
 Description: Phone bill, Feb. 2021
@@ -696,7 +692,7 @@ Account | Id | Date       | Description    | Total amount | Account balance
 Pocket  |  9 | 2021-03-12 | ATM withdrawal |        60.00 |          176.83
 Pocket  |  7 | 2021-03-12 | Supermarket    |       -10.90 |          116.83
 Bank    |  8 | 2021-03-12 | ATM withdrawal |       -60.00 |         4870.01</code></pre>
-<p>You could also <a href="#show">show</a> any of the transactions.</p>
+<p>You could also <a href="#show">show</a> any of the transactions to double-check their correctness.</p>
 <p>If all your work on the program is just entering these commands, you could even pass it as an argument to the program itself. Consider this simple example (save it as test-1.txt):</p>
 <pre><code>open test.sqlite
 add deposit of 150 on bank descr &#39;Lottery prize&#39; \
@@ -767,43 +763,155 @@ Test &gt; </code></pre>
 <p>(you should replace it with the path where you uncompressed the program) and that the database will be located in</p>
 <pre><code>C:\Users\USER\Documents\finctrl.sqlite</code></pre>
 <p>(you should replace this with the path where you wish the database to reside)</p></li>
-<li><p>To start the program just open the Windows Explorer on the folder where you created the batch file and double click on it. Provided everything is ok, a terminal window should open and you should see the program’s prompt:</p>
+<li><p>To start the program just open the Windows Explorer on the folder where you created the batch file and double click on it. If you created the batch file on the Desktop (you can do that, of course), you just need to double-click its icon. Provided everything is ok, a terminal window should open and you should see the program’s prompt:</p>
 <pre><code>finctrl.sqlite &gt;</code></pre>
 <p>Don’t forget you can change the terminal window settings (color, font, height and width) if you don’t like the Windows default.</p></li>
 </ol>
 <h2 id="reference">REFERENCE</h2>
+<h3 id="commands-arguments-reference">Command’s arguments reference</h3>
+<p>The command’s arguments must follow these general rules:</p>
+<ul>
+<li><p><strong>ACCOUNT_ID</strong>: account identification number (see <a href="#list-accounts">list accounts</a>).</p></li>
+<li><p><strong>ACCOUNT_NAME</strong>: exact name of the account (see <a href="#list-accounts">list accounts</a>). This argument is <em>not</em> case-sensitive.</p></li>
+<li><p><strong>AMOUNT</strong>: an integer or decimal number. The decimal part should be separated from the integer by the decimal separator character configured in the corresponding currency (see <a href="#show-currency">show currency</a>).</p></li>
+<li><p><strong>CHARACTER</strong>: a single character. This argument <em>is</em> case-sensitive and cannot be a decimal digit (0-9).</p></li>
+<li><p><strong>DATE</strong>: date in the general format YEAR-MONTH-DAY. The field separators may be dashes (‘-’) or forward slashes (‘/’). The year may be omitted (the current year is implicit) or without the century (21st century is implicit).</p></li>
+<li><p><strong>FILE</strong>: path to the file to be opened or saved. May be an absolute path or relative to the directory where the program was started. The tilde (‘~’) will be replaced by the current user’s home directory absolute path.</p></li>
+<li><p><strong>LEFT</strong> / <strong>RIGHT</strong> / <strong>ON</strong> / <strong>OFF</strong>: exact text that should be entered. This argument is <em>not</em> case-sensitive.</p></li>
+<li><p><strong>LIST</strong>: comma-separated list of text arguments. If the arguments contain spaces or quotes, the whole list must be enveloped in quotes (single or double).</p></li>
+<li><p><strong>NAME</strong>: exact name of an existing currency, as entered in the database. (see <a href="#list-currencies">list currencies</a>). This argument is <em>not</em> case-sensitive.</p></li>
+<li><p><strong>NUMBER</strong>: integer number.</p></li>
+<li><p><strong>TEXT</strong>: sequence of characters. Must be enveloped in quotes (single or double) if it contains spaces or quotes.</p></li>
+<li><p><strong>TRANSACTION_ID</strong>: transaction identification number (see <a href="#list-transactions">list transactions</a>).</p></li>
+<li><p><strong>PARCEL_ID</strong>: parcel identification number (see <a href="#show-transaction">show transaction</a>).</p></li>
+</ul>
 <h3 id="add">add</h3>
+<p><code>add</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="add-account">add account</h4>
+<p>(shortcut: <code>add acc</code>)</p>
+<p>Adds an account to the database.</p>
 <pre><code>&gt; add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): name for the new account. Should be short and without spaces, as it may be used for the account identification in other commands.</li>
+<li><strong>description</strong> (<em>optional</em>): description of the new account.</li>
+<li><strong>currency</strong> (<em>optional</em>): name of the currency for the new account. If not provided, the default currency of the database will be used (see <a href="#show-settings">show settings</a>).</li>
+</ul>
 <h4 id="add-currency">add currency</h4>
-<pre><code>&gt; add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \\
+<p>(shorcut: <code>add curr</code>)</p>
+<p>Adds a currency to the database.</p>
+<pre><code>&gt; add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \
 :     [decplaces NUMBER] [decsep CHARACTER]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): name for the new currency. Should be short and without spaces as it will be used to identify the currency in other commands.</li>
+<li><strong>short</strong> (<em>optional</em>): short name for the currency, like ‘EUR’ for Euro or ‘USD’ for United States Dollar. Currently not used in the program.</li>
+<li><strong>symbol</strong> (<em>optional</em>): symbol of the currency, like ‘€’ for Euro or ‘$’ for Dollar. Currently not used in the program.</li>
+<li><strong>position</strong> (<em>optional</em>): position of the currency symbol relative the digits when printing an amount in the currency. Currently not used in the program.</li>
+<li><strong>decplaces</strong> (<em>optional</em>): number of decimal places for the currency. This is the precision that will be used when storing and displaying amounts in the currency (all other digits will be discarded).</li>
+<li><strong>decsep</strong> (<em>optional</em>): character used to separate the integer from the decimal part of amounts in the currency. It will be used to print currency amounts as well to scan amounts input by the user.</li>
+</ul>
+<p>All optional arguments not provided, with the exception of the short name, will be copied from the currency named <code>default</code>.</p>
 <h4 id="add-deposit">add deposit</h4>
-<pre><code>&gt; add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
-:     [descr TEXT] [date DATE] [tags LIST]</code></pre>
+<p>Adds a single-parcel transaction to the database.</p>
+<pre><code>&gt; add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \
+:     [descr[iption] TEXT] [date DATE] [tags LIST]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>of</strong>: total amount of the transaction. Will be the amount of the single parcel.</li>
+<li><strong>on</strong>: account on which the transaction will be added (see <a href="#list-accounts">list accounts</a>).</li>
+<li><strong>description</strong> (<em>optional</em>): description of the transaction and parcel. If not provided the <em>default deposit text</em> will be used (see <a href="#show-settings">show settings</a>).</li>
+<li><strong>date</strong> (<em>optional</em>): the date the transaction is effective. If not provided, the current date will be used.</li>
+<li><strong>tags</strong> (<em>optional</em>): list of tags to be added to the single parcel.</li>
+</ul>
 <h4 id="add-expense">add expense</h4>
-<pre><code>&gt; add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \\
-:     [descr[iption] TEXT] [date DATE] \\
+<p>(shortcut: <code>add exp</code>)</p>
+<p>Adds a negative transaction to the database. All amounts provided will be multiplied by <code>-1</code> before being added to the database.</p>
+<pre><code>&gt; add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \
+:     [descr[iption] TEXT] [date DATE] \
 :     of AMOUNT | parcel &quot;TEXT AMOUNT [tags LIST]&quot;...</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>on</strong>: name or identification of the account on which the transaction will be added (see <a href="#list-accounts">list accounts</a>).</li>
+<li><strong>description</strong> (<em>optional</em>): description of the transaction.</li>
+<li><strong>date</strong> (<em>optional</em>): date on which the transaction will be effective. If not provided the current date will be used.</li>
+<li><strong>of</strong>: amount of the single parcel transaction to be added. If provided, the user may not provide any parcel.</li>
+<li><strong>parcel</strong>: description of one parcel to be added to this transaction. Transactions may have any number of parcels. The parcel description must be enveloped in quotes (single or double). The parcel description must have these arguments:
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): the description of this parcel;</li>
+<li><strong>AMOUNT</strong> (<em>positional</em>): the amount of this parcel;</li>
+<li><strong>tags</strong> (<em>optional</em>): list of tags to be added to this parcel.</li>
+</ul></li>
+</ul>
 <h4 id="add-parcel">add parcel</h4>
+<p>Adds a parcel to an existing transaction.</p>
 <pre><code>&gt; add parcel TEXT of AMOUNT on TRANSACTION_ID [tags LIST]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): description of the parcel to be added.</li>
+<li><strong>of</strong>: amount of the parcel to be added.</li>
+<li><strong>on</strong>: identification of the transaction on which the parcel will be added (see <a href="#list-transactions">list transactions</a>).</li>
+<li><strong>tags</strong> (<em>optional</em>): list of tags to be added to this parcel.</li>
+</ul>
 <h4 id="add-tag">add tag</h4>
+<p>Adds a tag to an existing parcel.</p>
 <pre><code>&gt; add tag TEXT to PARCEL_ID</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): the tag to add.</li>
+<li><strong>to</strong>: identification of the parcel to which the tag will be added (see <a href="#show-transaction">show transaction</a>).</li>
+</ul>
 <h4 id="add-transaction">add transaction</h4>
-<pre><code>&gt; add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \\
-:     [neg] [descr[iption] TEXT] [date DATE] \\
+<p>(shortcut: <code>add tr</code>)</p>
+<p>Adds a transaction to the database.</p>
+<pre><code>&gt; add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \
+:     [neg] [descr[iption] TEXT] [date DATE] \
 :     of AMOUNT | parcel &quot;TEXT AMOUNT [tags LIST]&quot;...</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>on</strong>: name or identification of the account on which the transaction will be added (see <a href="#list-accounts">list accounts</a>).</li>
+<li><strong>neg</strong> (<em>positional</em>, <em>optional</em>): indication that all amounts should be multiplied by <code>-1</code> before being added to the database.</li>
+<li><strong>description</strong> (<em>optional</em>): description of the transaction.</li>
+<li><strong>date</strong> (<em>optional</em>): date on which the transaction will be effective. If not provided, the current date will be used.</li>
+<li><strong>of</strong>: amount of the single parcel transaction to be added. If provided, the user may not provide any extra parcel.</li>
+<li><strong>parcel</strong>: description of one parcel to be added to this transaction. Transactions may have any number of parcels. The parcel description must be enveloped in quotes (single or double). The parcel description must have these arguments:
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): the description of this parcel;</li>
+<li><strong>AMOUNT</strong> (<em>positional</em>): the amount of this parcel;</li>
+<li><strong>tags</strong> (<em>optional</em>): list of tags to be added to this parcel.</li>
+</ul></li>
+</ul>
 <h4 id="add-transfer">add transfer</h4>
+<p>Adds two transactions to the database. The first removes the amount from an account and the second adds it to the other account, effectively transfering it from one to the other.</p>
 <pre><code>&gt; add transfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
 :     from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>of</strong>: total amount of the transaction. Will be the amount of the single parcel of each transaction, being multiplied by <code>-1</code> on the first.</li>
+<li><strong>description</strong> (<em>optional</em>): description of the transaction and parcels. If not provided the <em>default transfer text</em> will be used (see <a href="#show-settings">show settings</a>).</li>
+<li><strong>date</strong> (<em>optional</em>): the date the transactions are effective. If not provided, the current date will be used.</li>
+<li><strong>tags</strong> (<em>optional</em>): list of tags to be added to the parcels.</li>
+<li><strong>from</strong>: account from which the amount will be withdrawan (see <a href="#list-accounts">list accounts</a>).</li>
+<li><strong>to</strong>: account on which the amount will be deposited (see <a href="#list-accounts">list accounts</a>).</li>
+</ul>
 <h4 id="add-withdrawal">add withdrawal</h4>
+<p>Adds a single-parcel negative transaction to the database. The amount will be multiplied by <code>-1</code> before being added to the database.</p>
 <pre><code>&gt; add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
 :     [descr TEXT] [date DATE] [tags LIST]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>of</strong>: total amount of the transaction. Will be the amount of the single parcel. Will be multiplied by <code>-1</code> before being added to the database.</li>
+<li><strong>on</strong>: account on which the transaction will be added (see <a href="#list-accounts">list accounts</a>).</li>
+<li><strong>description</strong> (<em>optional</em>): description of the transaction and parcel. If not provided the <em>default withdrawal text</em> will be used (see <a href="#show-settings">show settings</a>).</li>
+<li><strong>date</strong> (<em>optional</em>): the date the transaction is effective. If not provided, the current date will be used.</li>
+<li><strong>tags</strong> (<em>optional</em>): list of tags to be added to the single parcel.</li>
+</ul>
 <h3 id="backup">backup</h3>
 <pre><code>&gt; backup FILE</code></pre>
 <h3 id="bye">bye</h3>
 <pre><code>&gt; bye|EOF</code></pre>
 <h3 id="change">change</h3>
+<p><code>change</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="change-account">change account</h4>
 <pre><code>&gt; ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID to TEXT</code></pre>
 <h4 id="change-currency">change currency</h4>
@@ -826,6 +934,7 @@ Test &gt; </code></pre>
 <h3 id="close">close</h3>
 <pre><code>&gt; close</code></pre>
 <h3 id="delete">delete</h3>
+<p><code>delete</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="delete-account">delete account</h4>
 <pre><code>&gt; del[ete] acc[ount] ACCOUNT_NAME|ACCOUNT_ID</code></pre>
 <h4 id="delete-transaction">delete transaction</h4>
@@ -839,6 +948,7 @@ Test &gt; </code></pre>
 <h3 id="help">help</h3>
 <pre><code>&gt; help|? [COMMAND]</code></pre>
 <h3 id="list">list</h3>
+<p><code>list</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="list-accounts">list accounts</h4>
 <pre><code>&gt; list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]</code></pre>
 <h4 id="list-currencies">list currencies</h4>
@@ -853,6 +963,7 @@ Test &gt; </code></pre>
 <h3 id="open">open</h3>
 <pre><code>&gt; open FILE</code></pre>
 <h3 id="set">set</h3>
+<p><code>set</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="set-csvsep">set csvsep</h4>
 <pre><code>&gt; set csvsep CHARACTER</code></pre>
 <h4 id="set-currency">set currency</h4>
@@ -868,6 +979,7 @@ Test &gt; </code></pre>
 <h4 id="set-withdrawal">set withdrawal</h4>
 <pre><code>&gt; set withdrawal descr[iption] TEXT</code></pre>
 <h3 id="show">show</h3>
+<p><code>show</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="show-account">show account</h4>
 <pre><code>&gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID</code></pre>
 <h4 id="show-copyright">show copyright</h4>
@@ -885,12 +997,13 @@ Test &gt; </code></pre>
 <h3 id="source">source</h3>
 <pre><code>&gt; source FILE</code></pre>
 <h3 id="trim">trim</h3>
+<p><code>trim</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="trim-account">trim account</h4>
 <pre><code>&gt; trim acc[ount] ACCOUNT_NAME|ACCOUNT_ID upto DATE</code></pre>
 <h4 id="trim-storage">trim storage</h4>
 <pre><code>&gt; trim storage upto DATE</code></pre>
 <h3 id="database-structure">Database structure</h3>
-<p>Below is the instructions used to create the database on SQLite, which reflect its schema:</p>
+<p>Below are the instructions used to create the database on SQLite, which reflect its schema:</p>
 <pre><code>CREATE TABLE metadata (
      key         text not null,
      value       text not null,

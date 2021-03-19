@@ -214,7 +214,7 @@ class FinCtrlCmd(cmd.Cmd):
         > add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \\
         :                [decplaces NUMBER] [decsep CHARACTER]
         > add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
-        :             [descr TEXT] [date DATE] [tags LIST]
+        :             [descr[iption] TEXT] [date DATE] [tags LIST]
         > add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \\
         :               [descr[iption] TEXT] [date DATE] \\
         :               of AMOUNT | parcel "TEXT AMOUNT [tags LIST]" ...
@@ -223,10 +223,10 @@ class FinCtrlCmd(cmd.Cmd):
         > add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \\
         :                   [neg] [descr[iption] TEXT] [date DATE] \\
         :                   of AMOUNT | parcel "TEXT AMOUNT [tags LIST]" ...
-        > add transfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
+        > add transfer of AMOUNT [descr[iption] TEXT] [date DATE] [tags LIST]
         :              from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID
         > add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
-        :                [descr TEXT] [date DATE] [tags LIST]
+        :                [descr[iption] TEXT] [date DATE] [tags LIST]
         """
         if self._store:
             self._dispatch('add', arg)
