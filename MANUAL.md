@@ -10,7 +10,7 @@ overview of the program.
 
 This is what the program IS NOT and CANNOT DO:
 
-* It will not contact your homebanking system;
+* It will not contact your home banking system;
 * It will not scan your bills and insert them automatically;
 * It will not produce beautiful (or even ugly) graphics;
 * It will not analyse your savings and make predictions on where you will be in
@@ -261,7 +261,7 @@ program's answer, if any.  Some notes:
      
    * Text values with spaces must be enveloped by single- or double-quotes.
      If a text value has single-quotes, use double-quotes to envelop it and
-     vece-versa.
+     vice-versa.
      
    * List values, used when entering tags, are text values separated by commas.
      Same rule applies as for text values: if any value of the list has spaces
@@ -406,7 +406,7 @@ As stated earlier, the program keeps all information in
 
 The [open] command takes a single argument, the path to the file to be opened.
 If a relative path is given, the directory where the program was started will
-be the base directory. The tilde (`~`) may be used in substituition of the
+be the base directory. The tilde (`~`) may be used in substitution of the
 user's home absolute path.  For example, in my case, if I used the command
 `open ~/doc/accounting.sqlite` the opened file would be
 `/home/antonio/doc/accounting.sqlite`.  This is standard Unix notation, but may
@@ -1430,6 +1430,7 @@ REFERENCE
 ---------
 
 ### Command's arguments reference
+
 The command's arguments must follow these general rules:
 
 - **ACCOUNT_ID**: account identification number (see [list accounts]).
@@ -1478,6 +1479,7 @@ The command's arguments must follow these general rules:
 `add` is a *meta-command* with several available forms.  Below are their
 descriptions:
 
+
 #### add account
 (shortcut: `add acc`)
 
@@ -1495,8 +1497,9 @@ Arguments:
   provided, the default currency of the database will be used
   (see [show settings]).
 
+
 #### add currency
-(shorcut: `add curr`)
+(shortcut: `add curr`)
 
 Adds a currency to the database.
 
@@ -1524,6 +1527,7 @@ Arguments:
 All optional arguments not provided, with the exception of the short name, will
 be copied from the currency named `default`.
 
+
 #### add deposit
 
 Adds a single-parcel transaction to the database.
@@ -1542,6 +1546,7 @@ Arguments:
 - **date** (*optional*): the date the transaction is effective.  If not
   provided, the current date will be used.
 - **tags** (*optional*): list of tags to be added to the single parcel.
+
 
 #### add expense
 (shortcut: `add exp`)
@@ -1570,6 +1575,7 @@ Arguments:
   - **AMOUNT** (*positional*): the amount of this parcel;
   - **tags** (*optional*): list of tags to be added to this parcel.
 
+
 #### add parcel
 
 Adds a parcel to an existing transaction.
@@ -1584,6 +1590,7 @@ Arguments:
   (see [list transactions]).
 - **tags** (*optional*): list of tags to be added to this parcel.
 
+
 #### add tag
 
 Adds a tag to an existing parcel.
@@ -1595,6 +1602,7 @@ Arguments:
 - **TEXT** (*positional*): the tag to add.
 - **to**: identification of the parcel to which the tag will be added (see
   [show transaction]).
+
 
 #### add transaction
 (shortcut: `add tr`)
@@ -1624,10 +1632,11 @@ Arguments:
   - **AMOUNT** (*positional*): the amount of this parcel;
   - **tags** (*optional*): list of tags to be added to this parcel.
 
+
 #### add transfer
 
 Adds two transactions to the database.  The first removes the amount from an
-account and the second adds it to the other account, effectively transfering
+account and the second adds it to the other account, effectively transferring
 it from one to the other.
 
     > add transfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
@@ -1642,9 +1651,10 @@ Arguments:
 - **date** (*optional*): the date the transactions are effective.  If not
   provided, the current date will be used.
 - **tags** (*optional*): list of tags to be added to the parcels.
-- **from**: account from which the amount will be withdrawan (see
+- **from**: account from which the amount will be withdrawn (see
   [list accounts]).
 - **to**: account on which the amount will be deposited (see [list accounts]).
+
 
 #### add withdrawal
 
@@ -1666,191 +1676,556 @@ Arguments:
   provided, the current date will be used.
 - **tags** (*optional*): list of tags to be added to the single parcel.
 
+
 ### backup
+
+Copies current database to a new file.
 
     > backup FILE
 
+Arguments:
+
+- **FILE** (*positional*): path to the new file.  May be an absolute or
+  relative path (relative to the directory the application was started).  The
+  tilde ('`~`') may be used in substitution of the users' absolute home path.
+
+
 ### bye
+(shortcuts: `EOF`; the system's end-of-file character)
+
+Quits the Finance Control program.
 
     > bye|EOF
+
 
 ### change
 
 `change` is a *meta-command* with several available forms.  Below are their
 descriptions:
 
-#### change account
 
-    > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID to TEXT
+#### change account
+(shortcuts: `change acc`; `ch account`; `ch acc`)
+
+Changes an account's description.
+
+    > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID descr[iption] to TEXT
+    
+Changes an account's name.
+
+    > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID name to TEXT
+
+Arguments:
+
+- **ACCOUNT_NAME|ACCOUNT_ID** (*positional*): identification of the account to
+  change.
+- **to**: new description or name.
+
 
 #### change currency
+(shortcuts: `change curr`; `ch currency`; `ch curr`)
 
-    > ch[ange] curr[ency] NAME [short TEXT] \\
-    :          [symbol TEXT] [position LEFT|RIGHT] \\
+Changes a currency's settings:
+
+    > ch[ange] curr[ency] NAME [short TEXT] \
+    :          [symbol TEXT] [position LEFT|RIGHT] \
     :          [decplaces NUMBER] [decsep CHARACTER]
 
+Arguments:
+
+- **NAME** (*positional*): name of the currency to change.
+- **short** (*optional*): new short name for the currency, like 'EUR' for Euro
+  or 'USD' for United States Dollar. Currently not used in the program.
+- **symbol** (*optional*): new symbol of the currency, like '€' for Euro or '$'
+  for Dollar. Currently not used in the program
+- **position** (*optional*): new position of the currency symbol relative the
+  digits when printing an amount in the currency. Currently not used in the 
+  program.
+- **decplaces** (*optional*): new number of decimal places for the currency.
+  This is the precision that will be used when storing and displaying amounts
+  in the currency (all other digits will be discarded).
+- **decsep** (*optional*): new character used to separate the integer from the
+  decimal part of amounts in the currency. It will be used to print currency
+  amounts as well to scan amounts input by the user.
+
+
 #### change parcel
+(shortcut: `ch parcel`)
+
+Changes a parcel's description.
 
     > ch[ange] parcel PARCEL_ID descr[iption] to TEXT
 
+Changes a parcel's amount.
+
     > ch[ange] parcel PARCEL_ID amount to AMOUNT
 
+Arguments:
+
+- **PARCEL_ID** (*positional*): identification number of the parcel to change.
+- **to**: new text or amount.
+
+
 #### change tag
+(shortcut: `ch tag`)
+
+Renames a tag.
 
     > ch[ange] tag TAG to TEXT
 
-#### change transaction
+Arguments:
 
-    > ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT
+- **TAG** (*positional*): tag name to be renamed.
+- **to**: new name for the tag.
+
+
+#### change transaction
+(shortcuts: `change tr`; `ch transaction`; `ch tr`)
+
+Moves a transaction to another account.
+
+    > ch[ange] tr[ansaction] TRANSACTION_ID acc[ount] \
+    :          to ACCOUNT_NAME|ACCOUNT_ID
+
+Changes a transaction's date.
 
     > ch[ange] tr[ansaction] TRANSACTION_ID date to DATE
 
-    > ch[ange] tr[ansaction] TRANSACTION_ID acc[ount] \\
-    :          to ACCOUNT_NAME|ACCOUNT_ID
+Changes a transaction's description.
+
+    > ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT
+    
+Arguments:
+
+- **TRANSACTION_ID** (*positional*): identification number of the transaction
+  to change.
+- **to**: new transaction account, date or description.
+
 
 ### close
 
+Closes the currently opened file.
+
     > close
+
 
 ### delete
 
 `delete` is a *meta-command* with several available forms.  Below are their
 descriptions:
 
+
 #### delete account
+(shortcuts: `delete acc`; `del account`; `del acc`)
+
+Removes an account and all its transactions and corresponding parcels from the
+database.
 
     > del[ete] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
 
+Arguments:
+
+- **ACCOUNT_NAME|ACCOUNT_ID** (*positional*): identification of the account to
+  be deleted from the database.
+
+
 #### delete transaction
+(shortcuts: `delete tr`; `del transaction`; `del tr`)
+
+Removes a transaction and corresponding parcels from the database.
 
     > del[ete] tr[ansaction] TRANSACTION_ID
 
+Arguments:
+
+- **TRANSACTION_ID** (*positional*): identification of the transaction to delete.
+
+
 #### delete parcel
+(shortcut: `del parcel`)
+
+Removes a parcel from a transaction.
 
     > del[ete] parcel PARCEL_ID
 
+Arguments:
+
+- **PARCEL_ID** (*positional*): identification of the parcel to delete.
+
+
 #### delete tag
+(shortcut: `del tag`)
+
+Removes a tag from a parcel.
 
     > del[ete] tag TEXT from PARCEL_ID
 
+Removes a tag from all parcels.
+
     > del[ete] tag TEXT
 
+Arguments:
+
+- **TEXT** (*positional*): tag to be deleted.
+- *from*: identification of the parcel from which the tag will be deleted.
+
+
 ### help
+(shortcut: `?`)
+
+Displays all available commands or the purpose and syntax of a specific
+command.
 
     > help|? [COMMAND]
+
+Arguments:
+
+- **COMMAND** (*positional*, *optional*): command to be displayed.
+
 
 ### list
 
 `list` is a *meta-command* with several available forms.  Below are their
 descriptions:
 
+
 #### list accounts
+(shortcuts: `list acc`; `ls accounts`; `ls acc`)
+
+Displays a table with information about the requested accounts.
 
     > list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]
 
+Arguments:
+
+- **ACCOUNT_NAME** (*positional*, *optional*): name of the account to be
+  displayed.  If no account is requested, all accounts will be displayed.
+- **tofile** (*optional*): path to the CSV file where the information should be
+  saved. May be an absolute or relative path (relative to the directory the
+  application was started).  The tilde ('`~`') may be used in substitution of
+  the users' absolute home path.
+
+
 #### list currencies
+(shortcuts: `list curr`, `ls currencies`, `ls curr`)
+
+Displays a table with information about the requested currencies.
 
     > list|ls curr[encies] [NAME] [tofile FILE]
 
+Arguments:
+
+- **NAME** (*positional*, *optional*): name of the currency to be displayed.
+  If no currency is requested, all currencies will be displayed.
+- **tofile** (*optional*): path to the CSV file where the information should be
+  saved. May be an absolute or relative path (relative to the directory the
+  application was started).  The tilde ('`~`') may be used in substitution of
+  the user's absolute home path.
+
+
 #### list parcels
+(shortcut: `ls parcels`)
+
+Displays a list of all parcels filtered by specific tags.
 
     > list|ls parcels tagged LIST [from DATE] [to DATE] [tofile FILE]
 
+Arguments:
+
+- **LIST** (*positional*): list of tags to search.
+- **from** (*optional*): lower date limit of the results to be displayed.  If no
+  date is given, the results will include all parcels from the first recorded
+  to the upper limit.
+- **to** (*optional*): upper date limit of the results to be displayed.  If no
+  date is given, the results will include all parcels from the lower limit to
+  the last recorded one.
+- **tofile** (*optional*): path to the CSV file where the information should be
+  saved. May be an absolute or relative path (relative to the directory the
+  application was started).  The tilde ('`~`') may be used in substitution of
+  the user's absolute home path.
+
+
 #### list tags
+(shortcut: `ls tags`)
+
+Displays a list of all recorded tags and the number of parcels where each is
+used.
 
     > list|ls tags [tofile FILE]
 
+Arguments:
+
+- **tofile** (*optional*): path to the CSV file where the information should be
+  saved. May be an absolute or relative path (relative to the directory the
+  application was started).  The tilde ('`~`') may be used in substitution of
+  the users' absolute home path.
+
+
 #### list transactions
+(shortcuts: `list tr`; `ls transactions`; `ls tr`)
+
+Displays a list of transactions filtered by specific criteria.
 
     > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
     :         [from DATE] [to DATE] [tofile FILE]
 
+Arguments:
+
+- **on** (*optional*): account identification of the transactions to be
+  displayed.  If no account is given, transactions from all accounts will be
+  displayed, grouped by account.
+- **from** (*optional*): lower date limit of the results to be displayed.  If no
+  date is given, the results will include all transactions from the first
+  recorded to the upper limit.
+- **to** (*optional*): upper date limit of the results to be displayed.  If no
+  date is given, the results will include all transactions from the lower limit
+  to the last recorded one.
+- **tofile** (*optional*): path to the CSV file where the information should be
+  saved. May be an absolute or relative path (relative to the directory the
+  application was started).  The tilde ('`~`') may be used in substitution of
+  the users' absolute home path.
+  
+
 ### open
 
+Opens a Finance Control database file.
+
     > open FILE
+
+Arguments:
+
+- **FILE** (*positional*): path to the file to be opened.  May be an absolute
+  or relative path (relative to the directory the application was started).
+  The tilde ('`~`') may be used in substitution of the users' absolute home
+  path.
+
 
 ### set
 
 `set` is a *meta-command* with several available forms.  Below are their
 descriptions:
 
+
 #### set csvsep
+
+Sets the field separator character for CSV files.
 
     > set csvsep CHARACTER
 
+Arguments:
+
+- **CHARACTER** (*positional*): the character to be set as a field separator
+  for CSV files.
+
+
 #### set currency
+
+Sets the default currency to be used for new accounts.
 
     > set curr[ency] NAME
 
+Arguments:
+
+- **NAME** (*positional*): the name of the currency to be used as default for
+  new accounts.
+
+
 #### set deposit
 
+Sets the default description to be used for new deposits.
+
     > set deposit descr[iption] TEXT
+    
+Arguments:
+
+- **TEXT** (*positional*): the description to be used as default for new
+  deposits.
+
 
 #### set echo
 
+Enables or disables command echo (repeat) on the prompt.
+
     > set echo ON|OFF
+
+Arguments:
+
+- **ON|OFF** (*positional*): `on` enables command echo, `off` disables it.
+  This argument is *not* case-sensitive.
+
 
 #### set prompt
 
+Sets the prompt to be used for the current file.
+
     > set prompt TEXT
+
+Arguments:
+
+- **TEXT** (*positional*): the text to be used as prompt when the current file
+  is opened.
+
 
 #### set transfer
 
+Sets the default description to be used for new account transfers.
+
     > set transfer descr[iption] TEXT
+
+Arguments:
+
+- **TEXT** (*positional*): the description to be used for new account
+  transfers.
+
 
 #### set withdrawal
 
+Sets the default description to be used for new withdrawals.
+
     > set withdrawal descr[iption] TEXT
+
+Arguments:
+
+- **TEXT** (*positional*): the default description to be used for new
+  withdrawals.
+  
 
 ### show
 
 `show` is a *meta-command* with several available forms.  Below are their
 descriptions:
 
+
 #### show account
+(shortcuts: `show acc`; `show account`; `sh acc`)
+
+Displays detailed information about an account.
 
     > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
 
+Arguments:
+
+- **ACCOUNT_NAME|ACCOUNT_ID** (*positional*): identification of the account to
+  be displayed.  This argument is not case-sensitive.
+
+
 #### show copyright
+(shortcut: `sh copyright`)
+
+Displays copyright information.
     
     > sh[ow] copyright
 
+
 #### show currency
+(shortcuts: `show curr`; `sh currency`; `sh curr`)
+
+Displays detailed information about a currency.
 
     > sh[ow] curr[ency] NAME
 
-#### show license
+Arguments:
 
-    > sh[ow] license
+- **NAME** (*positional*): the name of the currency to be displayed.  This
+  argument is *not* case-sensitive.
+
+
+#### show license
+(shortcut: `sh license`)
+
+Displays the Finance Control program's copyright license.
+
+    > sh[ow] license [inline]
+    
+Arguments:
+
+- **inline** (*positional*, *optional*): instructs the program to display the
+  license on the terminal.  If not present, the license text will be displayed
+  on a web browser if one is available.
+
 
 #### show manual
+(shortcut: `sh manual`)
+
+Displays this manual.
     
-    > sh[ow] manual
+    > sh[ow] manual [inline]
+
+Arguments:
+
+- **inline** (*positional*, *optional*): instructs the program to display the
+  manual on the terminal.  If not present, the manual will be displayed on a
+  web browser, if one is available.
+ 
 
 #### show settings
+(shortcut: `sh settings`)
+
+Displays the default program settings of the opened file.
 
     > sh[ow] settings
 
+
 #### show transaction
+(shortcuts: `show tr`; `sh transaction`; `sh tr`)
+
+Displays detailed information about a transaction, including its parcels.
 
     > sh[ow] tr[ansaction] TRANSACTION_ID
 
+Arguments:
+
+- **TRANSACTION_ID** (*positional*): identification number of the transaction
+  to be displayed.
+
+
 ### source
 
+Executes commands from an external text file.
+
     > source FILE
+
+Arguments:
+
+- **FILE** (*positional*): path to the file to be executed.  May be an absolute
+  or relative path (relative to the directory the application was started).
+  The tilde ('`~`') may be used in substitution of the users' absolute home
+  path.
+
 
 ### trim
 
 `trim` is a *meta-command* with several available forms.  Below are their
 descriptions:
 
+
 #### trim account
+
+Removes all transactions prior to the specified date from an account.  If no
+transaction remains, one will be created with the amount of the account balance
+at that date.
 
     > trim acc[ount] ACCOUNT_NAME|ACCOUNT_ID upto DATE
 
+Arguments:
+
+- **ACCOUNT_NAME|ACCOUNT_ID** (*positional*): account identification from which
+  the transactions will be removed.
+- **DATE**: date up to which the transactions will be removed.
+
+
 #### trim storage
 
+Removes all transactions prior to the specified date from the database.  If no
+transaction remains on an account, one will be created with the amount of the
+account balance at that date.
+
     > trim storage upto DATE
+
+Arguments:
+
+- **DATE**: date up to which the transactions will be removed.
+
 
 ### Database structure
 
@@ -1953,5 +2328,4 @@ GNU General Public License for more details.
 You should have received a copy of the [GNU General Public
 License](http://www.gnu.org/licenses) along with this program.  If not,
 please check the site above.
-
 

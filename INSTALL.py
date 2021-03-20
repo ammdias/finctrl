@@ -5,7 +5,7 @@
 FILES = ('finctrlcmd.py', 'finctrl.py', 'finstore.py', 'finutil.py',
          'sqlitestore.py',
          'LICENSE.md', 'LICENSE.html', 'MANUAL.md', 'MANUAL.html', 'README.md',
-         '__version__')
+         '__version__', 'food.csv.png')
 APP_NAME = 'FinCtrl' # will be the name of installation directory
 START_SCRIPT = 'finctrl.py'
 LINK_NAME = 'finctrl'

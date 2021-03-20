@@ -1015,6 +1015,8 @@ class FinCtrlCmd(cmd.Cmd):
                 acckey = None
             datemin = parse_date(kw['from']) if 'from' in kw else None
             datemax = parse_date(kw['to']) if 'to' in kw else None
+            if datemin and datemax and datemin > datemax:
+                datemin, datemax = datemax, datemin
             transactions = self._store.transactions(acckey, datemin, datemax)
             data = []
             for t in transactions:
@@ -1046,6 +1048,8 @@ class FinCtrlCmd(cmd.Cmd):
 
         datemin = parse_date(kw.get('from')) if 'from' in kw else None
         datemax = parse_date(kw.get('to')) if 'to' in kw else None
+        if datemin and datemax and datemin > datemax:
+            datemin, datemax = datemax, datemin
         data = []
         try:
             for i in self._store.parcels_by_tag(parse_tags(kw['tagged']),

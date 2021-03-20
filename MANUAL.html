@@ -2,7 +2,7 @@
 <p>This is a very basic program to control personal finances. It depends on <a href="https://python.org">Python 3</a> and was thought to be <strong>used only from the command line</strong>. It supports multiple accounts with possibly different currencies and transactions composed of multiple parcels, each with its different tags. Check the <a href="#usage">USAGE</a> section for a more complete overview of the program.</p>
 <p>This is what the program IS NOT and CANNOT DO:</p>
 <ul>
-<li>It will not contact your homebanking system;</li>
+<li>It will not contact your home banking system;</li>
 <li>It will not scan your bills and insert them automatically;</li>
 <li>It will not produce beautiful (or even ugly) graphics;</li>
 <li>It will not analyse your savings and make predictions on where you will be in ten years;</li>
@@ -137,7 +137,7 @@ Show a specific record&#39;s data:
 <li><p>Monetary amounts must consist of positive or negative integer or decimal values, using the decimal separator configured in the account they belong to. Examples: <code>123</code>, <code>123.24</code>, <code>-123.5</code>. Also, the decimal part may have at most the number of decimal places configured in the respective currency: the program will automatically truncate the remaining decimal places. See the <a href="#currencies">Currencies</a> section below for details on how to find or change an account’s decimal separator and number of decimal places.</p></li>
 <li><p>Dates must be provided in the general form YEAR-MONTH-DAY. The year may be omitted (the current year is implicit) or entered without the century (21st century is implicit). The field separator may be a dash (‘-’) or a forward slash (‘/’). Example: <code>2021-03-12</code>, <code>21-3-12</code> and <code>3/12</code> all refer to the March 12th of 2021 (assuming 2021 is the current year).</p>
 <p>The words <code>today</code> or <code>now</code> may be used in replacement of the current date.</p></li>
-<li><p>Text values with spaces must be enveloped by single- or double-quotes. If a text value has single-quotes, use double-quotes to envelop it and vece-versa.</p></li>
+<li><p>Text values with spaces must be enveloped by single- or double-quotes. If a text value has single-quotes, use double-quotes to envelop it and vice-versa.</p></li>
 <li>List values, used when entering tags, are text values separated by commas. Same rule applies as for text values: if any value of the list has spaces or quotes, the whole list must be enveloped by the other kind of quotes. Example:
 <ul>
 <li><code>food,vegetables</code></li>
@@ -214,7 +214,7 @@ This is a very basic program to control personal finances.  It depends on
 <p>As stated earlier, the program keeps all information in <a href="https://sqlite.org">SQLite</a> files. To open a file we use the <a href="#open">open</a> command:</p>
 <pre><code>FinCtrl &gt; open test.sqlite
 test.sqlite &gt; </code></pre>
-<p>The <a href="#open">open</a> command takes a single argument, the path to the file to be opened. If a relative path is given, the directory where the program was started will be the base directory. The tilde (<code>~</code>) may be used in substituition of the user’s home absolute path. For example, in my case, if I used the command <code>open ~/doc/accounting.sqlite</code> the opened file would be <code>/home/antonio/doc/accounting.sqlite</code>. This is standard Unix notation, but may also be used in other systems.</p>
+<p>The <a href="#open">open</a> command takes a single argument, the path to the file to be opened. If a relative path is given, the directory where the program was started will be the base directory. The tilde (<code>~</code>) may be used in substitution of the user’s home absolute path. For example, in my case, if I used the command <code>open ~/doc/accounting.sqlite</code> the opened file would be <code>/home/antonio/doc/accounting.sqlite</code>. This is standard Unix notation, but may also be used in other systems.</p>
 <p>I used the <code>.sqlite</code> extension because this way I can at a glance identify this as an SQLite file when I list my system’s directory, but the program doesn’t require any particular extension and you may even use files without one.</p>
 <p>If the file does not exist, it will be created with default settings (more about this in the subsection below). If it exists but is not a Finance Control file, an error will be presented and the file will not be opened:</p>
 <pre><code>FinCtrl &gt; open testfile.txt
@@ -798,7 +798,7 @@ Test &gt; </code></pre>
 <li><strong>currency</strong> (<em>optional</em>): name of the currency for the new account. If not provided, the default currency of the database will be used (see <a href="#show-settings">show settings</a>).</li>
 </ul>
 <h4 id="add-currency">add currency</h4>
-<p>(shorcut: <code>add curr</code>)</p>
+<p>(shortcut: <code>add curr</code>)</p>
 <p>Adds a currency to the database.</p>
 <pre><code>&gt; add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \
 :     [decplaces NUMBER] [decsep CHARACTER]</code></pre>
@@ -882,7 +882,7 @@ Test &gt; </code></pre>
 </ul></li>
 </ul>
 <h4 id="add-transfer">add transfer</h4>
-<p>Adds two transactions to the database. The first removes the amount from an account and the second adds it to the other account, effectively transfering it from one to the other.</p>
+<p>Adds two transactions to the database. The first removes the amount from an account and the second adds it to the other account, effectively transferring it from one to the other.</p>
 <pre><code>&gt; add transfer of AMOUNT [descr TEXT] [date DATE] [tags LIST]
 :     from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID</code></pre>
 <p>Arguments:</p>
@@ -891,7 +891,7 @@ Test &gt; </code></pre>
 <li><strong>description</strong> (<em>optional</em>): description of the transaction and parcels. If not provided the <em>default transfer text</em> will be used (see <a href="#show-settings">show settings</a>).</li>
 <li><strong>date</strong> (<em>optional</em>): the date the transactions are effective. If not provided, the current date will be used.</li>
 <li><strong>tags</strong> (<em>optional</em>): list of tags to be added to the parcels.</li>
-<li><strong>from</strong>: account from which the amount will be withdrawan (see <a href="#list-accounts">list accounts</a>).</li>
+<li><strong>from</strong>: account from which the amount will be withdrawn (see <a href="#list-accounts">list accounts</a>).</li>
 <li><strong>to</strong>: account on which the amount will be deposited (see <a href="#list-accounts">list accounts</a>).</li>
 </ul>
 <h4 id="add-withdrawal">add withdrawal</h4>
@@ -907,101 +907,309 @@ Test &gt; </code></pre>
 <li><strong>tags</strong> (<em>optional</em>): list of tags to be added to the single parcel.</li>
 </ul>
 <h3 id="backup">backup</h3>
+<p>Copies current database to a new file.</p>
 <pre><code>&gt; backup FILE</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>FILE</strong> (<em>positional</em>): path to the new file. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the users’ absolute home path.</li>
+</ul>
 <h3 id="bye">bye</h3>
+<p>(shortcuts: <code>EOF</code>; the system’s end-of-file character)</p>
+<p>Quits the Finance Control program.</p>
 <pre><code>&gt; bye|EOF</code></pre>
 <h3 id="change">change</h3>
 <p><code>change</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="change-account">change account</h4>
-<pre><code>&gt; ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID to TEXT</code></pre>
+<p>(shortcuts: <code>change acc</code>; <code>ch account</code>; <code>ch acc</code>)</p>
+<p>Changes an account’s description.</p>
+<pre><code>&gt; ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID descr[iption] to TEXT</code></pre>
+<p>Changes an account’s name.</p>
+<pre><code>&gt; ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID name to TEXT</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>ACCOUNT_NAME|ACCOUNT_ID</strong> (<em>positional</em>): identification of the account to change.</li>
+<li><strong>to</strong>: new description or name.</li>
+</ul>
 <h4 id="change-currency">change currency</h4>
-<pre><code>&gt; ch[ange] curr[ency] NAME [short TEXT] \\
-:          [symbol TEXT] [position LEFT|RIGHT] \\
+<p>(shortcuts: <code>change curr</code>; <code>ch currency</code>; <code>ch curr</code>)</p>
+<p>Changes a currency’s settings:</p>
+<pre><code>&gt; ch[ange] curr[ency] NAME [short TEXT] \
+:          [symbol TEXT] [position LEFT|RIGHT] \
 :          [decplaces NUMBER] [decsep CHARACTER]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>NAME</strong> (<em>positional</em>): name of the currency to change.</li>
+<li><strong>short</strong> (<em>optional</em>): new short name for the currency, like ‘EUR’ for Euro or ‘USD’ for United States Dollar. Currently not used in the program.</li>
+<li><strong>symbol</strong> (<em>optional</em>): new symbol of the currency, like ‘€’ for Euro or ‘$’ for Dollar. Currently not used in the program</li>
+<li><strong>position</strong> (<em>optional</em>): new position of the currency symbol relative the digits when printing an amount in the currency. Currently not used in the program.</li>
+<li><strong>decplaces</strong> (<em>optional</em>): new number of decimal places for the currency. This is the precision that will be used when storing and displaying amounts in the currency (all other digits will be discarded).</li>
+<li><strong>decsep</strong> (<em>optional</em>): new character used to separate the integer from the decimal part of amounts in the currency. It will be used to print currency amounts as well to scan amounts input by the user.</li>
+</ul>
 <h4 id="change-parcel">change parcel</h4>
-<pre><code>&gt; ch[ange] parcel PARCEL_ID descr[iption] to TEXT
-
-&gt; ch[ange] parcel PARCEL_ID amount to AMOUNT</code></pre>
+<p>(shortcut: <code>ch parcel</code>)</p>
+<p>Changes a parcel’s description.</p>
+<pre><code>&gt; ch[ange] parcel PARCEL_ID descr[iption] to TEXT</code></pre>
+<p>Changes a parcel’s amount.</p>
+<pre><code>&gt; ch[ange] parcel PARCEL_ID amount to AMOUNT</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>PARCEL_ID</strong> (<em>positional</em>): identification number of the parcel to change.</li>
+<li><strong>to</strong>: new text or amount.</li>
+</ul>
 <h4 id="change-tag">change tag</h4>
+<p>(shortcut: <code>ch tag</code>)</p>
+<p>Renames a tag.</p>
 <pre><code>&gt; ch[ange] tag TAG to TEXT</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TAG</strong> (<em>positional</em>): tag name to be renamed.</li>
+<li><strong>to</strong>: new name for the tag.</li>
+</ul>
 <h4 id="change-transaction">change transaction</h4>
-<pre><code>&gt; ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT
-
-&gt; ch[ange] tr[ansaction] TRANSACTION_ID date to DATE
-
-&gt; ch[ange] tr[ansaction] TRANSACTION_ID acc[ount] \\
+<p>(shortcuts: <code>change tr</code>; <code>ch transaction</code>; <code>ch tr</code>)</p>
+<p>Moves a transaction to another account.</p>
+<pre><code>&gt; ch[ange] tr[ansaction] TRANSACTION_ID acc[ount] \
 :          to ACCOUNT_NAME|ACCOUNT_ID</code></pre>
+<p>Changes a transaction’s date.</p>
+<pre><code>&gt; ch[ange] tr[ansaction] TRANSACTION_ID date to DATE</code></pre>
+<p>Changes a transaction’s description.</p>
+<pre><code>&gt; ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TRANSACTION_ID</strong> (<em>positional</em>): identification number of the transaction to change.</li>
+<li><strong>to</strong>: new transaction account, date or description.</li>
+</ul>
 <h3 id="close">close</h3>
+<p>Closes the currently opened file.</p>
 <pre><code>&gt; close</code></pre>
 <h3 id="delete">delete</h3>
 <p><code>delete</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="delete-account">delete account</h4>
+<p>(shortcuts: <code>delete acc</code>; <code>del account</code>; <code>del acc</code>)</p>
+<p>Removes an account and all its transactions and corresponding parcels from the database.</p>
 <pre><code>&gt; del[ete] acc[ount] ACCOUNT_NAME|ACCOUNT_ID</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>ACCOUNT_NAME|ACCOUNT_ID</strong> (<em>positional</em>): identification of the account to be deleted from the database.</li>
+</ul>
 <h4 id="delete-transaction">delete transaction</h4>
+<p>(shortcuts: <code>delete tr</code>; <code>del transaction</code>; <code>del tr</code>)</p>
+<p>Removes a transaction and corresponding parcels from the database.</p>
 <pre><code>&gt; del[ete] tr[ansaction] TRANSACTION_ID</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TRANSACTION_ID</strong> (<em>positional</em>): identification of the transaction to delete.</li>
+</ul>
 <h4 id="delete-parcel">delete parcel</h4>
+<p>(shortcut: <code>del parcel</code>)</p>
+<p>Removes a parcel from a transaction.</p>
 <pre><code>&gt; del[ete] parcel PARCEL_ID</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>PARCEL_ID</strong> (<em>positional</em>): identification of the parcel to delete.</li>
+</ul>
 <h4 id="delete-tag">delete tag</h4>
-<pre><code>&gt; del[ete] tag TEXT from PARCEL_ID
-
-&gt; del[ete] tag TEXT</code></pre>
+<p>(shortcut: <code>del tag</code>)</p>
+<p>Removes a tag from a parcel.</p>
+<pre><code>&gt; del[ete] tag TEXT from PARCEL_ID</code></pre>
+<p>Removes a tag from all parcels.</p>
+<pre><code>&gt; del[ete] tag TEXT</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): tag to be deleted.</li>
+<li><em>from</em>: identification of the parcel from which the tag will be deleted.</li>
+</ul>
 <h3 id="help">help</h3>
+<p>(shortcut: <code>?</code>)</p>
+<p>Displays all available commands or the purpose and syntax of a specific command.</p>
 <pre><code>&gt; help|? [COMMAND]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>COMMAND</strong> (<em>positional</em>, <em>optional</em>): command to be displayed.</li>
+</ul>
 <h3 id="list">list</h3>
 <p><code>list</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="list-accounts">list accounts</h4>
+<p>(shortcuts: <code>list acc</code>; <code>ls accounts</code>; <code>ls acc</code>)</p>
+<p>Displays a table with information about the requested accounts.</p>
 <pre><code>&gt; list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>ACCOUNT_NAME</strong> (<em>positional</em>, <em>optional</em>): name of the account to be displayed. If no account is requested, all accounts will be displayed.</li>
+<li><strong>tofile</strong> (<em>optional</em>): path to the CSV file where the information should be saved. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the users’ absolute home path.</li>
+</ul>
 <h4 id="list-currencies">list currencies</h4>
+<p>(shortcuts: <code>list curr</code>, <code>ls currencies</code>, <code>ls curr</code>)</p>
+<p>Displays a table with information about the requested currencies.</p>
 <pre><code>&gt; list|ls curr[encies] [NAME] [tofile FILE]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>NAME</strong> (<em>positional</em>, <em>optional</em>): name of the currency to be displayed. If no currency is requested, all currencies will be displayed.</li>
+<li><strong>tofile</strong> (<em>optional</em>): path to the CSV file where the information should be saved. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the user’s absolute home path.</li>
+</ul>
 <h4 id="list-parcels">list parcels</h4>
+<p>(shortcut: <code>ls parcels</code>)</p>
+<p>Displays a list of all parcels filtered by specific tags.</p>
 <pre><code>&gt; list|ls parcels tagged LIST [from DATE] [to DATE] [tofile FILE]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>LIST</strong> (<em>positional</em>): list of tags to search.</li>
+<li><strong>from</strong> (<em>optional</em>): lower date limit of the results to be displayed. If no date is given, the results will include all parcels from the first recorded to the upper limit.</li>
+<li><strong>to</strong> (<em>optional</em>): upper date limit of the results to be displayed. If no date is given, the results will include all parcels from the lower limit to the last recorded one.</li>
+<li><strong>tofile</strong> (<em>optional</em>): path to the CSV file where the information should be saved. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the user’s absolute home path.</li>
+</ul>
 <h4 id="list-tags">list tags</h4>
+<p>(shortcut: <code>ls tags</code>)</p>
+<p>Displays a list of all recorded tags and the number of parcels where each is used.</p>
 <pre><code>&gt; list|ls tags [tofile FILE]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>tofile</strong> (<em>optional</em>): path to the CSV file where the information should be saved. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the users’ absolute home path.</li>
+</ul>
 <h4 id="list-transactions">list transactions</h4>
+<p>(shortcuts: <code>list tr</code>; <code>ls transactions</code>; <code>ls tr</code>)</p>
+<p>Displays a list of transactions filtered by specific criteria.</p>
 <pre><code>&gt; list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
 :         [from DATE] [to DATE] [tofile FILE]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>on</strong> (<em>optional</em>): account identification of the transactions to be displayed. If no account is given, transactions from all accounts will be displayed, grouped by account.</li>
+<li><strong>from</strong> (<em>optional</em>): lower date limit of the results to be displayed. If no date is given, the results will include all transactions from the first recorded to the upper limit.</li>
+<li><strong>to</strong> (<em>optional</em>): upper date limit of the results to be displayed. If no date is given, the results will include all transactions from the lower limit to the last recorded one.</li>
+<li><strong>tofile</strong> (<em>optional</em>): path to the CSV file where the information should be saved. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the users’ absolute home path.</li>
+</ul>
 <h3 id="open">open</h3>
+<p>Opens a Finance Control database file.</p>
 <pre><code>&gt; open FILE</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>FILE</strong> (<em>positional</em>): path to the file to be opened. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the users’ absolute home path.</li>
+</ul>
 <h3 id="set">set</h3>
 <p><code>set</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="set-csvsep">set csvsep</h4>
+<p>Sets the field separator character for CSV files.</p>
 <pre><code>&gt; set csvsep CHARACTER</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>CHARACTER</strong> (<em>positional</em>): the character to be set as a field separator for CSV files.</li>
+</ul>
 <h4 id="set-currency">set currency</h4>
+<p>Sets the default currency to be used for new accounts.</p>
 <pre><code>&gt; set curr[ency] NAME</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>NAME</strong> (<em>positional</em>): the name of the currency to be used as default for new accounts.</li>
+</ul>
 <h4 id="set-deposit">set deposit</h4>
+<p>Sets the default description to be used for new deposits.</p>
 <pre><code>&gt; set deposit descr[iption] TEXT</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): the description to be used as default for new deposits.</li>
+</ul>
 <h4 id="set-echo">set echo</h4>
+<p>Enables or disables command echo (repeat) on the prompt.</p>
 <pre><code>&gt; set echo ON|OFF</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>ON|OFF</strong> (<em>positional</em>): <code>on</code> enables command echo, <code>off</code> disables it. This argument is <em>not</em> case-sensitive.</li>
+</ul>
 <h4 id="set-prompt">set prompt</h4>
+<p>Sets the prompt to be used for the current file.</p>
 <pre><code>&gt; set prompt TEXT</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): the text to be used as prompt when the current file is opened.</li>
+</ul>
 <h4 id="set-transfer">set transfer</h4>
+<p>Sets the default description to be used for new account transfers.</p>
 <pre><code>&gt; set transfer descr[iption] TEXT</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): the description to be used for new account transfers.</li>
+</ul>
 <h4 id="set-withdrawal">set withdrawal</h4>
+<p>Sets the default description to be used for new withdrawals.</p>
 <pre><code>&gt; set withdrawal descr[iption] TEXT</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): the default description to be used for new withdrawals.</li>
+</ul>
 <h3 id="show">show</h3>
 <p><code>show</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="show-account">show account</h4>
+<p>(shortcuts: <code>show acc</code>; <code>show account</code>; <code>sh acc</code>)</p>
+<p>Displays detailed information about an account.</p>
 <pre><code>&gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>ACCOUNT_NAME|ACCOUNT_ID</strong> (<em>positional</em>): identification of the account to be displayed. This argument is not case-sensitive.</li>
+</ul>
 <h4 id="show-copyright">show copyright</h4>
+<p>(shortcut: <code>sh copyright</code>)</p>
+<p>Displays copyright information.</p>
 <pre><code>&gt; sh[ow] copyright</code></pre>
 <h4 id="show-currency">show currency</h4>
+<p>(shortcuts: <code>show curr</code>; <code>sh currency</code>; <code>sh curr</code>)</p>
+<p>Displays detailed information about a currency.</p>
 <pre><code>&gt; sh[ow] curr[ency] NAME</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>NAME</strong> (<em>positional</em>): the name of the currency to be displayed. This argument is <em>not</em> case-sensitive.</li>
+</ul>
 <h4 id="show-license">show license</h4>
-<pre><code>&gt; sh[ow] license</code></pre>
+<p>(shortcut: <code>sh license</code>)</p>
+<p>Displays the Finance Control program’s copyright license.</p>
+<pre><code>&gt; sh[ow] license [inline]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>inline</strong> (<em>positional</em>, <em>optional</em>): instructs the program to display the license on the terminal. If not present, the license text will be displayed on a web browser if one is available.</li>
+</ul>
 <h4 id="show-manual">show manual</h4>
-<pre><code>&gt; sh[ow] manual</code></pre>
+<p>(shortcut: <code>sh manual</code>)</p>
+<p>Displays this manual.</p>
+<pre><code>&gt; sh[ow] manual [inline]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>inline</strong> (<em>positional</em>, <em>optional</em>): instructs the program to display the manual on the terminal. If not present, the manual will be displayed on a web browser, if one is available.</li>
+</ul>
 <h4 id="show-settings">show settings</h4>
+<p>(shortcut: <code>sh settings</code>)</p>
+<p>Displays the default program settings of the opened file.</p>
 <pre><code>&gt; sh[ow] settings</code></pre>
 <h4 id="show-transaction">show transaction</h4>
+<p>(shortcuts: <code>show tr</code>; <code>sh transaction</code>; <code>sh tr</code>)</p>
+<p>Displays detailed information about a transaction, including its parcels.</p>
 <pre><code>&gt; sh[ow] tr[ansaction] TRANSACTION_ID</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TRANSACTION_ID</strong> (<em>positional</em>): identification number of the transaction to be displayed.</li>
+</ul>
 <h3 id="source">source</h3>
+<p>Executes commands from an external text file.</p>
 <pre><code>&gt; source FILE</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>FILE</strong> (<em>positional</em>): path to the file to be executed. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the users’ absolute home path.</li>
+</ul>
 <h3 id="trim">trim</h3>
 <p><code>trim</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>
 <h4 id="trim-account">trim account</h4>
+<p>Removes all transactions prior to the specified date from an account. If no transaction remains, one will be created with the amount of the account balance at that date.</p>
 <pre><code>&gt; trim acc[ount] ACCOUNT_NAME|ACCOUNT_ID upto DATE</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>ACCOUNT_NAME|ACCOUNT_ID</strong> (<em>positional</em>): account identification from which the transactions will be removed.</li>
+<li><strong>DATE</strong>: date up to which the transactions will be removed.</li>
+</ul>
 <h4 id="trim-storage">trim storage</h4>
+<p>Removes all transactions prior to the specified date from the database. If no transaction remains on an account, one will be created with the amount of the account balance at that date.</p>
 <pre><code>&gt; trim storage upto DATE</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>DATE</strong>: date up to which the transactions will be removed.</li>
+</ul>
 <h3 id="database-structure">Database structure</h3>
 <p>Below are the instructions used to create the database on SQLite, which reflect its schema:</p>
 <pre><code>CREATE TABLE metadata (
