@@ -282,6 +282,8 @@ class FinStore(SQLiteStore):
             raise ValueError("Transaction not found.")
         if not self._exists("accounts", "key", acckey):
             raise ValueError("Account not found.")
+        if t.account == acckey:
+            raise ValueError("Cannot transfer transaction to the same account.")
 
         self.del_transaction(transkey)
         t.key, t.account, t.accbalance = None, acckey, 0
@@ -313,9 +315,10 @@ class FinStore(SQLiteStore):
                        "from transactions where key=?", (transkey,))
         if not t:
             raise ValueError("Transaction not found.")
+        acckey, amount, date = t
         with self._db:
             self._exec("delete from transactions where key=?", (transkey,))
-            self._upd_trans_accbalance(transkey, t[0], t[1], t[2])
+            self._upd_trans_accbalance(transkey, acckey, -amount, date)
 
 
     def transaction(self, transkey):
