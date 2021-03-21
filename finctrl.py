@@ -7,7 +7,7 @@ An application to control personal finances.
 """
 
 __version__ = '0.1'
-__date__ = '2021-02-21'  # TODO: Change!
+__date__ = '2021-03-21'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify

@@ -38,7 +38,7 @@ composed of multiple parcels, each with its different tags.  Check the
 
 This is what the program IS NOT and CANNOT DO:
 
-* It will not contact your homebanking system;
+* It will not contact your home banking system;
 * It will not scan your bills and insert them automatically;
 * It will not produce beautiful (or even ugly) graphics;
 * It will not analyse your savings and make predictions on where you will be in

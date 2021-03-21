@@ -5,14 +5,14 @@
 FILES = ('finctrlcmd.py', 'finctrl.py', 'finstore.py', 'finutil.py',
          'sqlitestore.py',
          'LICENSE.md', 'LICENSE.html', 'MANUAL.md', 'MANUAL.html', 'README.md',
-         '__version__', 'food.csv.png')
+         'food.csv.png', '__version__')
 APP_NAME = 'FinCtrl' # will be the name of installation directory
 START_SCRIPT = 'finctrl.py'
 LINK_NAME = 'finctrl'
 CONFIG_FILES = ()  # must be a tuple or list
 
 __version__ = '0.1'
-__date__ = '2021-03-01' # TODO: CHANGE
+__date__ = '2021-03-21'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = '''
 This program is free software: you can redistribute it and/or modify
@@ -129,17 +129,17 @@ except Exception as e:
     _quit(f"Could not create symbolic link to application script. Reason:\n{e}")
 
 # copy default configuration files, if they don't already exist
-try:
-    print('Creating configuration files directory, if necessary...')
-    if CONFIG_FILES:
+if CONFIG_FILES:
+    try:
+        print('Creating configuration files directory...')
         os.makedirs(CONFIG_DIR, exist_ok=True)
-    print('Copying necessary configuration files:')
-    for i in CONFIG_FILES:
-        if not os.path.exists(os.path.join(CONFIG_DIR, i)):
-            print(f'... {i}')
-            shutil.copy2(os.path.join(PKG_DIR, i), CONFIG_DIR) 
-except Exception as e:
-    _quit(f"Could not copy configuration files. Reason:\n{e}")
+        print('Copying necessary configuration files:')
+        for i in CONFIG_FILES:
+            if not os.path.exists(os.path.join(CONFIG_DIR, i)):
+                print(f'... {i}')
+                shutil.copy2(os.path.join(PKG_DIR, i), CONFIG_DIR) 
+    except Exception as e:
+        _quit(f"Could not copy configuration files. Reason:\n{e}")
 
 print('\nApplication successfully installed.\n')
 
