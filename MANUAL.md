@@ -334,12 +334,12 @@ available commands:
 We may also obtain help on a specific command by typing `help` followed by the
 name of the command.  For example, for the [show] command:
 
-FinCtrl > help show
-Show a specific record's data:
-        > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
-        > sh[ow] curr[ency] NAME
-        > sh[ow] settings|manual [inline]|copyright|license [inline]
-        > sh[ow] tr[ansaction] TRANSACTION_ID
+    FinCtrl > help show
+    Show a specific record's data:
+            > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
+            > sh[ow] curr[ency] NAME
+            > sh[ow] settings|manual [inline]|copyright|license [inline]
+            > sh[ow] tr[ansaction] TRANSACTION_ID
  
 The program will print a brief description of the purpose of the command
 followed by a list of the command's allowed syntax. The following conventions
