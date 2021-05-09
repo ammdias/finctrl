@@ -24,9 +24,9 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 Changes history:
  
-* 0.2: Added `edit` option to `source` command
-       Corrected bug in `set csvsep` command
-* 0.1: Initial version
+* 0.2: Added `edit` option to `source` command;
+       Corrected bug in `set csvsep` command.
+* 0.1: Initial version.
 
 
 ABOUT THE PROGRAM
