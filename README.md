@@ -116,4 +116,5 @@ usage, please refer to the user manual in the file "MANUAL.md" or "MANUAL.html".
 3. Read the MANUAL.  You can open it in a web browser from the program with the
    command:
 
-      FinCtrl > show manual
+       FinCtrl > show manual
+ 
