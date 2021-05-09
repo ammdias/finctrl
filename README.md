@@ -36,7 +36,7 @@ This is a very basic program to control personal finances.  It depends on
 **Python 3** and was thought to be **used only from the command line**.  It
 supports multiple accounts with possibly different currencies and transactions
 composed of multiple parcels, each with its different tags.  Check the
-[MANUAL](MANUAL.html) a more complete overview of the program.
+[MANUAL](MANUAL.html) for a more complete overview of the program.
 
 This is what the program IS NOT and CANNOT DO:
 
