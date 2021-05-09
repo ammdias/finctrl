@@ -19,6 +19,7 @@
 <p>website: <a href="https://github.com/ammdias/finctrl">AMMDIAS GitHub</a></p>
 <h3 id="changes-history">Changes history</h3>
 <ul>
+<li>0.2: Added <code>edit</code> option to <code>source</code> command Corrected bug in <code>set csvsep</code> command</li>
 <li>0.1: Initial version</li>
 </ul>
 <h2 id="contents">CONTENTS</h2>
@@ -180,12 +181,7 @@ Documented commands (type help &lt;topic&gt;):
 EOF  backup  ch      close  delete  list  open  sh    source
 add  bye     change  del    help    ls    set   show  trim  </code></pre>
 <p>We may also obtain help on a specific command by typing <code>help</code> followed by the name of the command. For example, for the <a href="#show">show</a> command:</p>
-<pre><code>FinCtrl &gt; help show
-Show a specific record&#39;s data:
-        &gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
-        &gt; sh[ow] curr[ency] NAME
-        &gt; sh[ow] settings|manual [inline]|copyright|license [inline]
-        &gt; sh[ow] tr[ansaction] TRANSACTION_ID</code></pre>
+<p>FinCtrl &gt; help show Show a specific record’s data: &gt; sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID &gt; sh[ow] curr[ency] NAME &gt; sh[ow] settings|manual [inline]|copyright|license [inline] &gt; sh[ow] tr[ansaction] TRANSACTION_ID</p>
 <p>The program will print a brief description of the purpose of the command followed by a list of the command’s allowed syntax. The following conventions apply to every command description:</p>
 <ul>
 <li>Text between square brackets (<code>[]</code>) is optional — you may enter it or not, as you wish;</li>
@@ -238,6 +234,7 @@ test.sqlite &gt;</code></pre>
 <pre><code>test.sqlite &gt; sh settings
 Prompt: test.sqlite &gt; 
 Field separator for CSV files: ;
+Configured editor: 
 Default deposit text: Deposit
 Default withdrawal text: Withdrawal
 Default transfer text: Transfer
@@ -246,6 +243,7 @@ Default currency: default</code></pre>
 <ul>
 <li><em>Prompt</em>: the prompt to be displayed when the file is opened;</li>
 <li><em>Field separator for CSV files</em>: the character used to separate fields when exporting results to a CSV file;</li>
+<li><em>Configured editor</em>: the program to edit external text files;</li>
 <li><em>Default deposit</em>, <em>withdrawal</em> and <em>transfer text</em>: the text used as description for any of those operations if none is given when issuing the command;</li>
 <li><em>Default currency</em>: the name of the currency to be used for any new account if no other is given at the time of creation.</li>
 </ul>
@@ -313,7 +311,8 @@ Test &gt;</code></pre>
 Test &gt; 
 Test &gt; sh settings
 Prompt: Test &gt; 
-CSV files&#39; field separator: ;
+Field separator for CSV files: ;
+Configured editor: 
 Default deposit text: Deposit
 Default withdrawal text: Withdrawal
 Default transfer text: Transfer
@@ -662,7 +661,7 @@ sweets     |         1</code></pre>
 <h3 id="advanced-usage">Advanced usage</h3>
 <p>In the previous sections we covered the basic usage of Finance Control. Here we will skim over the last few bits that could facilitate the continuous usage of the program.</p>
 <h4 id="scripting">Scripting</h4>
-<p>Using a command line may become tedious and treacherous, especially when entering multi-line commands. Imagine someone inserting a transaction with a long list of parcels and, at the last, discovering that there’s an error in the first that will stop the command to be recognized by the program. It would frustrating! To stop that from happening the program accepts commands from a separate text file, using the <a href="#source">source</a> command.</p>
+<p>Using a command line may become tedious and treacherous, especially when entering multi-line commands. Imagine someone inserting a transaction with a long list of parcels and, at the last, discovering that there’s an error in the first that will stop the command to be recognized by the program. It would be frustrating! To stop that from happening the program accepts commands from a separate text file, using the <a href="#source">source</a> command.</p>
 <p>The idea is simple: you prepare a simple-text file in your favourite editor, where you can review the commands and correct any mistake, and then use the <a href="#source">source</a> command to insert it into the database. The commands in the text file must match <strong>exactly</strong> the commands you would enter at the program command line. This includes adding a backslash at the end of lines of a multi-line command.</p>
 <p>Let’s clarify this with a small example. Create a text file with the content below and name it <code>test.txt</code>:</p>
 <pre><code>add expense on pocket \
@@ -1120,6 +1119,13 @@ Test &gt; </code></pre>
 <ul>
 <li><strong>ON|OFF</strong> (<em>positional</em>): <code>on</code> enables command echo, <code>off</code> disables it. This argument is <em>not</em> case-sensitive.</li>
 </ul>
+<h4 id="set-editor">set editor</h4>
+<p>Sets the external text editor to open the files passed to the <a href="#source">source</a> command.</p>
+<pre><code>&gt; set editor TEXT</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (positional): the command to launch the preferred text editor (e.g. <code>vim</code>, <code>nano</code>, <code>gedit</code> or <code>notepad.exe</code>).</li>
+</ul>
 <h4 id="set-prompt">set prompt</h4>
 <p>Sets the prompt to be used for the current file.</p>
 <pre><code>&gt; set prompt TEXT</code></pre>
@@ -1192,11 +1198,12 @@ Test &gt; </code></pre>
 <li><strong>TRANSACTION_ID</strong> (<em>positional</em>): identification number of the transaction to be displayed.</li>
 </ul>
 <h3 id="source">source</h3>
-<p>Executes commands from an external text file.</p>
-<pre><code>&gt; source FILE</code></pre>
+<p>Executes commands from an external text file. Optionally, opens an external text editor to edit the file prior to executing its commands.</p>
+<pre><code>&gt; source FILE [edit]</code></pre>
 <p>Arguments:</p>
 <ul>
 <li><strong>FILE</strong> (<em>positional</em>): path to the file to be executed. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the users’ absolute home path.</li>
+<li><strong>edit</strong> (<em>positional</em>, <em>optional</em>): instructs the program to open the file on an external text editor before executing the commands. If no editor is explicitly configured, via the <a href="#set-editor">set editor</a> command, the program will scan the <code>VISUAL</code> and <code>EDITOR</code> environment variables to discover the editor to launch. If no editor is configured on those variables, an error will be output and no editor will be launched. The commands in the text file will be executed after closing the editor (remember to save the file).</li>
 </ul>
 <h3 id="trim">trim</h3>
 <p><code>trim</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>

@@ -33,6 +33,8 @@ website: [AMMDIAS GitHub](https://github.com/ammdias/finctrl)
 
 ### Changes history
 
+* 0.2: Added `edit` option to `source` command
+       Corrected bug in `set csvsep` command
 * 0.1: Initial version
 
 
@@ -334,12 +336,12 @@ available commands:
 We may also obtain help on a specific command by typing `help` followed by the
 name of the command.  For example, for the [show] command:
 
-    FinCtrl > help show
-    Show a specific record's data:
-            > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
-            > sh[ow] curr[ency] NAME
-            > sh[ow] settings|manual [inline]|copyright|license [inline]
-            > sh[ow] tr[ansaction] TRANSACTION_ID
+FinCtrl > help show
+Show a specific record's data:
+        > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
+        > sh[ow] curr[ency] NAME
+        > sh[ow] settings|manual [inline]|copyright|license [inline]
+        > sh[ow] tr[ansaction] TRANSACTION_ID
  
 The program will print a brief description of the purpose of the command
 followed by a list of the command's allowed syntax. The following conventions
@@ -456,6 +458,7 @@ the [show settings] command (a file must be already opened):
     test.sqlite > sh settings
     Prompt: test.sqlite > 
     Field separator for CSV files: ;
+    Configured editor: 
     Default deposit text: Deposit
     Default withdrawal text: Withdrawal
     Default transfer text: Transfer
@@ -466,6 +469,7 @@ The settings are:
 - *Prompt*: the prompt to be displayed when the file is opened;
 - *Field separator for CSV files*: the character used to separate fields when
   exporting results to a CSV file;
+- *Configured editor*: the program to edit external text files;
 - *Default deposit*, *withdrawal* and *transfer text*: the text used as
   description for any of those operations if none is given when issuing the
   command;
@@ -586,7 +590,8 @@ new account.  For this we use the [set currency] command:
     Test > 
     Test > sh settings
     Prompt: Test > 
-    CSV files' field separator: ;
+    Field separator for CSV files: ;
+    Configured editor: 
     Default deposit text: Deposit
     Default withdrawal text: Withdrawal
     Default transfer text: Transfer
@@ -1208,7 +1213,7 @@ Using a command line may become tedious and treacherous, especially when
 entering multi-line commands.  Imagine someone inserting a transaction with
 a long list of parcels and, at the last, discovering that there's an error in
 the first that will stop the command to be recognized by  the program.  It
-would frustrating!  To stop that from happening the program accepts commands
+would be frustrating!  To stop that from happening the program accepts commands
 from a separate text file, using the [source] command.
 
 The idea is simple: you prepare a simple-text file in your favourite editor,
@@ -2054,6 +2059,18 @@ Arguments:
   This argument is *not* case-sensitive.
 
 
+#### set editor
+
+Sets the external text editor to open the files passed to the [source] command.
+
+    > set editor TEXT
+
+Arguments:
+
+- **TEXT** (positional): the command to launch the preferred text editor
+  (e.g. `vim`, `nano`, `gedit` or `notepad.exe`).
+  
+
 #### set prompt
 
 Sets the prompt to be used for the current file.
@@ -2181,9 +2198,10 @@ Arguments:
 
 ### source
 
-Executes commands from an external text file.
+Executes commands from an external text file.  Optionally, opens an external
+text editor to edit the file prior to executing its commands.
 
-    > source FILE
+    > source FILE [edit]
 
 Arguments:
 
@@ -2191,6 +2209,13 @@ Arguments:
   or relative path (relative to the directory the application was started).
   The tilde ('`~`') may be used in substitution of the users' absolute home
   path.
+- **edit** (*positional*, *optional*): instructs the program to open the file
+  on an external text editor before executing the commands.  If no editor is
+  explicitly configured, via the [set editor] command, the program will scan
+  the `VISUAL` and `EDITOR` environment variables to discover the editor to
+  launch. If no editor is configured on those variables, an error will be
+  output and no editor will be launched.  The commands in the text file will be
+  executed after closing the editor (remember to save the file).
 
 
 ### trim

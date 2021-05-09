@@ -2,8 +2,8 @@
 Finance Control command line interface
 """
 
-__version__ = '0.1'
-__date__ = '2021-03-21'
+__version__ = '0.2'
+__date__ = '2021-05-09'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -18,12 +18,18 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Changes:
+    0.2: Added 'edit' option to 'source' command
+         Corrected bug in 'set csvsep' command
+    0.1: Initial version.
 """
 
 import cmd
 import sys
 import shlex
-import os.path
+import os             # for os.path and os.environ
+import subprocess
 import webbrowser
 
 from finutil import *
@@ -36,6 +42,7 @@ from finstore import FinStore
 DEFAULTS = {
         'prompt': 'FinCtrl > ',
         'csvsep': ';',
+        'editor': '',
         'currency': 'default',
         'withdrawal': 'Withdrawal',
         'deposit': 'Deposit',
@@ -178,11 +185,27 @@ class FinCtrlCmd(cmd.Cmd):
 
     def do_source(self, arg):
         """Execute commands from a file.
-        > source FILE
+        > source FILE [edit]
         """
+        args = shlex.split(arg)
+        if 'edit' in args:
+            edit = True
+            args.remove('edit')
+        else:
+            edit = False
+
+        if len(args) != 1:
+            error("'source' command syntax:\n"
+                  "    > source FILE [edit]")
+            return
+
+        fname = os.path.expanduser(args[0])
+        if edit:
+            self._editfile(fname)
+
         echo, self.echo = self.echo, True
         try:
-            for line in open(os.path.expanduser(arg), 'r'):
+            for line in open(fname, 'r'):
                 line = self.precmd(line)
                 if line:
                     self.onecmd(line)
@@ -198,6 +221,7 @@ class FinCtrlCmd(cmd.Cmd):
         > set curr[ency] NAME
         > set deposit descr[iption] TEXT
         > set echo ON|OFF
+        > set editor TEXT
         > set prompt TEXT
         > set transfer descr[iption] TEXT
         > set withdrawal descr[iption] TEXT
@@ -334,7 +358,7 @@ class FinCtrlCmd(cmd.Cmd):
             else:
                 self.do_help(prefix)
         except AttributeError:
-            error(f"Syntax of '{prefix}' command:")
+            error(f"'{prefix}' command syntax:")
             self.do_help(prefix)
         except Exception as e:
             error(e)
@@ -407,7 +431,7 @@ class FinCtrlCmd(cmd.Cmd):
     def _set_csvsep(self, args):
         """Set field separator for CSV files.
         """
-        if len(args) != 1 or len(arg[0]) != 1:
+        if len(args) != 1 or len(args[0]) != 1:
             raise Exception("'set csvsep' syntax:\n"
                             "    > set csvsep CHARACTER")
 
@@ -439,6 +463,19 @@ class FinCtrlCmd(cmd.Cmd):
         """Set deposit default text.
         """
         self._setdescr('deposit', args)
+
+
+    def _set_editor(self, args):
+        """Set editor command.
+        """
+        if len(args) != 1:
+            raise Exception("'set editor syntax:\n"
+                            "    > set editor TEXT")
+
+        try:
+            self._store.set_metadata('editor', args[0])
+        except Exception as e:
+            error(f"unable to set editor. Reason:\n    {e}")
 
 
     def _set_withdrawal(self, args):
@@ -859,6 +896,7 @@ class FinCtrlCmd(cmd.Cmd):
             data = []
             data.append(f"Prompt: {self._store.metadata('prompt')}")
             data.append(f"Field separator for CSV files: {self._store.metadata('csvsep')}")
+            data.append(f"Configured editor: {self._store.metadata('editor')}")
             data.append(f"Default deposit text: {self._store.metadata('deposit')}")
             data.append(f"Default withdrawal text: {self._store.metadata('withdrawal')}")
             data.append(f"Default transfer text: {self._store.metadata('transfer')}")
@@ -1090,6 +1128,23 @@ class FinCtrlCmd(cmd.Cmd):
 
     #-------------------------------------------------------------------------
     # Auxilliary methods
+
+    def _editfile(self, fname):
+        """Edit a file in an external editor.
+        """
+        editor = self._store.metadata('editor') if self._store else None 
+        if not editor:
+            editor = os.environ.get('VISUAL', os.environ.get('EDITOR', ''))
+
+        if editor:
+            try:
+                subprocess.call([editor, fname])
+            except Exception as e:
+                error(f"unable to execute the editor. Reason:\n    {e}")
+        else:
+            error("Could not find an editor to use.\n"
+                  "Please choose an editor with the command 'set editor'.")
+
 
     def _setdescr(self, cmd, args):
         """Set deposit, withdrawal or transfer description.

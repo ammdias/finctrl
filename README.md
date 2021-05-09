@@ -1,6 +1,6 @@
 FINANCE CONTROL README
 ======================
-version 0.1
+version 0.2
 
 Copyright (C) 2021 António Manuel Dias
 
@@ -23,7 +23,9 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 
 Changes history:
-
+ 
+* 0.2: Added `edit` option to `source` command
+       Corrected bug in `set csvsep` command
 * 0.1: Initial version
 
 
@@ -34,7 +36,7 @@ This is a very basic program to control personal finances.  It depends on
 **Python 3** and was thought to be **used only from the command line**.  It
 supports multiple accounts with possibly different currencies and transactions
 composed of multiple parcels, each with its different tags.  Check the
-[MANUAL](MANUAL.html) for a more complete overview of the program.
+[MANUAL](MANUAL.html) a more complete overview of the program.
 
 This is what the program IS NOT and CANNOT DO:
 
@@ -114,5 +116,4 @@ usage, please refer to the user manual in the file "MANUAL.md" or "MANUAL.html".
 3. Read the MANUAL.  You can open it in a web browser from the program with the
    command:
 
-       FinCtrl > show manual
-
+      FinCtrl > show manual
