@@ -2,8 +2,8 @@
 Finance Control command line interface
 """
 
-__version__ = '0.2'
-__date__ = '2021-05-09'
+__version__ = '0.3'
+__date__ = '2021-05-13'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Changes:
+    0.3: Removed unused symbol in FinCtrlCmd
     0.2: Added 'edit' option to 'source' command
          Corrected bug in 'set csvsep' command
     0.1: Initial version.
@@ -58,7 +59,6 @@ class FinCtrlCmd(cmd.Cmd):
     """
     prompt = DEFAULTS['prompt']
     _store = None
-    _accinfo = {}
     echo = False
 
     #-------------------------------------------------------------------------
@@ -185,7 +185,7 @@ class FinCtrlCmd(cmd.Cmd):
 
     def do_source(self, arg):
         """Execute commands from a file.
-        > source FILE [edit]
+        > source [edit] FILE
         """
         args = shlex.split(arg)
         if 'edit' in args:
@@ -196,7 +196,7 @@ class FinCtrlCmd(cmd.Cmd):
 
         if len(args) != 1:
             error("'source' command syntax:\n"
-                  "    > source FILE [edit]")
+                  "    > source [edit] FILE")
             return
 
         fname = os.path.expanduser(args[0])

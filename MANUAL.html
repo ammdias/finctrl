@@ -19,7 +19,8 @@
 <p>website: <a href="https://github.com/ammdias/finctrl">AMMDIAS GitHub</a></p>
 <h3 id="changes-history">Changes history</h3>
 <ul>
-<li>0.2: Added <code>edit</code> option to <code>source</code> command Corrected bug in <code>set csvsep</code> command</li>
+<li>0.3: Corrected bug in currency values parsing</li>
+<li>0.2: Added <code>edit</code> option to <code>source</code> command; Corrected bug in <code>set csvsep</code> command</li>
 <li>0.1: Initial version</li>
 </ul>
 <h2 id="contents">CONTENTS</h2>
@@ -116,12 +117,12 @@ FinCtrl &gt;  </code></pre></li>
 <p>However, although the commands are case-sensitive, some arguments may be entered in any case, like account names or tags. Also, the answer to inline questions may be given in lower or upper case. Examples of those are given throughout this manual.</p></li>
 <li><p>Some commands or options have a shortcut version that may be used interchangeably. That will be indicated in the <a href="#reference">REFERENCE</a> section and in the online help by enveloping the optional characters in square brackets. For example, the <a href="#show-copyright">show copyright</a> command may be entered as <code>show</code> or <code>sh</code>:</p>
 <pre><code>FinCtrl &gt; show copyright
-Finance Control 0.1
+Finance Control 0.3
 (C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>or</p>
 <pre><code>FinCtrl &gt; sh copyright
-Finance Control 0.1
+Finance Control 0.3
 (C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>This is explicitly stated in <em>help</em> text of the command:</p>
@@ -197,7 +198,7 @@ Show a specific record&#39;s data:
 <p>The third syntax line of the example above explains how to use the <a href="#show">show</a> command to display some information pertaining to the program. The command may be written as <code>show</code> or <code>sh</code> (the bracketed ‘<code>ow</code>’ is optional) and must be followed by only one of the options separated by vertical bars, <code>settings</code>, <code>manual</code>, <code>copyright</code> or <code>license</code>.</p>
 <p>For example, to show the program’s copyright information, as we have seen in previous section, we could type:</p>
 <pre><code>FinCtrl &gt; show copyright
-Finance Control 0.1
+Finance Control 0.3
 (C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>Both the <code>manual</code> and <code>license</code> information will be shown on a new web browser window, assuming a browser is installed on your system:</p>
@@ -702,7 +703,12 @@ Pocket  |  9 | 2021-03-12 | ATM withdrawal |        60.00 |          176.83
 Pocket  |  7 | 2021-03-12 | Supermarket    |       -10.90 |          116.83
 Bank    |  8 | 2021-03-12 | ATM withdrawal |       -60.00 |         4870.01</code></pre>
 <p>You could also <a href="#show">show</a> any of the transactions to double-check their correctness.</p>
-<p>If all your work on the program is just entering these commands, you could even pass it as an argument to the program itself. Consider this simple example (save it as test-1.txt):</p>
+<p>If there was an error in a command in the <em>script</em>, that particular command would not be executed and an error would be displayed in the program’s prompt. To fix that error you need to open the text file and correct it. Remember to remove all the other commands or they will be executed again.</p>
+<p>The <a href="#source">source</a> command has an extra option, <code>edit</code>, that automatically opens the file in a text editor and executes it after you save the file and exit the editor. For this to work, the Finance Control program will scan the <code>VISUAL</code> and <code>EDITOR</code> environment variables to find your favorite text editor. If none of those variables are set, or if you’d rather use another editor, you may set the editor you prefer with the <a href="#set-editor">set editor</a> command. For example, if you want to use <em>gedit</em>, the <a href="https://wiki.gnome.org/Apps/Gedit">GNOME text editor</a>, you would enter:</p>
+<pre><code>Test &gt; set editor gedit</code></pre>
+<p>And, to edit and then execute the script above:</p>
+<pre><code>Test &gt; source edit test.txt</code></pre>
+<p>If all your work on the program is just executing a script, you could even pass it as an argument to the program itself. Consider this simple example (save it as test-1.txt):</p>
 <pre><code>open test.sqlite
 add deposit of 150 on bank descr &#39;Lottery prize&#39; \
     date 3/15
@@ -775,6 +781,8 @@ Test &gt; </code></pre>
 <li><p>To start the program just open the Windows Explorer on the folder where you created the batch file and double click on it. If you created the batch file on the Desktop (you can do that, of course), you just need to double-click its icon. Provided everything is ok, a terminal window should open and you should see the program’s prompt:</p>
 <pre><code>finctrl.sqlite &gt;</code></pre>
 <p>Don’t forget you can change the terminal window settings (color, font, height and width) if you don’t like the Windows default.</p></li>
+<li><p>(<em>Optional</em>) Set <em>Notepad</em> as the default text editor to use with the <code>source</code> command (please confirm the exact location of Notepad’s executable):</p>
+<pre><code>finctrl.sqlite &gt; set editor &quot;C:\Windows\System32\notepad.exe&quot;</code></pre></li>
 </ol>
 <h2 id="reference">REFERENCE</h2>
 <h3 id="commands-arguments-reference">Command’s arguments reference</h3>
@@ -1204,11 +1212,11 @@ Test &gt; </code></pre>
 </ul>
 <h3 id="source">source</h3>
 <p>Executes commands from an external text file. Optionally, opens an external text editor to edit the file prior to executing its commands.</p>
-<pre><code>&gt; source FILE [edit]</code></pre>
+<pre><code>&gt; source [edit] FILE</code></pre>
 <p>Arguments:</p>
 <ul>
-<li><strong>FILE</strong> (<em>positional</em>): path to the file to be executed. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the users’ absolute home path.</li>
 <li><strong>edit</strong> (<em>positional</em>, <em>optional</em>): instructs the program to open the file on an external text editor before executing the commands. If no editor is explicitly configured, via the <a href="#set-editor">set editor</a> command, the program will scan the <code>VISUAL</code> and <code>EDITOR</code> environment variables to discover the editor to launch. If no editor is configured on those variables, an error will be output and no editor will be launched. The commands in the text file will be executed after closing the editor (remember to save the file).</li>
+<li><strong>FILE</strong> (<em>positional</em>): path to the file to be executed. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the users’ absolute home path.</li>
 </ul>
 <h3 id="trim">trim</h3>
 <p><code>trim</code> is a <em>meta-command</em> with several available forms. Below are their descriptions:</p>

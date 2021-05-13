@@ -33,7 +33,8 @@ website: [AMMDIAS GitHub](https://github.com/ammdias/finctrl)
 
 ### Changes history
 
-* 0.2: Added `edit` option to `source` command
+* 0.3: Corrected bug in currency values parsing
+* 0.2: Added `edit` option to `source` command;
        Corrected bug in `set csvsep` command
 * 0.1: Initial version
 
@@ -211,14 +212,14 @@ program's answer, if any.  Some notes:
    For example, the [show copyright] command may be entered as `show` or `sh`:
 
        FinCtrl > show copyright
-       Finance Control 0.1
+       Finance Control 0.3
        (C) 2021 António Manuel Dias <ammdias@gmail.com>
        (...)
 
    or
 
        FinCtrl > sh copyright
-       Finance Control 0.1
+       Finance Control 0.3
        (C) 2021 António Manuel Dias <ammdias@gmail.com>
        (...)
 
@@ -366,7 +367,7 @@ For example, to show the program's copyright information, as we have seen in
 previous section, we could type:
 
     FinCtrl > show copyright
-    Finance Control 0.1
+    Finance Control 0.3
     (C) 2021 António Manuel Dias <ammdias@gmail.com>
     (...)
 
@@ -1269,7 +1270,27 @@ confirm list the transactions on the 12th of March:
 
 You could also [show] any of the transactions to double-check their correctness.
 
-If all your work on the program is just entering these commands, you could even
+If there was an error in a command in the *script*, that particular command
+would not be executed and an error would be displayed in the program's prompt.
+To fix that error you need to open the text file and correct it.  Remember to
+remove all the other commands or they will be executed again.
+
+The [source] command has an extra option, `edit`, that automatically opens the
+file in a text editor and executes it after you save the file and exit the
+editor.  For this to work, the Finance Control program will scan the `VISUAL`
+and `EDITOR` environment variables to find your favorite text editor.  If none
+of those variables are set, or if you'd rather use another editor, you may set
+the editor you prefer with the [set editor] command.  For example, if you want
+to use *gedit*, the [GNOME text editor](https://wiki.gnome.org/Apps/Gedit), you
+would enter:
+
+    Test > set editor gedit
+
+And, to edit and then execute the script above:
+
+    Test > source edit test.txt
+
+If all your work on the program is just executing a script, you could even
 pass it as an argument to the program itself.  Consider this simple example
 (save it as test-1.txt):
 
@@ -1429,6 +1450,11 @@ important detail.  Please contact me if that is the case.  In steps:
 
    Don't forget you can change the terminal window settings (color, font, height
    and width) if you don't like the Windows default.
+
+5. (*Optional*) Set *Notepad* as the default text editor to use with the `source`
+   command (please confirm the exact location of Notepad's executable):
+   
+       finctrl.sqlite > set editor "C:\Windows\System32\notepad.exe"
 
 
 REFERENCE
@@ -2201,14 +2227,10 @@ Arguments:
 Executes commands from an external text file.  Optionally, opens an external
 text editor to edit the file prior to executing its commands.
 
-    > source FILE [edit]
+    > source [edit] FILE
 
 Arguments:
 
-- **FILE** (*positional*): path to the file to be executed.  May be an absolute
-  or relative path (relative to the directory the application was started).
-  The tilde ('`~`') may be used in substitution of the users' absolute home
-  path.
 - **edit** (*positional*, *optional*): instructs the program to open the file
   on an external text editor before executing the commands.  If no editor is
   explicitly configured, via the [set editor] command, the program will scan
@@ -2216,6 +2238,10 @@ Arguments:
   launch. If no editor is configured on those variables, an error will be
   output and no editor will be launched.  The commands in the text file will be
   executed after closing the editor (remember to save the file).
+- **FILE** (*positional*): path to the file to be executed.  May be an absolute
+  or relative path (relative to the directory the application was started).
+  The tilde ('`~`') may be used in substitution of the users' absolute home
+  path.
 
 
 ### trim

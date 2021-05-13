@@ -2,8 +2,8 @@
 Finance Control command line interface utility functions
 """
 
-__version__ = '0.1'
-__date__ ='2021-03-21'
+__version__ = '0.3'
+__date__ ='2021-05-13'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -18,6 +18,11 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Versions:
+    0.3: Corrected bug in d2i() which prevented parsing of decimal numbers
+         without leading integer part.
+    0.1: Initial version
 """
 
 import sys
@@ -112,7 +117,7 @@ def d2i(value, curr):
        with no conversion to float, avoiding float binary representation errors.
     """
     def valid_number(s):
-        vd = f'-0123456789{curr.dec_sep}'
+        vd = f'0123456789{curr.dec_sep}'
         for c in s:
             if c not in vd: return False
         return True
@@ -127,7 +132,7 @@ def d2i(value, curr):
         raise ValueError('Invalid number.')
 
     value = value.split(curr.dec_sep)
-    i, d = (int(value[0]) * 10 ** curr.dec_places), 0
+    i, d = (int(value[0]) * 10 ** curr.dec_places) if value[0] else 0, 0
     if len(value) == 2:
         d = int(value[1][:curr.dec_places] + '0' * (curr.dec_places-len(value[1])))
 
