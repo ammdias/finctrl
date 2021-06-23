@@ -33,9 +33,10 @@ website: [AMMDIAS GitHub](https://github.com/ammdias/finctrl)
 
 ### Changes history
 
-* 0.3: Corrected bug in currency values parsing
+* 0.3.1: Corrected bug in 'list transactions'.
+* 0.3: Corrected bug in currency values parsing.
 * 0.2: Added `edit` option to `source` command;
-       Corrected bug in `set csvsep` command
+       Corrected bug in `set csvsep` command.
 * 0.1: Initial version
 
 

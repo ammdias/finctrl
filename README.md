@@ -1,6 +1,6 @@
 FINANCE CONTROL README
 ======================
-version 0.3
+version 0.3.1
 
 Copyright (C) 2021 António Manuel Dias
 
@@ -24,7 +24,8 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 Changes history:
  
-* 0.3: Corrected bug in currency values parsing
+* 0.3.1: Corrected bug in 'list transactions'.
+* 0.3: Corrected bug in currency values parsing.
 * 0.2: Added `edit` option to `source` command;
        Corrected bug in `set csvsep` command.
 * 0.1: Initial version.
