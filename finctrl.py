@@ -6,8 +6,8 @@ Finance Control
 An application to control personal finances.
 """
 
-__version__ = '0.3.1'
-__date__ = '2021-06-23'
+__version__ = '0.4'
+__date__ = '2021-09-10'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Changes:
+    0.4: List accounts, transactions and parcels now show total amounts;
+         Added extra lines in table printings for better presentation;
+         Navigation in multi-page listings may be done by page number.
     0.3.1: Corrected bug in 'list transactions'.
     0.3: Corrected bug in finutil.d2i() which prevented parsing of decimal
          numbers without leading integer part.

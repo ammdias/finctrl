@@ -1,6 +1,6 @@
 FINANCE CONTROL README
 ======================
-version 0.3.1
+version 0.4
 
 Copyright (C) 2021 António Manuel Dias
 
@@ -24,6 +24,9 @@ along with this program.  If not, see http://www.gnu.org/licenses/.
 
 Changes history:
  
+* 0.4: List accounts, transactions and parcels now show total amounts;
+       Added extra lines in table printings for better presentation;
+       Navigation in multi-line listings may be done by page number.
 * 0.3.1: Corrected bug in 'list transactions'.
 * 0.3: Corrected bug in currency values parsing.
 * 0.2: Added `edit` option to `source` command;

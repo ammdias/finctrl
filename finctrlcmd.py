@@ -2,8 +2,8 @@
 Finance Control command line interface
 """
 
-__version__ = '0.3.1'
-__date__ = '2021-06-23'
+__version__ = '0.4'
+__date__ = '2021-09-10'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -20,10 +20,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Changes:
-    0.3.1: Corrected bug in 'list transactions'
-    0.3: Removed unused symbol in FinCtrlCmd
-    0.2: Added 'edit' option to 'source' command
-         Corrected bug in 'set csvsep' command
+    0.4: List accounts, transactions and parcels now show amount totals;
+         Added extra lines in table printings for better presentation;
+         Navigation in multi-page listing may be done by page number.
+    0.3.1: Corrected bug in 'list transactions'.
+    0.3: Removed unused symbol in FinCtrlCmd.
+    0.2: Added 'edit' option to 'source' command.
+         Corrected bug in 'set csvsep' command.
     0.1: Initial version.
 """
 
@@ -1021,9 +1024,11 @@ class FinCtrlCmd(cmd.Cmd):
                             "    > list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]")
         try:
             data = []
+            totals = {}
             for a in self._store.accounts(*pos):
                 curr = self._store.account_currency(a.key)
                 data.append((str(a.key), a.name, a.descr, i2d(a.balance, curr)))
+                totals[curr.name] = totals.get(curr.name, 0) + a.balance
         except Exception as e:
             error(f"unable to list accounts. Reason:\n    {e}")
 
@@ -1032,6 +1037,7 @@ class FinCtrlCmd(cmd.Cmd):
             export(os.path.expanduser(kw['tofile']), self.csvsep, data, headers)
         else:
             print_table(data, headers, hints='><<>')
+            self._totals(totals, 'Total balances by currency')
 
     # shortcut
     _list_acc = _list_accounts
@@ -1058,11 +1064,13 @@ class FinCtrlCmd(cmd.Cmd):
                 datemin, datemax = datemax, datemin
             transactions = self._store.transactions(acckey, datemin, datemax)
             data = []
+            totals = {}
             for t in transactions:
                 acc = self._store.transaction_account(t.key)
                 curr = self._store.transaction_currency(t.key)
                 data.append([acc.name, str(t.key), t.date, t.descr,
                              i2d(t.amount, curr), i2d(t.accbalance, curr)])
+                totals[curr.name] = totals.get(curr.name, 0) + t.amount
         except Exception as e:
             error(f"unable to list transactions. Reason:\n    {e}")
             return
@@ -1073,6 +1081,7 @@ class FinCtrlCmd(cmd.Cmd):
             export(os.path.expanduser(kw['tofile']), self.csvsep, data, headers)
         else:
             print_table(data, headers, hints='<>><>>')
+            self._totals(totals, 'Total amounts by currency')
 
     # shortcut
     _list_tr = _list_transactions
@@ -1091,6 +1100,7 @@ class FinCtrlCmd(cmd.Cmd):
         if datemin and datemax and datemin > datemax:
             datemin, datemax = datemax, datemin
         data = []
+        totals = {}
         try:
             for i in self._store.parcels_by_tag(parse_tags(kw['tagged']),
                                                 datemin, datemax):
@@ -1098,6 +1108,7 @@ class FinCtrlCmd(cmd.Cmd):
                 curr = self._store.transaction_currency(i[2])
                 data.append((str(i[0]), i[1], acc.name, str(i[2]),
                              i[3], i2d(i[4], curr)))
+                totals[curr.name] = totals.get(curr.name, 0) + i[4]
         except Exception as e:
             error(f"unable to list parcels by tag. Reason:\n    {e}")
 
@@ -1106,6 +1117,7 @@ class FinCtrlCmd(cmd.Cmd):
             export(os.path.expanduser(kw['tofile']), self.csvsep, data, headers)
         else:
             print_table(data, headers, hints='>><><>')
+            self._totals(totals, 'Total amounts by currency')
 
 
     def _list_tags(self, args):
@@ -1195,4 +1207,14 @@ class FinCtrlCmd(cmd.Cmd):
             print(f"Transaction id: {t.key}")
         except Exception as e:
             error(f"unable to add transaction. Reason:\n    {e}")
+
+    
+    def _totals(self, totals, title):
+        """Print list of totals by currency.
+        """
+        print(f'{title}:')
+        for curr in totals:
+            print(f'    {curr}: {i2d(totals[curr], self._store.currency(curr))}')
+        print()
+
 

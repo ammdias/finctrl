@@ -2,8 +2,8 @@
 Finance Control command line interface utility functions
 """
 
-__version__ = '0.3'
-__date__ ='2021-05-13'
+__version__ = '0.4'
+__date__ ='2021-09-10'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -20,9 +20,11 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Versions:
+    0.4: Add extra lines for better table visualization;
+         paginate() now accepts page number.
     0.3: Corrected bug in d2i() which prevented parsing of decimal numbers
          without leading integer part.
-    0.1: Initial version
+    0.1: Initial version.
 """
 
 import sys
@@ -170,14 +172,14 @@ def print_table(data, headers=[], hints=None):
     for row in data:
         pagedata.append(colsep.join([f"{col:{hints[idx]}{sizes[idx]}s}"
                                      for idx,col in enumerate(row)]))
-
+    print()
     paginate(pageheader, pagedata)
     
 
 def paginate(header=[], data=[]):
     """Print data split by pages accounting for screen size.
     """
-    footer = "\nPage {} of {}. (N)ext / (P)revious / (Q)uit ? "
+    footer = "Page {} of {}. (N)ext / (P)revious / Page number / (Q)uit ? "
     term_width, term_height = shutil.get_terminal_size()
     page_size = term_height - len(header) - 2 # 2: len of footer
 
@@ -192,6 +194,7 @@ def paginate(header=[], data=[]):
             println(i)
         for i in data[page_num*page_size:(page_num+1)*page_size]:
             println(i)
+        print()
 
     if len(data) <= page_size:
         print_page(0)
@@ -203,12 +206,16 @@ def paginate(header=[], data=[]):
             try:
                 cmd = input(footer.format(page+1, pages)).strip().lower()
             except EOFError:
-                print('\nQuit!')
+                print('Quit!')
                 break;
             if cmd in ('n', 'next') and page < pages-1:
                 page += 1
             elif cmd in ('p', 'previous') and page > 0:
                 page -= 1
+            elif cmd.isdigit():
+                pagenum = int(cmd)
+                if 0 < pagenum <= pages:
+                    page = pagenum - 1
             print()
 
 

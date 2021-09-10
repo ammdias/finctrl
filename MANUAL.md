@@ -20,7 +20,8 @@ This is what the program IS NOT and CANNOT DO:
 
 This is what it CAN DO:
 
-* Record your earnings and expenses exactly as you enter them;
+* Record your earnings and expenses exactly as you enter them in a standard
+  SQLite database;
 * List your earnings and expenses filtered by date, account and/or item tags;
 * Export your listings to CSV files that can be further processed in other
   tools like spreadsheet applications.
@@ -32,7 +33,10 @@ contact: ammdias@gmail.com
 website: [AMMDIAS GitHub](https://github.com/ammdias/finctrl)
 
 ### Changes history
-
+ 
+* 0.4: List accounts, transactions and parcels now show total amounts;
+       Added extra lines in table printings for better presentation;
+       Navigation in multi-page listings may be done by page number.
 * 0.3.1: Corrected bug in 'list transactions'.
 * 0.3: Corrected bug in currency values parsing.
 * 0.2: Added `edit` option to `source` command;
@@ -213,14 +217,14 @@ program's answer, if any.  Some notes:
    For example, the [show copyright] command may be entered as `show` or `sh`:
 
        FinCtrl > show copyright
-       Finance Control 0.3
+       Finance Control 0.4
        (C) 2021 António Manuel Dias <ammdias@gmail.com>
        (...)
 
    or
 
        FinCtrl > sh copyright
-       Finance Control 0.3
+       Finance Control 0.4
        (C) 2021 António Manuel Dias <ammdias@gmail.com>
        (...)
 
@@ -278,8 +282,9 @@ program's answer, if any.  Some notes:
    will be truncated and end with an ellipsis (`...`).  If the output has more
    lines than fit in the terminal height then the output will be split in pages
    and at the end of each page you will have the option to go to the next page
-   (enter `next` or `n`), go back to the previous (enter `previous` or `p`) or
-   quit the presentation (enter `quit` or `q`). 
+   (enter `next` or `n`), go back to the previous (enter `previous` or `p`),
+   go to a specific page (enter its page number) or quit the presentation
+   (enter `quit` or `q`). 
 
        FinCtrl > show license inline
 
@@ -293,7 +298,7 @@ program's answer, if any.  Some notes:
        Everyone is permitted to copy and distribute verbatim copies of this
        license document, but changing it is not allowed.
 
-       Page 1 of 30. (N)ext / (P)revious / (Q)uit ? q
+       Page 1 of 30. (N)ext / (P)revious / Page number / (Q)uit ? q
 
        FinCtrl >
 
@@ -368,7 +373,7 @@ For example, to show the program's copyright information, as we have seen in
 previous section, we could type:
 
     FinCtrl > show copyright
-    Finance Control 0.3
+    Finance Control 0.4
     (C) 2021 António Manuel Dias <ammdias@gmail.com>
     (...)
 
@@ -511,6 +516,7 @@ correctly display and scan monetary amounts.  We can list the configured
     currencies with the [list currencies] command:
 
     Test > list currencies
+    
     Name    | Short name | Symbol | Position | Decimal places | Decimal separator
     --------+------------+--------+----------+----------------+------------------
     default |            |        | left     | 2              | .                
@@ -620,6 +626,7 @@ a *bank account* and a *pocket account*, for the hard currency we have with us:
     Test > add acc Bank descr 'My bank account'
     Test >
     Test > ls acc
+    
     ID | Name   | Description     | Balance
     ---+--------+-----------------+--------
      1 | Pocket |                 |    0,00
@@ -636,6 +643,7 @@ balances will reflect this change:
 
     Test > ch curr euro decsep .
     Test > ls acc
+    
     ID | Name   | Description     | Balance
     ---+--------+-----------------+--------
      1 | Pocket |                 |    0.00
@@ -777,10 +785,14 @@ Now that we have some transactions, we may list them all using the [list
 transactions] command:
 
     Test > ls tr
+
     Account | Id | Date       | Description    | Total amount | Account balance
     --------+----+------------+----------------+--------------+----------------
     Pocket  |  1 | 2021-03-01 | Initial amount |       123.45 |          123.45
     Bank    |  2 | 2021-03-01 | Deposit        |      5000.00 |         5000.00
+
+    Total amounts by currency:
+        Euro: 5123.45
 
 There is also a shortcut command to take some amount from an account, [add
 withdrawal]:
@@ -827,6 +839,7 @@ Wait! Why were two transactions added this time if I only issued one command?
 We can find out listing the transactions:
 
     Test > ls tr
+    
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
@@ -834,6 +847,9 @@ We can find out listing the transactions:
     Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
     Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
     Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.00
+
+    Total amounts by currency:
+        Euro: 5063.46
 
 As can be seen is this listing, there is a transaction on the *Bank* account
 and another on the *Pocket* account, which makes sense.  This listing also
@@ -843,25 +859,36 @@ shows some important features of transaction listings:
 * They are listed from the most recent down to the most ancient;
 * The account balance is the amount available on each account after the
   operation has taken place.
+* The 'Total amounts by currency' is a list of the sum of the 'Total amount'
+  column by currency.  As all the transactions listed belong to accounts with
+  the same currency, Euro, only one value is listed.
 
 Probably it makes more sense to list the transactions on a single account, and
 we may do that:
 
     Test > ls tr on bank
+    
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
     Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
     Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.00
 
+    Total amounts by currency:
+        Euro: 4930.01
+
 Finally, although there is no need with so few transactions, we may also set
 a date interval on the transactions listed:
 
     Test > ls tr on bank from 3/2 to today
+    
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
     Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
+
+    Total amounts by currency:
+        Euro: -69.99
 
 If the `from` date is omitted, the listing starts at the first transaction; if
 instead the `to` date is omitted, the listing ends in the most recent recorded
@@ -899,9 +926,13 @@ To check if the transaction was inserted correctly, we can list the
 transactions of the corresponding account:
 
     Test > ls tr on bank from 3/4
+    
     Account | Id | Date       | Description | Total amount | Account balance
     --------+----+------------+-------------+--------------+----------------
     Bank    |  6 | 2021-03-04 | Supermarket |        -4.87 |         4925.14
+
+    Total amounts by currency:
+        Euro: -4.87
 
 It seems alright, but we may also display the complete transaction:
 
@@ -955,7 +986,7 @@ the missing tags to parcel 11 (the baking powder, as listed in the
     Test > add tag food to 11
     Test > add tag grocery to 11
 
-And now we use the [change parcel] commando to change the amount of the same
+And now we use the [change parcel] command to change the amount of the same
 parcel:
 
     Test > ch parcel 11 amount to -0.85
@@ -1026,17 +1057,21 @@ Another variant of the [change] command is [change transaction] and it may be
 used, for example, to change a transaction description:
 
     Test > ls tr
+    
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     (...)
     Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.00
+    (...)
     
     Test > change transaction 2 description to 'Initial amount'
     Test > ls tr
+    
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     (...)
     Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+    (...)
 
 More useful is probably changing a transaction from one account to another.
 Let's say that we payed the chocolate ingredients in coin and not directly from
@@ -1044,6 +1079,7 @@ the bank.  To correct this we need to change transaction 6 to the *Pocket*
 account:
 
     Test > ls tr
+    
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
@@ -1052,9 +1088,14 @@ account:
     Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
     Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
     Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+    
+    Total amounts by currency:
+        Euro: 5057.74
+
     Test > 
     Test > ch tr 6 account to pocket
     Test > ls tr
+ 
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     Pocket  |  6 | 2021-03-04 | Supermarket           |        -5.72 |          127.73
@@ -1063,6 +1104,9 @@ account:
     Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
     Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
     Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+    
+    Total amounts by currency:
+        Euro: 5057.74
 
 On the first listing, transaction 6 (the supermarket bill) was on the *Bank*
 account and, after the [change transaction] command it is now on the *Pocket*
@@ -1076,10 +1120,14 @@ an account's description:
 
     Test > ch acc pocket descr to 'Money with me'
     Test > ls acc
+    
     ID | Name   | Description     | Balance
     ---+--------+-----------------+--------
      1 | Pocket | Money with me   |  127.73
      2 | Bank   | My bank account | 4930.01
+
+    Total balances by currency:
+        Euro: 5057.74
 
 The last general command to correct mistakes is the [delete] command.  We
 already covered both versions of the [delete tag] command above and although
@@ -1102,6 +1150,7 @@ empty and its total amount zero:
     Date: 2021-03-02
     Parcels:
       (3) Phone bill, Feb. 2021: -59.99 (comms, phone)
+      
     Test > 
     Test > del parcel 3
     Test > sh tr 3
@@ -1110,6 +1159,7 @@ empty and its total amount zero:
     Total amount: 0.00
     Date: 2021-03-02
     Parcels:
+    
     Test >
 
 I don't know how this could be useful, but... it's possible.  The only way to
@@ -1143,9 +1193,13 @@ to list only that currency or account instead of all of them.  In short, it's
 just an alternative way of visualizing the data to the [show] command:
 
     Test > ls acc bank
+    
     ID | Name | Description     | Balance
     ---+------+-----------------+--------
      2 | Bank | My bank account | 4930.01
+
+    Total balances by currency:
+        Euro: 4930.01
 
 We also covered in some detail the [list transactions] command with both its
 filtering options, account and date.  The two remaining list commands are
@@ -1153,6 +1207,7 @@ related to tags: [list parcels] and [list tags].  With the first you may
 list all parcels with certain tags:
 
     Test > ls parcels tagged grocery,dairy
+    
     Id | Date       | Account | Trans | Description   | Amount
     ---+------------+---------+-------+---------------+--------
      6 | 2021-03-04 | Pocket  |     6 | eggs          |   -0.85
@@ -1161,13 +1216,19 @@ list all parcels with certain tags:
      9 | 2021-03-04 | Pocket  |     6 | butter        |   -1.39
     11 | 2021-03-04 | Pocket  |     6 | baking power  |   -0.85
 
+    Total amounts by currency:
+        Euro: -4.23
+
 This command may also be filtered by date, with the keywords `from` and `to`,
-like `list transactions`.
+like `list transactions`.  Note that you also get the total amount for that
+listing -- and this is how we may find how much we are spending on certain
+items on a certain period of time.
 
 [list tags] lists all tags in use and their *frequency* --- the  number of
 parcels tagged with each particular tag:
 
     Test > ls tags
+    
     Tag        | Frequency
     -----------+----------
     carry-over |         1
@@ -1263,11 +1324,15 @@ the `add expense` command).  Transactions 7, 8 and 9 were added, as we may
 confirm list the transactions on the 12th of March:
 
     Test > ls tr from 3/12
+    
     Account | Id | Date       | Description    | Total amount | Account balance
     --------+----+------------+----------------+--------------+----------------
     Pocket  |  9 | 2021-03-12 | ATM withdrawal |        60.00 |          176.83
     Pocket  |  7 | 2021-03-12 | Supermarket    |       -10.90 |          116.83
     Bank    |  8 | 2021-03-12 | ATM withdrawal |       -60.00 |         4870.01
+
+    Total amounts by currency:
+        Euro: -10.90
 
 You could also [show] any of the transactions to double-check their correctness.
 
@@ -1348,10 +1413,14 @@ test the backup, opening it in the program:
 
     Test > open test-20210315.sqlite
     Test > ls acc
+    
     ID | Name   | Description     | Balance
     ---+--------+-----------------+--------
      1 | Pocket | Money with me   |  176.83
      2 | Bank   | My bank account | 5020.01
+
+    Total balances by currency:
+        Euro: 5196.84
 
 As this is a backup file, we should change its prompt so that when we open it
 we are immediately alerted that we are on the backup file and not in the main
@@ -1364,6 +1433,7 @@ We can now return to the main file and trim the database.
 
     Test-20210315 > open test.sqlite
     Test > ls tr
+    
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     Pocket  |  9 | 2021-03-12 | ATM withdrawal        |        60.00 |          176.83
@@ -1377,17 +1447,24 @@ We can now return to the main file and trim the database.
     Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
     Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
 
+    Total amounts by currency:
+        Euro: 5196.84
+
 Look at the transactions and see that the first, on both accounts, is on March
 1st and the last on March 12th in the *Pocket* account and on March 15th on the
 *Bank* account.  Let's trim the database up to March 12.
 
     Test > trim storage upto 3/12
     Test > ls tr
+
     Account | Id | Date       | Description     | Total amount | Account balance
     --------+----+------------+-----------------+--------------+----------------
     Pocket  | 11 | 2021-03-12 | Trim carry-over |       176.83 |          176.83
     Bank    | 10 | 2021-03-15 | Lottery prize   |       150.00 |         5020.01
     Test > 
+
+    Total amounts by currency:
+        Euro: 326.83
 
 As we can see, all transactions of the *Pocket* account were removed and a new
 one was created with the account's carry-over balance.  On the *Bank* account
