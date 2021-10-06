@@ -32,17 +32,6 @@ contact: ammdias@gmail.com
 
 website: [AMMDIAS GitHub](https://github.com/ammdias/finctrl)
 
-### Changes history
- 
-* 0.4: List accounts, transactions and parcels now show total amounts;
-       Added extra lines in table printings for better presentation;
-       Navigation in multi-page listings may be done by page number.
-* 0.3.1: Corrected bug in 'list transactions'.
-* 0.3: Corrected bug in currency values parsing.
-* 0.2: Added `edit` option to `source` command;
-       Corrected bug in `set csvsep` command.
-* 0.1: Initial version
-
 
 CONTENTS
 --------
@@ -217,14 +206,14 @@ program's answer, if any.  Some notes:
    For example, the [show copyright] command may be entered as `show` or `sh`:
 
        FinCtrl > show copyright
-       Finance Control 0.4
+       Finance Control 0.5
        (C) 2021 António Manuel Dias <ammdias@gmail.com>
        (...)
 
    or
 
        FinCtrl > sh copyright
-       Finance Control 0.4
+       Finance Control 0.5
        (C) 2021 António Manuel Dias <ammdias@gmail.com>
        (...)
 
@@ -373,7 +362,7 @@ For example, to show the program's copyright information, as we have seen in
 previous section, we could type:
 
     FinCtrl > show copyright
-    Finance Control 0.4
+    Finance Control 0.5
     (C) 2021 António Manuel Dias <ammdias@gmail.com>
     (...)
 
