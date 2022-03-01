@@ -26,7 +26,7 @@ This is what it CAN DO:
 * Export your listings to CSV files that can be further processed in other
   tools like spreadsheet applications.
 
-Copyright (C) 2021 António Manuel Dias
+Copyright (C) 2022 António Manuel Dias
 
 contact: ammdias@gmail.com
 
@@ -60,6 +60,7 @@ CONTENTS
   * [change]
   * [close]
   * [delete]
+  * [find]
   * [help]
   * [list]
   * [open]
@@ -206,15 +207,15 @@ program's answer, if any.  Some notes:
    For example, the [show copyright] command may be entered as `show` or `sh`:
 
        FinCtrl > show copyright
-       Finance Control 0.5
-       (C) 2021 António Manuel Dias <ammdias@gmail.com>
+       Finance Control 0.6
+       (C) 2022 António Manuel Dias <ammdias@gmail.com>
        (...)
 
    or
 
        FinCtrl > sh copyright
-       Finance Control 0.5
-       (C) 2021 António Manuel Dias <ammdias@gmail.com>
+       Finance Control 0.6
+       (C) 2022 António Manuel Dias <ammdias@gmail.com>
        (...)
 
    This is explicitly stated in *help* text of the command:
@@ -251,8 +252,8 @@ program's answer, if any.  Some notes:
    * Dates must be provided in the general form YEAR-MONTH-DAY.  The year may be
      omitted (the current year is implicit) or entered without the century (21st
      century is implicit).  The field separator may be a dash ('-') or a
-     forward slash ('/'). Example: `2021-03-12`, `21-3-12` and `3/12` all refer
-     to the March 12th of 2021 (assuming 2021 is the current year).
+     forward slash ('/'). Example: `2022-01-12`, `22-1-12` and `[[1/12]]` all refer
+     to the March 12th of 2022 (assuming 2022 is the current year).
 
      The words `today` or `now` may be used in replacement of the current date.
      
@@ -326,8 +327,9 @@ available commands:
 
     Documented commands (type help <topic>):
     ========================================
-    EOF  backup  ch      close  delete  list  open  sh    source
-    add  bye     change  del    help    ls    set   show  trim  
+    EOF  backup  ch      close  delete  help  ls    set  show    trim
+    add  bye     change  del    find    list  open  sh   source
+
 
 We may also obtain help on a specific command by typing `help` followed by the
 name of the command.  For example, for the [show] command:
@@ -362,8 +364,8 @@ For example, to show the program's copyright information, as we have seen in
 previous section, we could type:
 
     FinCtrl > show copyright
-    Finance Control 0.5
-    (C) 2021 António Manuel Dias <ammdias@gmail.com>
+    Finance Control 0.6
+    (C) 2022 António Manuel Dias <ammdias@gmail.com>
     (...)
 
 Both the `manual` and `license` information will be shown on a new web
@@ -523,7 +525,7 @@ check a currency settings with the [show currency] command:
 
 These are the properties of a currency:
 
-- *Name*: the name for which the currency is know in the program.  You will
+- *Name*: the name for which the currency is known in the program.  You will
   need this name every time you have to identify the currency, for example, to
   assign it to an account.
 - *Short name*: this is the abbreviation for the currency, like EUR for Euro or
@@ -678,7 +680,7 @@ using the program everything will become clear enough, so let's do that.
 The first thing we must do is insert the initial amounts of each account. 
 
     Test > add transaction on pocket description 'Initial amount' \
-         : date 2021-03-01 \
+         : date 2022-01-01 \
          : parcel "'Initial amount' 123.45 tags 'carry-over'"
     Transaction id: 1
     Test > 
@@ -748,7 +750,7 @@ command.  This is a shortcut to the previous command and takes this form:
 
 Let's use it to add the initial amount to the *Bank* account:
         
-    Test > add deposit of 5000 on bank date 3/1
+    Test > add deposit of 5000 on bank date 1/1
     Transaction id: 2
 
 You should have noticed that each time we add a transaction, the program
@@ -760,7 +762,7 @@ the [show transaction] command:
     Account: Bank (id: 2)
     Description: Deposit
     Total amount: 5000.00
-    Date: 2021-03-01
+    Date: 2022-01-01
     Parcels:
       (2) Deposit: 5000.00
 
@@ -777,8 +779,8 @@ transactions] command:
 
     Account | Id | Date       | Description    | Total amount | Account balance
     --------+----+------------+----------------+--------------+----------------
-    Pocket  |  1 | 2021-03-01 | Initial amount |       123.45 |          123.45
-    Bank    |  2 | 2021-03-01 | Deposit        |      5000.00 |         5000.00
+    Pocket  |  1 | 2022-01-01 | Initial amount |       123.45 |          123.45
+    Bank    |  2 | 2022-01-01 | Deposit        |      5000.00 |         5000.00
 
     Total amounts by currency:
         Euro: 5123.45
@@ -786,8 +788,8 @@ transactions] command:
 There is also a shortcut command to take some amount from an account, [add
 withdrawal]:
 
-    Test > add withdrawal on bank of 59.99 date 3/2 \
-         : descr 'Phone bill, Feb. 2021' tags phone,comms
+    Test > add withdrawal on bank of 59.99 date 1/2 \
+         : descr 'Phone bill, Jan. 2022' tags phone,comms
     Transaction id: 3
 
 Some noteworthy things on this transaction:
@@ -804,11 +806,11 @@ of the transaction and have already seen in the full `add transaction` command:
 
     Test > sh tr 3
     Account: Bank (id: 2)
-    Description: Phone bill, Feb. 2021
+    Description: Phone bill, Jan. 2022
     Total amount: -59.99
-    Date: 2021-03-02
+    Date: 2022-01-02
     Parcels:
-      (3) Phone bill, Feb. 2021: -59.99 (comms, phone)
+      (3) Phone bill, Jan. 2022: -59.99 (comms, phone)
 
 Here, we may also see that although the amount given to the command was
 positive (*59.99*), the transaction amount is negative.  This is the purpose of
@@ -819,10 +821,9 @@ There is one final shortcut transaction command, [add transfer], that moves an
 amount from one account to another.  If I took 10 Euro from my bank account on
 a ATM I could use this command to describe the operation:
 
-    Test > add transfer of 10 from bank to pocket date 3/3 \
+    Test > add transfer of 10 from bank to pocket date 1/3 \
          : descr 'ATM withdrawal'
-    Transaction id: 4
-    Transaction id: 5
+    Transaction ids: 4, 5
 
 Wait! Why were two transactions added this time if I only issued one command?
 We can find out listing the transactions:
@@ -831,11 +832,11 @@ We can find out listing the transactions:
     
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
-    Pocket  |  1 | 2021-03-01 | Initial amount        |       123.45 |          123.45
-    Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
-    Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.00
+    Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+    Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+    Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.00
 
     Total amounts by currency:
         Euro: 5063.46
@@ -859,9 +860,9 @@ we may do that:
     
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
-    Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.00
+    Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+    Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.00
 
     Total amounts by currency:
         Euro: 4930.01
@@ -869,12 +870,12 @@ we may do that:
 Finally, although there is no need with so few transactions, we may also set
 a date interval on the transactions listed:
 
-    Test > ls tr on bank from 3/2 to today
+    Test > ls tr on bank from 1/2 to today
     
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
+    Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
 
     Total amounts by currency:
         Euro: -69.99
@@ -903,7 +904,7 @@ earlier:
 
 We will use the `add expense` command:
 
-    Test > add expense on bank descr Supermarket date 3/4 \
+    Test > add expense on bank descr Supermarket date 1/4 \
          : parcel "eggs 0.85 tags food,grocery" \
          : parcel "'baking flour' 0.45 tags food,grocery" \
          : parcel "sugar 0.69 tags food,grocery" \
@@ -914,11 +915,11 @@ We will use the `add expense` command:
 To check if the transaction was inserted correctly, we can list the
 transactions of the corresponding account:
 
-    Test > ls tr on bank from 3/4
+    Test > ls tr on bank from 1/4
     
     Account | Id | Date       | Description | Total amount | Account balance
     --------+----+------------+-------------+--------------+----------------
-    Bank    |  6 | 2021-03-04 | Supermarket |        -4.87 |         4925.14
+    Bank    |  6 | 2022-01-04 | Supermarket |        -4.87 |         4925.14
 
     Total amounts by currency:
         Euro: -4.87
@@ -929,7 +930,7 @@ It seems alright, but we may also display the complete transaction:
     Account: Bank (id: 2)
     Description: Supermarket
     Total amount: -4.87
-    Date: 2021-03-04
+    Date: 2022-01-04
     Parcels:
       (6) eggs: -0.85 (food, grocery)
       (7) baking flour: -0.45 (food, grocery)
@@ -958,7 +959,7 @@ baking powder parcel.  Let's correct that adding that parcel to transaction 6:
     Account: Bank (id: 2)
     Description: Supermarket
     Total amount: -4.02
-    Date: 2021-03-04
+    Date: 2022-01-04
     Parcels:
       (6) eggs: -0.85 (food, grocery)
       (7) baking flour: -0.45 (food, grocery)
@@ -986,7 +987,7 @@ Printing the details on transaction 6 we can see that all is ok now:
     Account: Bank (id: 2)
     Description: Supermarket
     Total amount: -5.72
-    Date: 2021-03-04
+    Date: 2022-01-04
     Parcels:
       (6) eggs: -0.85 (food, grocery)
       (7) baking flour: -0.45 (food, grocery)
@@ -1002,7 +1003,7 @@ The [change parcel] command may also be used to change a parcel's description:
     Account: Bank (id: 2)
     Description: Supermarket
     Total amount: -5.72
-    Date: 2021-03-04
+    Date: 2022-01-04
     Parcels:
       (6) eggs: -0.85 (food, grocery)
       (7) baking flour: -0.45 (food, grocery)
@@ -1019,7 +1020,7 @@ for all parcels!  Just for an example, let's change *breakfast* to *dairy*:
     Account: Bank (id: 2)
     Description: Supermarket
     Total amount: -5.72
-    Date: 2021-03-04
+    Date: 2022-01-04
     Parcels:
       (6) eggs: -0.85 (food, grocery)
       (7) baking flour: -0.45 (food, grocery)
@@ -1029,7 +1030,7 @@ for all parcels!  Just for an example, let's change *breakfast* to *dairy*:
       (11) baking power: -0.85 (food, grocery)
 
 All parcels tagged with *breakfast* would now be tagged with *dairy* which may
-not be what you intended... If you what you intended was to remove the tag
+not be what you intended... If what you intended was to remove the tag
 *breakfast* from parcel 9 only and to replace it with the tag dairy you could
 have used the [delete tag] command and then [add tag]:
 
@@ -1050,7 +1051,7 @@ used, for example, to change a transaction description:
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     (...)
-    Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.00
+    Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.00
     (...)
     
     Test > change transaction 2 description to 'Initial amount'
@@ -1059,7 +1060,7 @@ used, for example, to change a transaction description:
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     (...)
-    Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+    Bank    |  2 | 2022-01-01 | Initial amount        |      5000.00 |         5000.00
     (...)
 
 More useful is probably changing a transaction from one account to another.
@@ -1071,12 +1072,12 @@ account:
     
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
-    Pocket  |  1 | 2021-03-01 | Initial amount        |       123.45 |          123.45
-    Bank    |  6 | 2021-03-04 | Supermarket           |        -5.72 |         4924.29
-    Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
-    Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+    Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+    Bank    |  6 | 2022-01-04 | Supermarket           |        -5.72 |         4924.29
+    Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+    Bank    |  2 | 2022-01-01 | Initial amount        |      5000.00 |         5000.00
     
     Total amounts by currency:
         Euro: 5057.74
@@ -1087,12 +1088,12 @@ account:
  
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Pocket  |  6 | 2021-03-04 | Supermarket           |        -5.72 |          127.73
-    Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
-    Pocket  |  1 | 2021-03-01 | Initial amount        |       123.45 |          123.45
-    Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
-    Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+    Pocket  |  6 | 2022-01-04 | Supermarket           |        -5.72 |          127.73
+    Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+    Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+    Bank    |  2 | 2022-01-01 | Initial amount        |      5000.00 |         5000.00
     
     Total amounts by currency:
         Euro: 5057.74
@@ -1134,19 +1135,19 @@ empty and its total amount zero:
 
     Test > sh tr 3
     Account: Bank (id: 2)
-    Description: Phone bill, Feb. 2021
+    Description: Phone bill, Jan. 2022
     Total amount: -59.99
-    Date: 2021-03-02
+    Date: 2022-01-02
     Parcels:
-      (3) Phone bill, Feb. 2021: -59.99 (comms, phone)
+      (3) Phone bill, Jan. 2022: -59.99 (comms, phone)
       
     Test > 
     Test > del parcel 3
     Test > sh tr 3
     Account: Bank (id: 2)
-    Description: Phone bill, Feb. 2021
+    Description: Phone bill, Jan. 2022
     Total amount: 0.00
-    Date: 2021-03-02
+    Date: 2022-01-02
     Parcels:
     
     Test >
@@ -1155,15 +1156,15 @@ I don't know how this could be useful, but... it's possible.  The only way to
 revert it now is to enter the data again.  Nevertheless, the parcel ID will be
 different --- it's a new parcel:
 
-    Test > add parcel 'Phone bill, Feb. 2021' \
+    Test > add parcel 'Phone bill, Jan. 2022' \
          : of -59.99 to 3 tags 'comms, phone'
     Test > sh tr 3
     Account: Bank (id: 2)
-    Description: Phone bill, Feb. 2021
+    Description: Phone bill, Jan. 2022
     Total amount: -59.99
-    Date: 2021-03-02
+    Date: 2022-01-02
     Parcels:
-      (12) Phone bill, Feb. 2021: -59.99 (comms, phone)
+      (12) Phone bill, Jan. 2022: -59.99 (comms, phone)
 
 [delete account] works in the same way, taking the account identification
 number or account name and removing the account permanently.  However, extra
@@ -1171,7 +1172,6 @@ care should be taken when using this command, as it will also remove all of
 the account's transactions (and their parcels, of course).  If you really want
 to remove an account, be sure that you don't have any relevant information in
 its transactions!
-
 
 ### Listing and exporting data
 
@@ -1199,11 +1199,11 @@ list all parcels with certain tags:
     
     Id | Date       | Account | Trans | Description   | Amount
     ---+------------+---------+-------+---------------+--------
-     6 | 2021-03-04 | Pocket  |     6 | eggs          |   -0.85
-     7 | 2021-03-04 | Pocket  |     6 | baking flour  |   -0.45
-     8 | 2021-03-04 | Pocket  |     6 | refined sugar |   -0.69
-     9 | 2021-03-04 | Pocket  |     6 | butter        |   -1.39
-    11 | 2021-03-04 | Pocket  |     6 | baking power  |   -0.85
+     6 | 2022-01-04 | Pocket  |     6 | eggs          |   -0.85
+     7 | 2022-01-04 | Pocket  |     6 | baking flour  |   -0.45
+     8 | 2022-01-04 | Pocket  |     6 | refined sugar |   -0.69
+     9 | 2022-01-04 | Pocket  |     6 | butter        |   -1.39
+    11 | 2022-01-04 | Pocket  |     6 | baking power  |   -0.85
 
     Total amounts by currency:
         Euro: -4.23
@@ -1228,8 +1228,37 @@ parcels tagged with each particular tag:
     phone      |         1
     sweets     |         1
 
-Finally, all [list] commands accept one keyword argument, `tofile`, that
-directs the program to export the data to a 
+The [find] command allows us to list transactions or parcels that contain a
+specific piece of text in their description.  For example, if we wanted to list
+all initial transactions in each account, we could search for the text 'initial' 
+in theie description:
+
+    Test > find transactions like initial
+    
+    Account | Id | Date       | Description    | Total amount | Account balance
+    --------+----+------------+----------------+--------------+----------------
+    Bank    |  2 | 2022-01-01 | Initial amount |      5000.00 |         5000.00
+    Pocket  |  1 | 2022-01-01 | Initial amount |       123.45 |          123.45
+
+    Total amounts by currency:
+        Euro: 5123.45
+
+The command to list all parcels with sugar in their description is very similar:
+
+    Test > find parcels like sugar
+
+    Id | Date       | Account | Trans | Description   | Amount
+    ---+------------+---------+-------+---------------+-------
+     8 | 2022-01-04 | Pocket  |     6 | refined sugar |  -0.69
+
+    Total amounts by currency:
+        Euro: -0.69
+
+Like the previous commands, the listing of the [file] command may also be
+filtered by date using the `from` and `to` keywords.
+
+Finally, all [list] and [find] commands accept one keyword argument, `tofile`,
+that directs the program to export the data to a 
 [CSV file](https://en.wikipedia.org/wiki/Comma-separated_values).  The keyword
 must be followed by the file name (same rules apply as to the [open] command).
 CSV files are very portable and supported by several applications and
@@ -1278,7 +1307,7 @@ Let's clarify this with a small example.  Create a text file with the content
 below and name it `test.txt`:
 
     add expense on pocket \
-        descr "Supermarket" date 3/12 \
+        descr "Supermarket" date 1/12 \
         parcel "tomatoes 1.29 tags 'food,vegetables'" \
         parcel "onions 0.99 tags 'food,vegetables'" \
         parcel "lettuce 0.58 tags 'food,vegetables'" \
@@ -1288,7 +1317,7 @@ below and name it `test.txt`:
         parcel "salt 1.25 tags 'food,grocery'"
     
     add transfer of 60 from bank to pocket \
-        descr 'ATM withdrawal' date 3/12
+        descr 'ATM withdrawal' date 1/12
 
 As you can see, these are just two commands, adding the expense of another trip
 to the supermarket and an ATM withdrawal.  After saving the file, open the
@@ -1297,28 +1326,27 @@ program and the `test.sqlite` file we have been working on and then execute the
 
     Test > source test.txt
     
-    add expense on pocket descr "Supermarket" date 3/12 parcel "tomatoes 1.29
+    add expense on pocket descr "Supermarket" date 1/12 parcel "tomatoes 1.29
     tags 'food,vegetables'" parcel "onions 0.99 tags 'food,vegetables'" parcel
     "lettuce 0.58 tags 'food,vegetables'" parcel "cucumber 0.29 tags 'food,
     vegetables'" parcel "'olive oil' 5.45 tags 'food,grocery'" parcel "'wine
     vinegar' 1.05 tags 'food,grocery'" parcel "salt 1.25 tags 'food,grocery'"
     Transaction id: 7
     
-    add transfer of 60 from bank to pocket descr 'ATM withdrawal' date 3/12
-    Transaction id: 8
-    Transaction id: 9 
+    add transfer of 60 from bank to pocket descr 'ATM withdrawal' date 1/12
+    Transaction ids: 8, 9 
 
 The commands are entered and *echoed* in the terminal (note the long line of
 the `add expense` command).  Transactions 7, 8 and 9 were added, as we may
 confirm list the transactions on the 12th of March:
 
-    Test > ls tr from 3/12
+    Test > ls tr from 1/12
     
     Account | Id | Date       | Description    | Total amount | Account balance
     --------+----+------------+----------------+--------------+----------------
-    Pocket  |  9 | 2021-03-12 | ATM withdrawal |        60.00 |          176.83
-    Pocket  |  7 | 2021-03-12 | Supermarket    |       -10.90 |          116.83
-    Bank    |  8 | 2021-03-12 | ATM withdrawal |       -60.00 |         4870.01
+    Pocket  |  9 | 2022-01-12 | ATM withdrawal |        60.00 |          176.83
+    Pocket  |  7 | 2022-01-12 | Supermarket    |       -10.90 |          116.83
+    Bank    |  8 | 2022-01-12 | ATM withdrawal |       -60.00 |         4870.01
 
     Total amounts by currency:
         Euro: -10.90
@@ -1351,8 +1379,8 @@ pass it as an argument to the program itself.  Consider this simple example
 
     open test.sqlite
     add deposit of 150 on bank descr 'Lottery prize' \
-        date 3/15
-    ls tr on bank from 2/1 to today tofile bank.csv
+        date 1/15
+    ls tr on bank from 1/1 to today tofile bank.csv
 
 First, note that we start by opening the database file, then add a transaction
 and finish by exporting the *Bank* account data to a `bank.csv` CSV file.  Now
@@ -1394,13 +1422,13 @@ tools, but you may also do it from inside the program, with the [backup]
 command.  Let's see a practical example of the usage of these two commands with
 our little database.
 
-    Test > backup test-20210315.sqlite
+    Test > backup test-20220115.sqlite
 
 This command will backup the current database to the file passed as argument
 (same rules for the file name as in the [open] command).  We may immediately
 test the backup, opening it in the program:
 
-    Test > open test-20210315.sqlite
+    Test > open test-20220115.sqlite
     Test > ls acc
     
     ID | Name   | Description     | Balance
@@ -1415,26 +1443,26 @@ As this is a backup file, we should change its prompt so that when we open it
 we are immediately alerted that we are on the backup file and not in the main
 file.
 
-    Test > set prompt 'Test-20210315 > '
-    Test-20210315 > 
+    Test > set prompt 'Test-20220115 > '
+    Test-20220115 > 
 
 We can now return to the main file and trim the database.
 
-    Test-20210315 > open test.sqlite
+    Test-20220315 > open test.sqlite
     Test > ls tr
     
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Pocket  |  9 | 2021-03-12 | ATM withdrawal        |        60.00 |          176.83
-    Pocket  |  7 | 2021-03-12 | Supermarket           |       -10.90 |          116.83
-    Pocket  |  6 | 2021-03-04 | Supermarket           |        -5.72 |          127.73
-    Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
-    Pocket  |  1 | 2021-03-01 | Initial amount        |       123.45 |          123.45
-    Bank    | 10 | 2021-03-15 | Lottery prize         |       150.00 |         5020.01
-    Bank    |  8 | 2021-03-12 | ATM withdrawal        |       -60.00 |         4870.01
-    Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
-    Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+    Pocket  |  9 | 2022-01-12 | ATM withdrawal        |        60.00 |          176.83
+    Pocket  |  7 | 2022-01-12 | Supermarket           |       -10.90 |          116.83
+    Pocket  |  6 | 2022-01-04 | Supermarket           |        -5.72 |          127.73
+    Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+    Bank    | 10 | 2022-01-15 | Lottery prize         |       150.00 |         5020.01
+    Bank    |  8 | 2022-01-12 | ATM withdrawal        |       -60.00 |         4870.01
+    Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+    Bank    |  2 | 2022-01-01 | Initial amount        |      5000.00 |         5000.00
 
     Total amounts by currency:
         Euro: 5196.84
@@ -1443,13 +1471,13 @@ Look at the transactions and see that the first, on both accounts, is on March
 1st and the last on March 12th in the *Pocket* account and on March 15th on the
 *Bank* account.  Let's trim the database up to March 12.
 
-    Test > trim storage upto 3/12
+    Test > trim storage upto 1/12
     Test > ls tr
 
     Account | Id | Date       | Description     | Total amount | Account balance
     --------+----+------------+-----------------+--------------+----------------
-    Pocket  | 11 | 2021-03-12 | Trim carry-over |       176.83 |          176.83
-    Bank    | 10 | 2021-03-15 | Lottery prize   |       150.00 |         5020.01
+    Pocket  | 11 | 2022-01-12 | Trim carry-over |       176.83 |          176.83
+    Bank    | 10 | 2022-01-15 | Lottery prize   |       150.00 |         5020.01
     Test > 
 
     Total amounts by currency:
@@ -1468,7 +1496,6 @@ is not know for a very friendly environment for the users of command-line tools.
 Here I will provide some advice on how a Windows user could install and run the
 program but be advised that **I DID NOT TEST THIS**, so I may have missed some
 important detail.  Please contact me if that is the case.  In steps:
-
 
 1. Start by downloading and installing the most recent version of the [Python
    language to your system](https://www.python.org/downloads/windows/).
@@ -1968,6 +1995,59 @@ Arguments:
 - *from*: identification of the parcel from which the tag will be deleted.
 
 
+### find
+
+`find` is a *meta-command* with two available forms.  Below are their
+descriptions:
+
+
+#### find parcels
+
+List parcels that contain a specific piece of text anywhere in their
+description.
+    
+    > find parcels like TEXT [from DATE] [to DATE] [tofile FILE]
+
+Arguments:
+
+- **TEXT** (*positional*): the piece of text to search for in the parcel
+  description (not case sensitive)
+- **from** (*optional*): lower date limit of the results to be displayed.  If no
+  date is given, the results will include all parcels from the first recorded
+  to the upper limit.
+- **to** (*optional*): upper date limit of the results to be displayed.  If no
+  date is given, the results will include all parcels from the lower limit to
+  the last recorded one.
+- **tofile** (*optional*): path to the CSV file where the information should be
+  saved. May be an absolute or relative path (relative to the directory the
+  application was started).  The tilde ('`~`') may be used in substitution of
+  the user's absolute home path.
+
+
+#### find transactions
+(shortcut: `find tr`)
+
+List transactions that contain a specific piece of text anywhere in their
+description.
+    
+    > find tr[ansactions] like TEXT [from DATE] [to DATE] [tofile FILE]
+
+Arguments:
+
+- **TEXT** (*positional*): the piece of text to search for in the transaction
+  description (not case sensitive)
+- **from** (*optional*): lower date limit of the results to be displayed.  If no
+  date is given, the results will include all transactions from the first
+  recorded to the upper limit.
+- **to** (*optional*): upper date limit of the results to be displayed.  If no
+  date is given, the results will include all transactions from the lower
+  limit to the last recorded one.
+- **tofile** (*optional*): path to the CSV file where the information should be
+  saved. May be an absolute or relative path (relative to the directory the
+  application was started).  The tilde ('`~`') may be used in substitution of
+  the user's absolute home path.
+
+
 ### help
 (shortcut: `?`)
 
@@ -2427,7 +2507,7 @@ its schema:
 LICENSE
 -------
 
-Copyright (C) 2021 António Manuel Dias
+Copyright (C) 2022 António Manuel Dias
 
 contact: ammdias@gmail.com
 

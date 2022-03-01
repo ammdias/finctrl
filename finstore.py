@@ -2,8 +2,8 @@
 FinStore: class to store finance control data in a sqlite3 database.
 """
 
-__version__ = '0.1'
-__date__ = '2021-03-21'
+__version__ = '0.6'
+__date__ = '2022-03-01'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -19,6 +19,9 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
+__changes__ = """
+    0.6: Added transactions_by_descr(), parcels_by_descr()
+"""
 
 from sqlitestore import SQLiteStore
 
@@ -31,13 +34,12 @@ class FinStore(SQLiteStore):
     """
     
     class Currency:
-        (name, short_name,
-         symbol, symbol_pos, dec_places, dec_sep) = (None, '',
-                                                    '', 'left', 2, '.' )
+        (name, short_name, symbol, symbol_pos, dec_places, dec_sep) = \
+                (None, '', '', 'left', 2, '.' )
         def __init__(self, *params):
             if len(params):
                 (self.name, self.short_name, self.symbol, self.symbol_pos,
-                            self.dec_places, self.dec_sep) = params
+                 self.dec_places, self.dec_sep) = params
 
     class Account:
         key, name, balance, descr, currency = (None, '', 0, '', '')
@@ -351,7 +353,31 @@ class FinStore(SQLiteStore):
 
         return [self.Transaction(*t)
                 for t in self._qry(f"select * from transactions {cond} "
-                    f"order by account, date desc, key desc {lim}",
+                                   f"order by account, date desc, key desc {lim}",
+                                   tuple(params))]
+
+
+    def transactions_by_descr(self, pattern, datemin=None, datemax=None, limit=None):
+        """Return list of transactions in which the description includes pattern.
+        """
+        if not str(pattern):
+            raise ValueError('Pattern is empty')
+
+        conds, params = ["descr like ?"], [f'%{pattern}%']
+
+        if datemin:
+            conds.append("date>=?")
+            params.append(datemin)
+        if datemax:
+            conds.append("date<=?")
+            params.append(datemax)
+
+        conds = " and ".join(conds)
+        lim = f"limit {int(limit)}" if limit else ''
+
+        return [self.Transaction(*t)
+                for t in self._qry(f"select * from transactions where {conds} "
+                                   f"order by date desc, key desc {lim}",
                                    tuple(params))]
 
 
@@ -564,6 +590,32 @@ class FinStore(SQLiteStore):
                 "select distinct P.key, T.date, T.key, P.descr, P.amount "
                 "from transactions as T, parcels as P, parceltags as PT "
                 f"where PT.parcel=P.key and P.trans=T.key and {tagcond} {cond} "
+                f"order by T.date desc, T.key desc, P.key {lim}",
+                         tuple(params))
+
+    
+    def parcels_by_descr(self, pattern, datemin=None, datemax=None, limit=0):
+        """Return list of parcels in wich description includes pattern.
+        """
+        if not str(pattern):
+            raise ValueError("empty pattern.")
+
+        conds, params = ["P.descr like ?"], [f'%{pattern}%']
+
+        if datemin:
+            conds.append("T.date>=?")
+            params.append(datemin)
+        if datemax:
+            conds.append("T.date<=?")
+            params.append(datemax)
+
+        conds = " and ".join(conds)
+        lim = f"limit {int(limit)}" if limit else ''
+
+        return self._qry(
+                "select distinct P.key, T.date, T.key, P.descr, P.amount "
+                "from transactions as T, parcels as P "
+                f"where P.trans=T.key and {conds} "
                 f"order by T.date desc, T.key desc, P.key {lim}",
                          tuple(params))
 

@@ -2,8 +2,8 @@
 Finance Control command line interface
 """
 
-__version__ = '0.5'
-__date__ = '2021-10-06'
+__version__ = '0.6'
+__date__ = '2022-03-01'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __changes__ = """
+    0.6: Add transfer completely fails if one of the transactions fails;
+         Added 'find transactions' and 'find parcels' commands.
     0.5: Blank input on multiple page listings advances one page and quits
          on last page
     0.4: List accounts, transactions and parcels now show amount totals;
@@ -340,6 +342,17 @@ class FinCtrlCmd(cmd.Cmd):
     do_ls = do_list
 
 
+    def do_find(self, arg):
+        """Find text in descriptions.
+        > find tr[ansactions] like TEXT [from DATE] [to DATE] [tofile FILE]
+        > find parcels like TEXT [from DATE] [to DATE] [tofile FILE]
+        """
+        if self._store:
+            self._dispatch('find', arg)
+        else:
+            error("'find' command needs an open file.")
+
+
     #---- Quit commands
 
     def do_bye(self, arg):
@@ -359,7 +372,7 @@ class FinCtrlCmd(cmd.Cmd):
         try:
             args = shlex.split(arg)
             if args:
-                cmd = '_%s_%s' % (prefix, args.pop(0))
+                cmd = f'_{prefix}_{args.pop(0)}'
                 getattr(self, cmd)(args)
             else:
                 self.do_help(prefix)
@@ -559,7 +572,8 @@ class FinCtrlCmd(cmd.Cmd):
                   "    > add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\\n"
                   "    :             [descr[iption] TEXT] [date DATE] [tags LIST]")
 
-        self._addtr(kw, descr=self._store.metadata('deposit'), mul=1)
+        t = self._addtr(kw, descr=self._store.metadata('deposit'), mul=1)
+        print(f"Transaction id: {t}")
 
 
     def _add_withdrawal(self, args):
@@ -572,7 +586,8 @@ class FinCtrlCmd(cmd.Cmd):
                   "    > add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\\n"
                   "    :                [descr[iption] TEXT] [date DATE] [tags LIST]")
 
-        self._addtr(kw, descr=self._store.metadata('withdrawal'), mul=-1)
+        t = self._addtr(kw, descr=self._store.metadata('withdrawal'), mul=-1)
+        print(f"Transaction id: {t}")
 
 
     def _add_transfer(self, args):
@@ -586,10 +601,23 @@ class FinCtrlCmd(cmd.Cmd):
                   "    :   [descr[iption] TEXT] [date DATE] [tags LIST] \\\n"
                   "    :   from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID")
 
-        kw['on'] = kw['from']
-        self._addtr(kw, descr=self._store.metadata('transfer'), mul=-1)
-        kw['on'] = kw['to']
-        self._addtr(kw, descr=self._store.metadata('transfer'), mul=1)
+        try:
+            t1, t2, descr = None, None, self._store.metadata('transfer')
+            kw['on'] = kw['from']
+            t1 = self._addtr(kw, descr=descr, mul=-1)
+            kw['on'] = kw['to']
+            t2 = self._addtr(kw, descr=descr)
+        except Exception as e:
+            error(f"unable to add transfer. Reason:\n    {e}")
+            try:
+                if t1 is not None:
+                    self._store.del_transaction(t1)
+                if t2 is not None:
+                    self._store.del_transaction(t2)
+            except Exception as e:
+                error(f"unable to delete transaction. Reason:\n    {e}")
+        else:
+            print(f"Transaction ids: {t1}, {t2}")
 
 
     def _add_transaction(self, args):
@@ -613,7 +641,8 @@ class FinCtrlCmd(cmd.Cmd):
         if 'of' not in kw:
             parcels = [kw['parcel']] if 'parcel' in kw else mkw['parcel']
 
-        self._addtr(kw, parcels=parcels, mul=mul)
+        t = self._addtr(kw, parcels=parcels, mul=mul)
+        print(f"Transaction id: {t}")
 
     # shortcut
     _add_tr = _add_transaction
@@ -1141,6 +1170,77 @@ class FinCtrlCmd(cmd.Cmd):
             print_table(data, headers, hints='<>')
 
 
+    def _find_transactions(self, args):
+        """Find transactions by text in their discription.
+        """
+        pos, kw, mkw = parse_args(args, 'like', 'from', 'to', 'tofile')
+        if pos or mkw:
+            raise Exception("'find transactions' syntax:\n"
+                  "    > find tr[ransactions] like TEXT [from DATE] [to DATE] \\\n"
+                  "    : [tofile FILE]")
+
+        try:
+            datemin = parse_date(kw['from']) if 'from' in kw else None
+            datemax = parse_date(kw['to']) if 'to' in kw else None
+            if datemin and datemax and datemin > datemax:
+                datemin, datemax = datemax, datemin
+            transactions = self._store.transactions_by_descr(kw['like'],
+                                                             datemin, datemax)
+            data = []
+            totals = {}
+            for t in transactions:
+                acc = self._store.transaction_account(t.key)
+                curr = self._store.transaction_currency(t.key)
+                data.append([acc.name, str(t.key), t.date, t.descr,
+                             i2d(t.amount, curr), i2d(t.accbalance, curr)])
+                totals[curr.name] = totals.get(curr.name, 0) + t.amount
+        except Exception as e:
+            error(f"unable to find transactions. Reason:\n    {e}")
+            return
+
+        headers = ['Account', 'Id', 'Date', 'Description',
+                           'Total amount', 'Account balance']
+        if 'tofile' in kw:
+            export(os.path.expanduser(kw['tofile']), self.csvsep, data, headers)
+        else:
+            print_table(data, headers, hints='<>><>>')
+            self._totals(totals, 'Total amounts by currency')
+
+    _find_tr = _find_transactions
+
+
+    def _find_parcels(self, args):
+        """Find parcels by text in their discription.
+        """
+        pos, kw, mkw = parse_args(args, 'like', 'from', 'to', 'tofile')
+        if pos or mkw:
+            raise Exception("'find parcels' syntax:\n"
+                  "    > find parcels like TEXT [from DATE] [to DATE] \\\n"
+                  "    : [tofile FILE]")
+
+        datemin = parse_date(kw.get('from')) if 'from' in kw else None
+        datemax = parse_date(kw.get('to')) if 'to' in kw else None
+        if datemin and datemax and datemin > datemax:
+            datemin, datemax = datemax, datemin
+        data = []
+        totals = {}
+        try:
+            for i in self._store.parcels_by_descr(kw['like'], datemin, datemax):
+                acc = self._store.transaction_account(i[2])
+                curr = self._store.transaction_currency(i[2])
+                data.append((str(i[0]), i[1], acc.name, str(i[2]),
+                             i[3], i2d(i[4], curr)))
+                totals[curr.name] = totals.get(curr.name, 0) + i[4]
+        except Exception as e:
+            error(f"unable to list parcels by description. Reason:\n    {e}")
+
+        headers = ['Id', 'Date', 'Account', 'Trans', 'Description', 'Amount']
+        if 'tofile' in kw:
+            export(os.path.expanduser(kw['tofile']), self.csvsep, data, headers)
+        else:
+            print_table(data, headers, hints='>><><>')
+            self._totals(totals, 'Total amounts by currency')
+
 
     #-------------------------------------------------------------------------
     # Auxilliary methods
@@ -1176,7 +1276,7 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def _addtr(self, kw, descr='', parcels=[], mul=1):
-        """Add deposit.
+        """Add a transaction.
         """
         t = FinStore.Transaction()
         try:
@@ -1206,7 +1306,7 @@ class FinCtrlCmd(cmd.Cmd):
                     plist.append(p)
             t.parcels = plist
             self._store.add_transaction(t)
-            print(f"Transaction id: {t.key}")
+            return t.key
         except Exception as e:
             error(f"unable to add transaction. Reason:\n    {e}")
 

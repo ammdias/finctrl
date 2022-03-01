@@ -1,8 +1,8 @@
 FINANCE CONTROL README
 ======================
-version 0.5
+version 0.6
 
-Copyright (C) 2021 António Manuel Dias
+Copyright (C) 2022 António Manuel Dias
 
 contact: ammdias@gmail.com
 

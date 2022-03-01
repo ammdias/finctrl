@@ -14,7 +14,7 @@
 <li>List your earnings and expenses filtered by date, account and/or item tags;</li>
 <li>Export your listings to CSV files that can be further processed in other tools like spreadsheet applications.</li>
 </ul>
-<p>Copyright (C) 2021 António Manuel Dias</p>
+<p>Copyright (C) 2022 António Manuel Dias</p>
 <p>contact: ammdias@gmail.com</p>
 <p>website: <a href="https://github.com/ammdias/finctrl">AMMDIAS GitHub</a></p>
 <h2 id="contents">CONTENTS</h2>
@@ -48,6 +48,7 @@
 <li><a href="#change">change</a></li>
 <li><a href="#close">close</a></li>
 <li><a href="#delete">delete</a></li>
+<li><a href="#find">find</a></li>
 <li><a href="#help">help</a></li>
 <li><a href="#list">list</a></li>
 <li><a href="#open">open</a></li>
@@ -111,13 +112,13 @@ FinCtrl &gt;  </code></pre></li>
 <p>However, although the commands are case-sensitive, some arguments may be entered in any case, like account names or tags. Also, the answer to inline questions may be given in lower or upper case. Examples of those are given throughout this manual.</p></li>
 <li><p>Some commands or options have a shortcut version that may be used interchangeably. That will be indicated in the <a href="#reference">REFERENCE</a> section and in the online help by enveloping the optional characters in square brackets. For example, the <a href="#show-copyright">show copyright</a> command may be entered as <code>show</code> or <code>sh</code>:</p>
 <pre><code>FinCtrl &gt; show copyright
-Finance Control 0.5
-(C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
+Finance Control 0.6
+(C) 2022 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>or</p>
 <pre><code>FinCtrl &gt; sh copyright
-Finance Control 0.5
-(C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
+Finance Control 0.6
+(C) 2022 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>This is explicitly stated in <em>help</em> text of the command:</p>
 <pre><code>FinCtrl &gt; help show
@@ -131,7 +132,7 @@ Show a specific record&#39;s data:
 &gt; command keyword_b ARG-B POS1 keyword_a ARG-A POS2 </code></pre>
 <p>These commands would be valid and equivalent because the positional arguments are given in order (POS1 before POS2) and the keyword arguments (ARG-A and ARG-B) always follow the respective keyword (keyword_a and keyword_b).</p></li>
 <li><p>Monetary amounts must consist of positive or negative integer or decimal values, using the decimal separator configured in the account they belong to. Examples: <code>123</code>, <code>123.24</code>, <code>-123.5</code>. Also, the decimal part may have at most the number of decimal places configured in the respective currency: the program will automatically truncate the remaining decimal places. See the <a href="#currencies">Currencies</a> section below for details on how to find or change an account’s decimal separator and number of decimal places.</p></li>
-<li><p>Dates must be provided in the general form YEAR-MONTH-DAY. The year may be omitted (the current year is implicit) or entered without the century (21st century is implicit). The field separator may be a dash (‘-’) or a forward slash (‘/’). Example: <code>2021-03-12</code>, <code>21-3-12</code> and <code>3/12</code> all refer to the March 12th of 2021 (assuming 2021 is the current year).</p>
+<li><p>Dates must be provided in the general form YEAR-MONTH-DAY. The year may be omitted (the current year is implicit) or entered without the century (21st century is implicit). The field separator may be a dash (‘-’) or a forward slash (‘/’). Example: <code>2022-01-12</code>, <code>22-1-12</code> and <code>[[1/12]]</code> all refer to the March 12th of 2022 (assuming 2022 is the current year).</p>
 <p>The words <code>today</code> or <code>now</code> may be used in replacement of the current date.</p></li>
 <li><p>Text values with spaces must be enveloped by single- or double-quotes. If a text value has single-quotes, use double-quotes to envelop it and vice-versa.</p></li>
 <li>List values, used when entering tags, are text values separated by commas. Same rule applies as for text values: if any value of the list has spaces or quotes, the whole list must be enveloped by the other kind of quotes. Example:
@@ -173,8 +174,8 @@ Bye.</code></pre>
 
 Documented commands (type help &lt;topic&gt;):
 ========================================
-EOF  backup  ch      close  delete  list  open  sh    source
-add  bye     change  del    help    ls    set   show  trim  </code></pre>
+EOF  backup  ch      close  delete  help  ls    set  show    trim
+add  bye     change  del    find    list  open  sh   source</code></pre>
 <p>We may also obtain help on a specific command by typing <code>help</code> followed by the name of the command. For example, for the <a href="#show">show</a> command:</p>
 <pre><code>FinCtrl &gt; help show
 Show a specific record&#39;s data:
@@ -192,8 +193,8 @@ Show a specific record&#39;s data:
 <p>The third syntax line of the example above explains how to use the <a href="#show">show</a> command to display some information pertaining to the program. The command may be written as <code>show</code> or <code>sh</code> (the bracketed ‘<code>ow</code>’ is optional) and must be followed by only one of the options separated by vertical bars, <code>settings</code>, <code>manual</code>, <code>copyright</code> or <code>license</code>.</p>
 <p>For example, to show the program’s copyright information, as we have seen in previous section, we could type:</p>
 <pre><code>FinCtrl &gt; show copyright
-Finance Control 0.5
-(C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
+Finance Control 0.6
+(C) 2022 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>Both the <code>manual</code> and <code>license</code> information will be shown on a new web browser window, assuming a browser is installed on your system:</p>
 <pre><code>FinCtrl &gt; sh manual
@@ -276,7 +277,7 @@ Decimal places: 2
 Decimal separator: .</code></pre>
 <p>These are the properties of a currency:</p>
 <ul>
-<li><em>Name</em>: the name for which the currency is know in the program. You will need this name every time you have to identify the currency, for example, to assign it to an account.</li>
+<li><em>Name</em>: the name for which the currency is known in the program. You will need this name every time you have to identify the currency, for example, to assign it to an account.</li>
 <li><em>Short name</em>: this is the abbreviation for the currency, like EUR for Euro or USD for United States Dollar. Currently it has no purpose in the program.</li>
 <li><em>Symbol</em>: the currency symbol, like ‘€’ for Euro. Currently it is not used by the program.</li>
 <li><em>Position</em>: the position of the symbol when writing an amount. Must be <code>left</code> or <code>right</code>. Also with no current use in the program.</li>
@@ -358,7 +359,7 @@ Balance (current): 0.00 (---)</code></pre>
 <p>Once we have our accounts set, we can start really using the program for its intended purpose, tracking our personal earnings and expenses. Every operation on each of the accounts is a <em>transaction</em> and may be split into several <em>parcels</em>. For example, on a single trip to the supermarket one may buy sugar, chocolate, flour, eggs and butter to make a chocolate cake. Each of those items would be a <em>parcel</em> and the sum of the parcels would comprise a <em>transaction</em>. Every transaction must have at least one parcel, although for transactions with a single parcel there are shortcut commands to avoid having to declare the parcel explicitly. If this seems unclear, I hope when you start using the program everything will become clear enough, so let’s do that.</p>
 <p>The first thing we must do is insert the initial amounts of each account.</p>
 <pre><code>Test &gt; add transaction on pocket description &#39;Initial amount&#39; \
-     : date 2021-03-01 \
+     : date 2022-01-01 \
      : parcel &quot;&#39;Initial amount&#39; 123.45 tags &#39;carry-over&#39;&quot;
 Transaction id: 1
 Test &gt; </code></pre>
@@ -386,14 +387,14 @@ Test &gt; </code></pre>
 <pre><code>&gt; add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \
 :             [descr TEXT] [date DATE] [tags LIST]</code></pre>
 <p>Let’s use it to add the initial amount to the <em>Bank</em> account:</p>
-<pre><code>Test &gt; add deposit of 5000 on bank date 3/1
+<pre><code>Test &gt; add deposit of 5000 on bank date 1/1
 Transaction id: 2</code></pre>
 <p>You should have noticed that each time we add a transaction, the program answers with the transaction identification. We need this number every time we have to refer to the transaction, like when we want to see its details with the <a href="#show-transaction">show transaction</a> command:</p>
 <pre><code>Test &gt; sh tr 2
 Account: Bank (id: 2)
 Description: Deposit
 Total amount: 5000.00
-Date: 2021-03-01
+Date: 2022-01-01
 Parcels:
   (2) Deposit: 5000.00</code></pre>
 <p>Note that the description of the transaction (and also the implied parcel) was set to <em>Deposit</em>. This is due to one of the <a href="#default-settings">default settings</a>, the <em>default deposit text</em>. We could have set a different transaction description with the <code>description</code> keyword and even add tags to the implied parcel using the <code>tags</code> keyword.</p>
@@ -402,14 +403,14 @@ Parcels:
 
 Account | Id | Date       | Description    | Total amount | Account balance
 --------+----+------------+----------------+--------------+----------------
-Pocket  |  1 | 2021-03-01 | Initial amount |       123.45 |          123.45
-Bank    |  2 | 2021-03-01 | Deposit        |      5000.00 |         5000.00
+Pocket  |  1 | 2022-01-01 | Initial amount |       123.45 |          123.45
+Bank    |  2 | 2022-01-01 | Deposit        |      5000.00 |         5000.00
 
 Total amounts by currency:
     Euro: 5123.45</code></pre>
 <p>There is also a shortcut command to take some amount from an account, <a href="#add-withdrawal">add withdrawal</a>:</p>
-<pre><code>Test &gt; add withdrawal on bank of 59.99 date 3/2 \
-     : descr &#39;Phone bill, Feb. 2021&#39; tags phone,comms
+<pre><code>Test &gt; add withdrawal on bank of 59.99 date 1/2 \
+     : descr &#39;Phone bill, Jan. 2022&#39; tags phone,comms
 Transaction id: 3</code></pre>
 <p>Some noteworthy things on this transaction:</p>
 <ul>
@@ -419,27 +420,26 @@ Transaction id: 3</code></pre>
 <p>Actually, the tags are added to the implied parcel, as we may see in the details of the transaction and have already seen in the full <code>add transaction</code> command:</p>
 <pre><code>Test &gt; sh tr 3
 Account: Bank (id: 2)
-Description: Phone bill, Feb. 2021
+Description: Phone bill, Jan. 2022
 Total amount: -59.99
-Date: 2021-03-02
+Date: 2022-01-02
 Parcels:
-  (3) Phone bill, Feb. 2021: -59.99 (comms, phone)</code></pre>
+  (3) Phone bill, Jan. 2022: -59.99 (comms, phone)</code></pre>
 <p>Here, we may also see that although the amount given to the command was positive (<em>59.99</em>), the transaction amount is negative. This is the purpose of having a shortcut command to describe a <em>deposit</em> and another to describe a <em>withdrawal</em>.</p>
 <p>There is one final shortcut transaction command, <a href="#add-transfer">add transfer</a>, that moves an amount from one account to another. If I took 10 Euro from my bank account on a ATM I could use this command to describe the operation:</p>
-<pre><code>Test &gt; add transfer of 10 from bank to pocket date 3/3 \
+<pre><code>Test &gt; add transfer of 10 from bank to pocket date 1/3 \
      : descr &#39;ATM withdrawal&#39;
-Transaction id: 4
-Transaction id: 5</code></pre>
+Transaction ids: 4, 5</code></pre>
 <p>Wait! Why were two transactions added this time if I only issued one command? We can find out listing the transactions:</p>
 <pre><code>Test &gt; ls tr
 
 Account | Id | Date       | Description           | Total amount | Account balance
 --------+----+------------+-----------------------+--------------+----------------
-Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
-Pocket  |  1 | 2021-03-01 | Initial amount        |       123.45 |          123.45
-Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
-Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.00
+Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.00
 
 Total amounts by currency:
     Euro: 5063.46</code></pre>
@@ -455,19 +455,19 @@ Total amounts by currency:
 
 Account | Id | Date       | Description           | Total amount | Account balance
 --------+----+------------+-----------------------+--------------+----------------
-Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
-Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.00
+Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.00
 
 Total amounts by currency:
     Euro: 4930.01</code></pre>
 <p>Finally, although there is no need with so few transactions, we may also set a date interval on the transactions listed:</p>
-<pre><code>Test &gt; ls tr on bank from 3/2 to today
+<pre><code>Test &gt; ls tr on bank from 1/2 to today
 
 Account | Id | Date       | Description           | Total amount | Account balance
 --------+----+------------+-----------------------+--------------+----------------
-Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
+Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
 
 Total amounts by currency:
     Euro: -69.99</code></pre>
@@ -481,7 +481,7 @@ Total amounts by currency:
 <li>200g black chocolate, 1.49€</li>
 </ul>
 <p>We will use the <code>add expense</code> command:</p>
-<pre><code>Test &gt; add expense on bank descr Supermarket date 3/4 \
+<pre><code>Test &gt; add expense on bank descr Supermarket date 1/4 \
      : parcel &quot;eggs 0.85 tags food,grocery&quot; \
      : parcel &quot;&#39;baking flour&#39; 0.45 tags food,grocery&quot; \
      : parcel &quot;sugar 0.69 tags food,grocery&quot; \
@@ -489,11 +489,11 @@ Total amounts by currency:
      : parcel &quot;chocolate 1.49 tags food,sweets&quot;
 Transaction id: 6</code></pre>
 <p>To check if the transaction was inserted correctly, we can list the transactions of the corresponding account:</p>
-<pre><code>Test &gt; ls tr on bank from 3/4
+<pre><code>Test &gt; ls tr on bank from 1/4
 
 Account | Id | Date       | Description | Total amount | Account balance
 --------+----+------------+-------------+--------------+----------------
-Bank    |  6 | 2021-03-04 | Supermarket |        -4.87 |         4925.14
+Bank    |  6 | 2022-01-04 | Supermarket |        -4.87 |         4925.14
 
 Total amounts by currency:
     Euro: -4.87</code></pre>
@@ -502,7 +502,7 @@ Total amounts by currency:
 Account: Bank (id: 2)
 Description: Supermarket
 Total amount: -4.87
-Date: 2021-03-04
+Date: 2022-01-04
 Parcels:
   (6) eggs: -0.85 (food, grocery)
   (7) baking flour: -0.45 (food, grocery)
@@ -517,7 +517,7 @@ Test &gt; sh tr 6
 Account: Bank (id: 2)
 Description: Supermarket
 Total amount: -4.02
-Date: 2021-03-04
+Date: 2022-01-04
 Parcels:
   (6) eggs: -0.85 (food, grocery)
   (7) baking flour: -0.45 (food, grocery)
@@ -535,7 +535,7 @@ Test &gt; add tag grocery to 11</code></pre>
 Account: Bank (id: 2)
 Description: Supermarket
 Total amount: -5.72
-Date: 2021-03-04
+Date: 2022-01-04
 Parcels:
   (6) eggs: -0.85 (food, grocery)
   (7) baking flour: -0.45 (food, grocery)
@@ -549,7 +549,7 @@ Test &gt; sh tr 6
 Account: Bank (id: 2)
 Description: Supermarket
 Total amount: -5.72
-Date: 2021-03-04
+Date: 2022-01-04
 Parcels:
   (6) eggs: -0.85 (food, grocery)
   (7) baking flour: -0.45 (food, grocery)
@@ -563,7 +563,7 @@ Test &gt; sh tr 6
 Account: Bank (id: 2)
 Description: Supermarket
 Total amount: -5.72
-Date: 2021-03-04
+Date: 2022-01-04
 Parcels:
   (6) eggs: -0.85 (food, grocery)
   (7) baking flour: -0.45 (food, grocery)
@@ -571,7 +571,7 @@ Parcels:
   (9) butter: -1.39 (dairy, food)
   (10) chocolate: -1.49 (food, sweets)
   (11) baking power: -0.85 (food, grocery)</code></pre>
-<p>All parcels tagged with <em>breakfast</em> would now be tagged with <em>dairy</em> which may not be what you intended… If you what you intended was to remove the tag <em>breakfast</em> from parcel 9 only and to replace it with the tag dairy you could have used the <a href="#delete-tag">delete tag</a> command and then <a href="#add-tag">add tag</a>:</p>
+<p>All parcels tagged with <em>breakfast</em> would now be tagged with <em>dairy</em> which may not be what you intended… If what you intended was to remove the tag <em>breakfast</em> from parcel 9 only and to replace it with the tag dairy you could have used the <a href="#delete-tag">delete tag</a> command and then <a href="#add-tag">add tag</a>:</p>
 <p>(if you try this after the previous command it will fail, because parcel 9 is already tagged with <em>dairy</em>)</p>
 <pre><code>Test &gt; delete tag breakfast from 9
 Test &gt; add tag dairy to 9</code></pre>
@@ -582,7 +582,7 @@ Test &gt; add tag dairy to 9</code></pre>
 Account | Id | Date       | Description           | Total amount | Account balance
 --------+----+------------+-----------------------+--------------+----------------
 (...)
-Bank    |  2 | 2021-03-01 | Deposit               |      5000.00 |         5000.00
+Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.00
 (...)
 
 Test &gt; change transaction 2 description to &#39;Initial amount&#39;
@@ -591,19 +591,19 @@ Test &gt; ls tr
 Account | Id | Date       | Description           | Total amount | Account balance
 --------+----+------------+-----------------------+--------------+----------------
 (...)
-Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+Bank    |  2 | 2022-01-01 | Initial amount        |      5000.00 |         5000.00
 (...)</code></pre>
 <p>More useful is probably changing a transaction from one account to another. Let’s say that we payed the chocolate ingredients in coin and not directly from the bank. To correct this we need to change transaction 6 to the <em>Pocket</em> account:</p>
 <pre><code>Test &gt; ls tr
 
 Account | Id | Date       | Description           | Total amount | Account balance
 --------+----+------------+-----------------------+--------------+----------------
-Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
-Pocket  |  1 | 2021-03-01 | Initial amount        |       123.45 |          123.45
-Bank    |  6 | 2021-03-04 | Supermarket           |        -5.72 |         4924.29
-Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
-Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+Bank    |  6 | 2022-01-04 | Supermarket           |        -5.72 |         4924.29
+Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+Bank    |  2 | 2022-01-01 | Initial amount        |      5000.00 |         5000.00
 
 Total amounts by currency:
     Euro: 5057.74
@@ -614,12 +614,12 @@ Test &gt; ls tr
 
 Account | Id | Date       | Description           | Total amount | Account balance
 --------+----+------------+-----------------------+--------------+----------------
-Pocket  |  6 | 2021-03-04 | Supermarket           |        -5.72 |          127.73
-Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
-Pocket  |  1 | 2021-03-01 | Initial amount        |       123.45 |          123.45
-Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
-Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+Pocket  |  6 | 2022-01-04 | Supermarket           |        -5.72 |          127.73
+Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+Bank    |  2 | 2022-01-01 | Initial amount        |      5000.00 |         5000.00
 
 Total amounts by currency:
     Euro: 5057.74</code></pre>
@@ -640,32 +640,32 @@ Total balances by currency:
 <p>Previously I said that every transaction must have at least one parcel: well, that is generally true and logic but you <em>can</em> remove the last parcel from a transaction with the <code>delete transaction</code> command. The transaction will be empty and its total amount zero:</p>
 <pre><code>Test &gt; sh tr 3
 Account: Bank (id: 2)
-Description: Phone bill, Feb. 2021
+Description: Phone bill, Jan. 2022
 Total amount: -59.99
-Date: 2021-03-02
+Date: 2022-01-02
 Parcels:
-  (3) Phone bill, Feb. 2021: -59.99 (comms, phone)
+  (3) Phone bill, Jan. 2022: -59.99 (comms, phone)
   
 Test &gt; 
 Test &gt; del parcel 3
 Test &gt; sh tr 3
 Account: Bank (id: 2)
-Description: Phone bill, Feb. 2021
+Description: Phone bill, Jan. 2022
 Total amount: 0.00
-Date: 2021-03-02
+Date: 2022-01-02
 Parcels:
 
 Test &gt;</code></pre>
 <p>I don’t know how this could be useful, but… it’s possible. The only way to revert it now is to enter the data again. Nevertheless, the parcel ID will be different — it’s a new parcel:</p>
-<pre><code>Test &gt; add parcel &#39;Phone bill, Feb. 2021&#39; \
+<pre><code>Test &gt; add parcel &#39;Phone bill, Jan. 2022&#39; \
      : of -59.99 to 3 tags &#39;comms, phone&#39;
 Test &gt; sh tr 3
 Account: Bank (id: 2)
-Description: Phone bill, Feb. 2021
+Description: Phone bill, Jan. 2022
 Total amount: -59.99
-Date: 2021-03-02
+Date: 2022-01-02
 Parcels:
-  (12) Phone bill, Feb. 2021: -59.99 (comms, phone)</code></pre>
+  (12) Phone bill, Jan. 2022: -59.99 (comms, phone)</code></pre>
 <p><a href="#delete-account">delete account</a> works in the same way, taking the account identification number or account name and removing the account permanently. However, extra care should be taken when using this command, as it will also remove all of the account’s transactions (and their parcels, of course). If you really want to remove an account, be sure that you don’t have any relevant information in its transactions!</p>
 <h3 id="listing-and-exporting-data">Listing and exporting data</h3>
 <p>In the previous sections of this manual we already covered various forms of the <a href="#list">list</a> command, like <a href="#list-currencies">list currencies</a> and <a href="#list-accounts">list accounts</a>. There is only one detail we didn’t mention: we may pass a currency or account name, respectively, to list only that currency or account instead of all of them. In short, it’s just an alternative way of visualizing the data to the <a href="#show">show</a> command:</p>
@@ -682,11 +682,11 @@ Total balances by currency:
 
 Id | Date       | Account | Trans | Description   | Amount
 ---+------------+---------+-------+---------------+--------
- 6 | 2021-03-04 | Pocket  |     6 | eggs          |   -0.85
- 7 | 2021-03-04 | Pocket  |     6 | baking flour  |   -0.45
- 8 | 2021-03-04 | Pocket  |     6 | refined sugar |   -0.69
- 9 | 2021-03-04 | Pocket  |     6 | butter        |   -1.39
-11 | 2021-03-04 | Pocket  |     6 | baking power  |   -0.85
+ 6 | 2022-01-04 | Pocket  |     6 | eggs          |   -0.85
+ 7 | 2022-01-04 | Pocket  |     6 | baking flour  |   -0.45
+ 8 | 2022-01-04 | Pocket  |     6 | refined sugar |   -0.69
+ 9 | 2022-01-04 | Pocket  |     6 | butter        |   -1.39
+11 | 2022-01-04 | Pocket  |     6 | baking power  |   -0.85
 
 Total amounts by currency:
     Euro: -4.23</code></pre>
@@ -703,7 +703,27 @@ food       |         6
 grocery    |         4
 phone      |         1
 sweets     |         1</code></pre>
-<p>Finally, all <a href="#list">list</a> commands accept one keyword argument, <code>tofile</code>, that directs the program to export the data to a <a href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a>. The keyword must be followed by the file name (same rules apply as to the <a href="#open">open</a> command). CSV files are very portable and supported by several applications and programming languages, if you desire to process the exported data. The command below will export a list of the parcels with tag <code>food</code> to the file <code>food.csv</code> in the current directory:</p>
+<p>The <a href="#find">find</a> command allows us to list transactions or parcels that contain a specific piece of text in their description. For example, if we wanted to list all initial transactions in each account, we could search for the text ‘initial’ in theie description:</p>
+<pre><code>Test &gt; find transactions like initial
+
+Account | Id | Date       | Description    | Total amount | Account balance
+--------+----+------------+----------------+--------------+----------------
+Bank    |  2 | 2022-01-01 | Initial amount |      5000.00 |         5000.00
+Pocket  |  1 | 2022-01-01 | Initial amount |       123.45 |          123.45
+
+Total amounts by currency:
+    Euro: 5123.45</code></pre>
+<p>The command to list all parcels with sugar in their description is very similar:</p>
+<pre><code>Test &gt; find parcels like sugar
+
+Id | Date       | Account | Trans | Description   | Amount
+---+------------+---------+-------+---------------+-------
+ 8 | 2022-01-04 | Pocket  |     6 | refined sugar |  -0.69
+
+Total amounts by currency:
+    Euro: -0.69</code></pre>
+<p>Like the previous commands, the listing of the [file] command may also be filtered by date using the <code>from</code> and <code>to</code> keywords.</p>
+<p>Finally, all <a href="#list">list</a> and <a href="#find">find</a> commands accept one keyword argument, <code>tofile</code>, that directs the program to export the data to a <a href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a>. The keyword must be followed by the file name (same rules apply as to the <a href="#open">open</a> command). CSV files are very portable and supported by several applications and programming languages, if you desire to process the exported data. The command below will export a list of the parcels with tag <code>food</code> to the file <code>food.csv</code> in the current directory:</p>
 <pre><code>Test &gt; ls parcels tagged food tofile food.csv</code></pre>
 <p>After this you could open the file, for example, with a spreadsheet application like LibreOffice.org Calc, Microsoft Office or even Google Docs. When opening the file, don’t forget to choose the field separator character. For example, when opening the file with Calc I am presented with this dialog:</p>
 <figure>
@@ -717,7 +737,7 @@ sweets     |         1</code></pre>
 <p>The idea is simple: you prepare a simple-text file in your favourite editor, where you can review the commands and correct any mistake, and then use the <a href="#source">source</a> command to insert it into the database. The commands in the text file must match <strong>exactly</strong> the commands you would enter at the program command line. This includes adding a backslash at the end of lines of a multi-line command.</p>
 <p>Let’s clarify this with a small example. Create a text file with the content below and name it <code>test.txt</code>:</p>
 <pre><code>add expense on pocket \
-    descr &quot;Supermarket&quot; date 3/12 \
+    descr &quot;Supermarket&quot; date 1/12 \
     parcel &quot;tomatoes 1.29 tags &#39;food,vegetables&#39;&quot; \
     parcel &quot;onions 0.99 tags &#39;food,vegetables&#39;&quot; \
     parcel &quot;lettuce 0.58 tags &#39;food,vegetables&#39;&quot; \
@@ -727,28 +747,27 @@ sweets     |         1</code></pre>
     parcel &quot;salt 1.25 tags &#39;food,grocery&#39;&quot;
 
 add transfer of 60 from bank to pocket \
-    descr &#39;ATM withdrawal&#39; date 3/12</code></pre>
+    descr &#39;ATM withdrawal&#39; date 1/12</code></pre>
 <p>As you can see, these are just two commands, adding the expense of another trip to the supermarket and an ATM withdrawal. After saving the file, open the program and the <code>test.sqlite</code> file we have been working on and then execute the <a href="#source">source</a> command:</p>
 <pre><code>Test &gt; source test.txt
 
-add expense on pocket descr &quot;Supermarket&quot; date 3/12 parcel &quot;tomatoes 1.29
+add expense on pocket descr &quot;Supermarket&quot; date 1/12 parcel &quot;tomatoes 1.29
 tags &#39;food,vegetables&#39;&quot; parcel &quot;onions 0.99 tags &#39;food,vegetables&#39;&quot; parcel
 &quot;lettuce 0.58 tags &#39;food,vegetables&#39;&quot; parcel &quot;cucumber 0.29 tags &#39;food,
 vegetables&#39;&quot; parcel &quot;&#39;olive oil&#39; 5.45 tags &#39;food,grocery&#39;&quot; parcel &quot;&#39;wine
 vinegar&#39; 1.05 tags &#39;food,grocery&#39;&quot; parcel &quot;salt 1.25 tags &#39;food,grocery&#39;&quot;
 Transaction id: 7
 
-add transfer of 60 from bank to pocket descr &#39;ATM withdrawal&#39; date 3/12
-Transaction id: 8
-Transaction id: 9 </code></pre>
+add transfer of 60 from bank to pocket descr &#39;ATM withdrawal&#39; date 1/12
+Transaction ids: 8, 9 </code></pre>
 <p>The commands are entered and <em>echoed</em> in the terminal (note the long line of the <code>add expense</code> command). Transactions 7, 8 and 9 were added, as we may confirm list the transactions on the 12th of March:</p>
-<pre><code>Test &gt; ls tr from 3/12
+<pre><code>Test &gt; ls tr from 1/12
 
 Account | Id | Date       | Description    | Total amount | Account balance
 --------+----+------------+----------------+--------------+----------------
-Pocket  |  9 | 2021-03-12 | ATM withdrawal |        60.00 |          176.83
-Pocket  |  7 | 2021-03-12 | Supermarket    |       -10.90 |          116.83
-Bank    |  8 | 2021-03-12 | ATM withdrawal |       -60.00 |         4870.01
+Pocket  |  9 | 2022-01-12 | ATM withdrawal |        60.00 |          176.83
+Pocket  |  7 | 2022-01-12 | Supermarket    |       -10.90 |          116.83
+Bank    |  8 | 2022-01-12 | ATM withdrawal |       -60.00 |         4870.01
 
 Total amounts by currency:
     Euro: -10.90</code></pre>
@@ -761,8 +780,8 @@ Total amounts by currency:
 <p>If all your work on the program is just executing a script, you could even pass it as an argument to the program itself. Consider this simple example (save it as test-1.txt):</p>
 <pre><code>open test.sqlite
 add deposit of 150 on bank descr &#39;Lottery prize&#39; \
-    date 3/15
-ls tr on bank from 2/1 to today tofile bank.csv</code></pre>
+    date 1/15
+ls tr on bank from 1/1 to today tofile bank.csv</code></pre>
 <p>First, note that we start by opening the database file, then add a transaction and finish by exporting the <em>Bank</em> account data to a <code>bank.csv</code> CSV file. Now we can pass this to the program directly from the system prompt:</p>
 <pre><code>$ finctrl --source test-1.txt</code></pre>
 <p>The <code>--source</code> (or just <code>-s</code>) option of the Finance Control program tells it to open the program, execute the commands in the file and finally quit the program (check if the <code>bank.csv</code> file was created and that it is correct).</p>
@@ -773,9 +792,9 @@ ls tr on bank from 2/1 to today tofile bank.csv</code></pre>
 <p>After a good amount of time using the program, a lot of data will be collected and that could become a nuisance. For example, that means you always have to filter listings on starting date, to ignore old data. To overcome this problem you may use the <a href="#trim">trim</a> command to remove old, unnecessary data. This command has two forms: <a href="#trim-account">trim account</a>, that operates on a single account, and <a href="#trim-storage">trim storage</a>, which will trim the complete database.</p>
 <p>Trim will remove all transactions (and their parcels, of course) from the first up to (and including) the date the user indicates, preserving the affected accounts balance. If no transaction remains on an account, a <em>carry-over</em> transaction will be created with an amount identical to the account balance on that date.</p>
 <p>A good practice before using the <code>trim</code> command is to backup the database. The easiest way to do this is just copying the file using the operating system’s tools, but you may also do it from inside the program, with the <a href="#backup">backup</a> command. Let’s see a practical example of the usage of these two commands with our little database.</p>
-<pre><code>Test &gt; backup test-20210315.sqlite</code></pre>
+<pre><code>Test &gt; backup test-20220115.sqlite</code></pre>
 <p>This command will backup the current database to the file passed as argument (same rules for the file name as in the <a href="#open">open</a> command). We may immediately test the backup, opening it in the program:</p>
-<pre><code>Test &gt; open test-20210315.sqlite
+<pre><code>Test &gt; open test-20220115.sqlite
 Test &gt; ls acc
 
 ID | Name   | Description     | Balance
@@ -786,35 +805,35 @@ ID | Name   | Description     | Balance
 Total balances by currency:
     Euro: 5196.84</code></pre>
 <p>As this is a backup file, we should change its prompt so that when we open it we are immediately alerted that we are on the backup file and not in the main file.</p>
-<pre><code>Test &gt; set prompt &#39;Test-20210315 &gt; &#39;
-Test-20210315 &gt; </code></pre>
+<pre><code>Test &gt; set prompt &#39;Test-20220115 &gt; &#39;
+Test-20220115 &gt; </code></pre>
 <p>We can now return to the main file and trim the database.</p>
-<pre><code>Test-20210315 &gt; open test.sqlite
+<pre><code>Test-20220315 &gt; open test.sqlite
 Test &gt; ls tr
 
 Account | Id | Date       | Description           | Total amount | Account balance
 --------+----+------------+-----------------------+--------------+----------------
-Pocket  |  9 | 2021-03-12 | ATM withdrawal        |        60.00 |          176.83
-Pocket  |  7 | 2021-03-12 | Supermarket           |       -10.90 |          116.83
-Pocket  |  6 | 2021-03-04 | Supermarket           |        -5.72 |          127.73
-Pocket  |  5 | 2021-03-03 | ATM withdrawal        |        10.00 |          133.45
-Pocket  |  1 | 2021-03-01 | Initial amount        |       123.45 |          123.45
-Bank    | 10 | 2021-03-15 | Lottery prize         |       150.00 |         5020.01
-Bank    |  8 | 2021-03-12 | ATM withdrawal        |       -60.00 |         4870.01
-Bank    |  4 | 2021-03-03 | ATM withdrawal        |       -10.00 |         4930.01
-Bank    |  3 | 2021-03-02 | Phone bill, Feb. 2021 |       -59.99 |         4940.01
-Bank    |  2 | 2021-03-01 | Initial amount        |      5000.00 |         5000.00
+Pocket  |  9 | 2022-01-12 | ATM withdrawal        |        60.00 |          176.83
+Pocket  |  7 | 2022-01-12 | Supermarket           |       -10.90 |          116.83
+Pocket  |  6 | 2022-01-04 | Supermarket           |        -5.72 |          127.73
+Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+Bank    | 10 | 2022-01-15 | Lottery prize         |       150.00 |         5020.01
+Bank    |  8 | 2022-01-12 | ATM withdrawal        |       -60.00 |         4870.01
+Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+Bank    |  2 | 2022-01-01 | Initial amount        |      5000.00 |         5000.00
 
 Total amounts by currency:
     Euro: 5196.84</code></pre>
 <p>Look at the transactions and see that the first, on both accounts, is on March 1st and the last on March 12th in the <em>Pocket</em> account and on March 15th on the <em>Bank</em> account. Let’s trim the database up to March 12.</p>
-<pre><code>Test &gt; trim storage upto 3/12
+<pre><code>Test &gt; trim storage upto 1/12
 Test &gt; ls tr
 
 Account | Id | Date       | Description     | Total amount | Account balance
 --------+----+------------+-----------------+--------------+----------------
-Pocket  | 11 | 2021-03-12 | Trim carry-over |       176.83 |          176.83
-Bank    | 10 | 2021-03-15 | Lottery prize   |       150.00 |         5020.01
+Pocket  | 11 | 2022-01-12 | Trim carry-over |       176.83 |          176.83
+Bank    | 10 | 2022-01-15 | Lottery prize   |       150.00 |         5020.01
 Test &gt; 
 
 Total amounts by currency:
@@ -1098,6 +1117,29 @@ Total amounts by currency:
 <li><strong>TEXT</strong> (<em>positional</em>): tag to be deleted.</li>
 <li><em>from</em>: identification of the parcel from which the tag will be deleted.</li>
 </ul>
+<h3 id="find">find</h3>
+<p><code>find</code> is a <em>meta-command</em> with two available forms. Below are their descriptions:</p>
+<h4 id="find-parcels">find parcels</h4>
+<p>List parcels that contain a specific piece of text anywhere in their description.</p>
+<pre><code>&gt; find parcels like TEXT [from DATE] [to DATE] [tofile FILE]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): the piece of text to search for in the parcel description (not case sensitive)</li>
+<li><strong>from</strong> (<em>optional</em>): lower date limit of the results to be displayed. If no date is given, the results will include all parcels from the first recorded to the upper limit.</li>
+<li><strong>to</strong> (<em>optional</em>): upper date limit of the results to be displayed. If no date is given, the results will include all parcels from the lower limit to the last recorded one.</li>
+<li><strong>tofile</strong> (<em>optional</em>): path to the CSV file where the information should be saved. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the user’s absolute home path.</li>
+</ul>
+<h4 id="find-transactions">find transactions</h4>
+<p>(shortcut: <code>find tr</code>)</p>
+<p>List transactions that contain a specific piece of text anywhere in their description.</p>
+<pre><code>&gt; find tr[ansactions] like TEXT [from DATE] [to DATE] [tofile FILE]</code></pre>
+<p>Arguments:</p>
+<ul>
+<li><strong>TEXT</strong> (<em>positional</em>): the piece of text to search for in the transaction description (not case sensitive)</li>
+<li><strong>from</strong> (<em>optional</em>): lower date limit of the results to be displayed. If no date is given, the results will include all transactions from the first recorded to the upper limit.</li>
+<li><strong>to</strong> (<em>optional</em>): upper date limit of the results to be displayed. If no date is given, the results will include all transactions from the lower limit to the last recorded one.</li>
+<li><strong>tofile</strong> (<em>optional</em>): path to the CSV file where the information should be saved. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the user’s absolute home path.</li>
+</ul>
 <h3 id="help">help</h3>
 <p>(shortcut: <code>?</code>)</p>
 <p>Displays all available commands or the purpose and syntax of a specific command.</p>
@@ -1372,7 +1414,7 @@ begin
     delete from parceltags where parcel=old.key;
 end;</code></pre>
 <h2 id="license">LICENSE</h2>
-<p>Copyright (C) 2021 António Manuel Dias</p>
+<p>Copyright (C) 2022 António Manuel Dias</p>
 <p>contact: ammdias@gmail.com</p>
 <p>website: <a href="https://ammdias.duckdns.org/downloads">AMMDIAS</a></p>
 <p>This program is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.</p>
