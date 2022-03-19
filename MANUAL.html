@@ -19,7 +19,6 @@
 <p>website: <a href="https://github.com/ammdias/finctrl">AMMDIAS GitHub</a></p>
 <h2 id="contents">CONTENTS</h2>
 <ul>
-<li>[Changes history]</li>
 <li><a href="#installation">INSTALLATION</a></li>
 <li><a href="#usage">USAGE</a>
 <ul>
@@ -112,12 +111,12 @@ FinCtrl &gt;  </code></pre></li>
 <p>However, although the commands are case-sensitive, some arguments may be entered in any case, like account names or tags. Also, the answer to inline questions may be given in lower or upper case. Examples of those are given throughout this manual.</p></li>
 <li><p>Some commands or options have a shortcut version that may be used interchangeably. That will be indicated in the <a href="#reference">REFERENCE</a> section and in the online help by enveloping the optional characters in square brackets. For example, the <a href="#show-copyright">show copyright</a> command may be entered as <code>show</code> or <code>sh</code>:</p>
 <pre><code>FinCtrl &gt; show copyright
-Finance Control 0.6
+Finance Control 0.7
 (C) 2022 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>or</p>
 <pre><code>FinCtrl &gt; sh copyright
-Finance Control 0.6
+Finance Control 0.7
 (C) 2022 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>This is explicitly stated in <em>help</em> text of the command:</p>
@@ -135,12 +134,18 @@ Show a specific record&#39;s data:
 <li><p>Dates must be provided in the general form YEAR-MONTH-DAY. The year may be omitted (the current year is implicit) or entered without the century (21st century is implicit). The field separator may be a dash (‘-’) or a forward slash (‘/’). Example: <code>2022-01-12</code>, <code>22-1-12</code> and <code>[[1/12]]</code> all refer to the March 12th of 2022 (assuming 2022 is the current year).</p>
 <p>The words <code>today</code> or <code>now</code> may be used in replacement of the current date.</p></li>
 <li><p>Text values with spaces must be enveloped by single- or double-quotes. If a text value has single-quotes, use double-quotes to envelop it and vice-versa.</p></li>
+<li><p>Number values must be positive integers (only decimal digits allowed).</p></li>
 <li>List values, used when entering tags, are text values separated by commas. Same rule applies as for text values: if any value of the list has spaces or quotes, the whole list must be enveloped by the other kind of quotes. Example:
 <ul>
 <li><code>food,vegetables</code></li>
 <li><code>'car, washing liquid'</code></li>
 </ul></li>
 </ul></li>
+</ol>
+<ul>
+<li></li>
+</ul>
+<ol start="7" type="1">
 <li><p>If a line of the output of a command is longer than the terminal width, it will be truncated and end with an ellipsis (<code>...</code>). If the output has more lines than fit in the terminal height then the output will be split in pages and at the end of each page you will have the option to go to the next page (enter <code>next</code> or <code>n</code>), go back to the previous (enter <code>previous</code> or <code>p</code>), go to a specific page (enter its page number) or quit the presentation (enter <code>quit</code> or <code>q</code>).</p>
 <pre><code>FinCtrl &gt; show license inline
 
@@ -193,7 +198,7 @@ Show a specific record&#39;s data:
 <p>The third syntax line of the example above explains how to use the <a href="#show">show</a> command to display some information pertaining to the program. The command may be written as <code>show</code> or <code>sh</code> (the bracketed ‘<code>ow</code>’ is optional) and must be followed by only one of the options separated by vertical bars, <code>settings</code>, <code>manual</code>, <code>copyright</code> or <code>license</code>.</p>
 <p>For example, to show the program’s copyright information, as we have seen in previous section, we could type:</p>
 <pre><code>FinCtrl &gt; show copyright
-Finance Control 0.6
+Finance Control 0.7
 (C) 2022 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>Both the <code>manual</code> and <code>license</code> information will be shown on a new web browser window, assuming a browser is installed on your system:</p>
@@ -461,7 +466,7 @@ Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.
 
 Total amounts by currency:
     Euro: 4930.01</code></pre>
-<p>Finally, although there is no need with so few transactions, we may also set a date interval on the transactions listed:</p>
+<p>Although there is no need with so few transactions, we may also set a date interval on the transactions listed:</p>
 <pre><code>Test &gt; ls tr on bank from 1/2 to today
 
 Account | Id | Date       | Description           | Total amount | Account balance
@@ -472,6 +477,21 @@ Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.
 Total amounts by currency:
     Euro: -69.99</code></pre>
 <p>If the <code>from</code> date is omitted, the listing starts at the first transaction; if instead the <code>to</code> date is omitted, the listing ends in the most recent recorded transaction. As we have seen earlier, if we give no date interval, all transactions are listed. “<code>today</code>” (or “<code>now</code>”) are just shortcuts for the present date (remember that you may add transactions for future dates).</p>
+<p>Finally, you may list the last <em>n</em> transactions with the <code>top</code> option:</p>
+<pre><code>Test &gt; ls tr top 5
+
+Account | Id | Date       | Description           | Total amount | Account balance
+--------+----+------------+-----------------------+--------------+----------------
+Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.00
+Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+
+Total amounts by currency:
+    Euro: 5063.46
+    </code></pre>
+<p>When using the <code>top</code> option, the transactions will be ordered by date (from last to first) and will not be grouped by account.</p>
 <p>We now have seen all the shortcut commands that allow us to add a single parcel transaction. To add transactions with multiple parcels we have two commands, <a href="#add-expense">add expense</a> and the <code>add transaction</code> that we have covered above. They are basically the same, the only difference being that the former will automatically turn all parcel amounts to negative values, which is handy when you are adding some kind of bill. Of course, you could do the same with the <code>add transaction</code> command together with the <code>neg</code> argument. Let’s add the bill from the supermarket trip to buy the ingredients for the chocolate cake mentioned earlier:</p>
 <ul>
 <li>6 eggs, 0.85€</li>
@@ -488,8 +508,8 @@ Total amounts by currency:
      : parcel &quot;butter 1.39 tags food,breakfast&quot; \
      : parcel &quot;chocolate 1.49 tags food,sweets&quot;
 Transaction id: 6</code></pre>
-<p>To check if the transaction was inserted correctly, we can list the transactions of the corresponding account:</p>
-<pre><code>Test &gt; ls tr on bank from 1/4
+<p>To check if the transaction was inserted correctly, we can list the last transaction of the corresponding account:</p>
+<pre><code>Test &gt; ls tr on bank top 1
 
 Account | Id | Date       | Description | Total amount | Account balance
 --------+----+------------+-------------+--------------+----------------
@@ -690,7 +710,7 @@ Id | Date       | Account | Trans | Description   | Amount
 
 Total amounts by currency:
     Euro: -4.23</code></pre>
-<p>This command may also be filtered by date, with the keywords <code>from</code> and <code>to</code>, like <code>list transactions</code>. Note that you also get the total amount for that listing – and this is how we may find how much we are spending on certain items on a certain period of time.</p>
+<p>This command may also be filtered by date, with the keywords <code>from</code>, <code>to</code> and <code>top</code>, like <code>list transactions</code>. Note that you also get the total amount for that listing – and this is how we may find how much we are spending on certain items on a certain period of time.</p>
 <p><a href="#list-tags">list tags</a> lists all tags in use and their <em>frequency</em> — the number of parcels tagged with each particular tag:</p>
 <pre><code>Test &gt; ls tags
 
@@ -722,7 +742,7 @@ Id | Date       | Account | Trans | Description   | Amount
 
 Total amounts by currency:
     Euro: -0.69</code></pre>
-<p>Like the previous commands, the listing of the [file] command may also be filtered by date using the <code>from</code> and <code>to</code> keywords.</p>
+<p>Like the previous commands, the listing of the <a href="#find">find</a> command may also be filtered by date using the <code>from</code>, <code>to</code> and <code>top</code> keywords .</p>
 <p>Finally, all <a href="#list">list</a> and <a href="#find">find</a> commands accept one keyword argument, <code>tofile</code>, that directs the program to export the data to a <a href="https://en.wikipedia.org/wiki/Comma-separated_values">CSV file</a>. The keyword must be followed by the file name (same rules apply as to the <a href="#open">open</a> command). CSV files are very portable and supported by several applications and programming languages, if you desire to process the exported data. The command below will export a list of the parcels with tag <code>food</code> to the file <code>food.csv</code> in the current directory:</p>
 <pre><code>Test &gt; ls parcels tagged food tofile food.csv</code></pre>
 <p>After this you could open the file, for example, with a spreadsheet application like LibreOffice.org Calc, Microsoft Office or even Google Docs. When opening the file, don’t forget to choose the field separator character. For example, when opening the file with Calc I am presented with this dialog:</p>
@@ -994,7 +1014,7 @@ Total amounts by currency:
 </ul>
 <h4 id="add-withdrawal">add withdrawal</h4>
 <p>Adds a single-parcel negative transaction to the database. The amount will be multiplied by <code>-1</code> before being added to the database.</p>
-<pre><code>&gt; add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
+<pre><code>&gt; add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \
 :     [descr TEXT] [date DATE] [tags LIST]</code></pre>
 <p>Arguments:</p>
 <ul>
@@ -1121,23 +1141,27 @@ Total amounts by currency:
 <p><code>find</code> is a <em>meta-command</em> with two available forms. Below are their descriptions:</p>
 <h4 id="find-parcels">find parcels</h4>
 <p>List parcels that contain a specific piece of text anywhere in their description.</p>
-<pre><code>&gt; find parcels like TEXT [from DATE] [to DATE] [tofile FILE]</code></pre>
+<pre><code>&gt; find parcels like TEXT [from DATE] [to DATE] \
+:                        [top NUMBER] [tofile FILE]</code></pre>
 <p>Arguments:</p>
 <ul>
 <li><strong>TEXT</strong> (<em>positional</em>): the piece of text to search for in the parcel description (not case sensitive)</li>
 <li><strong>from</strong> (<em>optional</em>): lower date limit of the results to be displayed. If no date is given, the results will include all parcels from the first recorded to the upper limit.</li>
 <li><strong>to</strong> (<em>optional</em>): upper date limit of the results to be displayed. If no date is given, the results will include all parcels from the lower limit to the last recorded one.</li>
+<li><strong>top</strong> (<em>optional</em>): Maximum number of results to be displayed.</li>
 <li><strong>tofile</strong> (<em>optional</em>): path to the CSV file where the information should be saved. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the user’s absolute home path.</li>
 </ul>
 <h4 id="find-transactions">find transactions</h4>
 <p>(shortcut: <code>find tr</code>)</p>
 <p>List transactions that contain a specific piece of text anywhere in their description.</p>
-<pre><code>&gt; find tr[ansactions] like TEXT [from DATE] [to DATE] [tofile FILE]</code></pre>
+<pre><code>&gt; find tr[ansactions] like TEXT [from DATE] [to DATE] \
+:                               [top NUMBER] [tofile FILE]</code></pre>
 <p>Arguments:</p>
 <ul>
 <li><strong>TEXT</strong> (<em>positional</em>): the piece of text to search for in the transaction description (not case sensitive)</li>
 <li><strong>from</strong> (<em>optional</em>): lower date limit of the results to be displayed. If no date is given, the results will include all transactions from the first recorded to the upper limit.</li>
 <li><strong>to</strong> (<em>optional</em>): upper date limit of the results to be displayed. If no date is given, the results will include all transactions from the lower limit to the last recorded one.</li>
+<li><strong>top</strong> (<em>optional</em>): Maximum number of results to be displayed.</li>
 <li><strong>tofile</strong> (<em>optional</em>): path to the CSV file where the information should be saved. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the user’s absolute home path.</li>
 </ul>
 <h3 id="help">help</h3>
@@ -1171,12 +1195,14 @@ Total amounts by currency:
 <h4 id="list-parcels">list parcels</h4>
 <p>(shortcut: <code>ls parcels</code>)</p>
 <p>Displays a list of all parcels filtered by specific tags.</p>
-<pre><code>&gt; list|ls parcels tagged LIST [from DATE] [to DATE] [tofile FILE]</code></pre>
+<pre><code>&gt; list|ls parcels tagged LIST [from DATE] [to DATE] \
+:                             [top NUMBER] [tofile FILE]</code></pre>
 <p>Arguments:</p>
 <ul>
 <li><strong>LIST</strong> (<em>positional</em>): list of tags to search.</li>
 <li><strong>from</strong> (<em>optional</em>): lower date limit of the results to be displayed. If no date is given, the results will include all parcels from the first recorded to the upper limit.</li>
 <li><strong>to</strong> (<em>optional</em>): upper date limit of the results to be displayed. If no date is given, the results will include all parcels from the lower limit to the last recorded one.</li>
+<li><strong>top</strong> (<em>optional</em>): Maximum number of results to be displayed.</li>
 <li><strong>tofile</strong> (<em>optional</em>): path to the CSV file where the information should be saved. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the user’s absolute home path.</li>
 </ul>
 <h4 id="list-tags">list tags</h4>
@@ -1190,13 +1216,15 @@ Total amounts by currency:
 <h4 id="list-transactions">list transactions</h4>
 <p>(shortcuts: <code>list tr</code>; <code>ls transactions</code>; <code>ls tr</code>)</p>
 <p>Displays a list of transactions filtered by specific criteria.</p>
-<pre><code>&gt; list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
-:         [from DATE] [to DATE] [tofile FILE]</code></pre>
+<pre><code>&gt; list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \
+:                        [from DATE] [to DATE] \
+:                        [top NUMBER] [tofile FILE]</code></pre>
 <p>Arguments:</p>
 <ul>
 <li><strong>on</strong> (<em>optional</em>): account identification of the transactions to be displayed. If no account is given, transactions from all accounts will be displayed, grouped by account.</li>
 <li><strong>from</strong> (<em>optional</em>): lower date limit of the results to be displayed. If no date is given, the results will include all transactions from the first recorded to the upper limit.</li>
 <li><strong>to</strong> (<em>optional</em>): upper date limit of the results to be displayed. If no date is given, the results will include all transactions from the lower limit to the last recorded one.</li>
+<li><strong>top</strong> (<em>optional</em>): Maximum number of results to be displayed.</li>
 <li><strong>tofile</strong> (<em>optional</em>): path to the CSV file where the information should be saved. May be an absolute or relative path (relative to the directory the application was started). The tilde (‘<code>~</code>’) may be used in substitution of the users’ absolute home path.</li>
 </ul>
 <h3 id="open">open</h3>

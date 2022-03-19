@@ -36,7 +36,6 @@ website: [AMMDIAS GitHub](https://github.com/ammdias/finctrl)
 CONTENTS
 --------
 
-  * [Changes history]
 * [INSTALLATION]
 * [USAGE]
   * [Command line interface]
@@ -207,14 +206,14 @@ program's answer, if any.  Some notes:
    For example, the [show copyright] command may be entered as `show` or `sh`:
 
        FinCtrl > show copyright
-       Finance Control 0.6
+       Finance Control 0.7
        (C) 2022 António Manuel Dias <ammdias@gmail.com>
        (...)
 
    or
 
        FinCtrl > sh copyright
-       Finance Control 0.6
+       Finance Control 0.7
        (C) 2022 António Manuel Dias <ammdias@gmail.com>
        (...)
 
@@ -261,12 +260,15 @@ program's answer, if any.  Some notes:
      If a text value has single-quotes, use double-quotes to envelop it and
      vice-versa.
      
+   * Number values must be positive integers (only decimal digits allowed).
+     
    * List values, used when entering tags, are text values separated by commas.
      Same rule applies as for text values: if any value of the list has spaces
      or quotes, the whole list must be enveloped by the other kind of quotes.
      Example:
      * `food,vegetables`
      * `'car, washing liquid'`
+ * 
 
 7. If a line of the output of a command is longer than the terminal width, it
    will be truncated and end with an ellipsis (`...`).  If the output has more
@@ -364,7 +366,7 @@ For example, to show the program's copyright information, as we have seen in
 previous section, we could type:
 
     FinCtrl > show copyright
-    Finance Control 0.6
+    Finance Control 0.7
     (C) 2022 António Manuel Dias <ammdias@gmail.com>
     (...)
 
@@ -867,7 +869,7 @@ we may do that:
     Total amounts by currency:
         Euro: 4930.01
 
-Finally, although there is no need with so few transactions, we may also set
+Although there is no need with so few transactions, we may also set
 a date interval on the transactions listed:
 
     Test > ls tr on bank from 1/2 to today
@@ -885,6 +887,24 @@ instead the `to` date is omitted, the listing ends in the most recent recorded
 transaction. As we have seen earlier, if we give no date interval, all
 transactions are listed.  "`today`" (or "`now`") are just shortcuts for the
 present date (remember that you may add transactions for future dates).
+
+Finally, you may list the last *n* transactions with the `top` option:
+
+    Test > ls tr top 5
+
+    Account | Id | Date       | Description           | Total amount | Account balance
+    --------+----+------------+-----------------------+--------------+----------------
+    Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+    Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.00
+    Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+
+    Total amounts by currency:
+        Euro: 5063.46
+        
+When using the `top` option, the transactions will be ordered by date (from last
+to first) and will not be grouped by account.
 
 We now have seen all the shortcut commands that allow us to add a single parcel
 transaction.  To add transactions with multiple parcels we have two commands,
@@ -913,9 +933,9 @@ We will use the `add expense` command:
     Transaction id: 6
 
 To check if the transaction was inserted correctly, we can list the
-transactions of the corresponding account:
+last transaction of the corresponding account:
 
-    Test > ls tr on bank from 1/4
+    Test > ls tr on bank top 1
     
     Account | Id | Date       | Description | Total amount | Account balance
     --------+----+------------+-------------+--------------+----------------
@@ -1208,10 +1228,10 @@ list all parcels with certain tags:
     Total amounts by currency:
         Euro: -4.23
 
-This command may also be filtered by date, with the keywords `from` and `to`,
-like `list transactions`.  Note that you also get the total amount for that
-listing -- and this is how we may find how much we are spending on certain
-items on a certain period of time.
+This command may also be filtered by date, with the keywords `from`,
+`to` and `top`, like `list transactions`.  Note that you also get the total
+amount for that listing -- and this is how we may find how much we are
+spending on certain items on a certain period of time.
 
 [list tags] lists all tags in use and their *frequency* --- the  number of
 parcels tagged with each particular tag:
@@ -1254,8 +1274,8 @@ The command to list all parcels with sugar in their description is very similar:
     Total amounts by currency:
         Euro: -0.69
 
-Like the previous commands, the listing of the [file] command may also be
-filtered by date using the `from` and `to` keywords.
+Like the previous commands, the listing of the [find] command may also be
+filtered by date using the `from`, `to` and `top` keywords .
 
 Finally, all [list] and [find] commands accept one keyword argument, `tofile`,
 that directs the program to export the data to a 
@@ -1786,7 +1806,7 @@ Arguments:
 Adds a single-parcel negative transaction to the database.  The amount will be
 multiplied by `-1` before being added to the database.
 
-    > add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
+    > add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \
     :     [descr TEXT] [date DATE] [tags LIST]
 
 Arguments:
@@ -2006,7 +2026,8 @@ descriptions:
 List parcels that contain a specific piece of text anywhere in their
 description.
     
-    > find parcels like TEXT [from DATE] [to DATE] [tofile FILE]
+    > find parcels like TEXT [from DATE] [to DATE] \
+    :                        [top NUMBER] [tofile FILE]
 
 Arguments:
 
@@ -2018,6 +2039,7 @@ Arguments:
 - **to** (*optional*): upper date limit of the results to be displayed.  If no
   date is given, the results will include all parcels from the lower limit to
   the last recorded one.
+- **top** (*optional*): Maximum number of results to be displayed.
 - **tofile** (*optional*): path to the CSV file where the information should be
   saved. May be an absolute or relative path (relative to the directory the
   application was started).  The tilde ('`~`') may be used in substitution of
@@ -2030,7 +2052,8 @@ Arguments:
 List transactions that contain a specific piece of text anywhere in their
 description.
     
-    > find tr[ansactions] like TEXT [from DATE] [to DATE] [tofile FILE]
+    > find tr[ansactions] like TEXT [from DATE] [to DATE] \
+    :                               [top NUMBER] [tofile FILE]
 
 Arguments:
 
@@ -2042,6 +2065,7 @@ Arguments:
 - **to** (*optional*): upper date limit of the results to be displayed.  If no
   date is given, the results will include all transactions from the lower
   limit to the last recorded one.
+- **top** (*optional*): Maximum number of results to be displayed.
 - **tofile** (*optional*): path to the CSV file where the information should be
   saved. May be an absolute or relative path (relative to the directory the
   application was started).  The tilde ('`~`') may be used in substitution of
@@ -2106,7 +2130,8 @@ Arguments:
 
 Displays a list of all parcels filtered by specific tags.
 
-    > list|ls parcels tagged LIST [from DATE] [to DATE] [tofile FILE]
+    > list|ls parcels tagged LIST [from DATE] [to DATE] \
+    :                             [top NUMBER] [tofile FILE]
 
 Arguments:
 
@@ -2117,6 +2142,7 @@ Arguments:
 - **to** (*optional*): upper date limit of the results to be displayed.  If no
   date is given, the results will include all parcels from the lower limit to
   the last recorded one.
+- **top** (*optional*): Maximum number of results to be displayed.
 - **tofile** (*optional*): path to the CSV file where the information should be
   saved. May be an absolute or relative path (relative to the directory the
   application was started).  The tilde ('`~`') may be used in substitution of
@@ -2144,8 +2170,9 @@ Arguments:
 
 Displays a list of transactions filtered by specific criteria.
 
-    > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
-    :         [from DATE] [to DATE] [tofile FILE]
+    > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \
+    :                        [from DATE] [to DATE] \
+    :                        [top NUMBER] [tofile FILE]
 
 Arguments:
 
@@ -2158,6 +2185,7 @@ Arguments:
 - **to** (*optional*): upper date limit of the results to be displayed.  If no
   date is given, the results will include all transactions from the lower limit
   to the last recorded one.
+- **top** (*optional*): Maximum number of results to be displayed.
 - **tofile** (*optional*): path to the CSV file where the information should be
   saved. May be an absolute or relative path (relative to the directory the
   application was started).  The tilde ('`~`') may be used in substitution of

@@ -2,8 +2,8 @@
 FinStore: class to store finance control data in a sqlite3 database.
 """
 
-__version__ = '0.6'
-__date__ = '2022-03-01'
+__version__ = '0.7'
+__date__ = '2022-03-14'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __changes__ = """
+    0.7: Changed transactions() to not order by account when limit is set
     0.6: Added transactions_by_descr(), parcels_by_descr()
 """
 
@@ -349,12 +350,13 @@ class FinStore(SQLiteStore):
             params.append(datemax)
 
         cond = f"where {' and '.join(conds)}" if conds else ''
-        lim = f"limit {int(limit)}" if limit else ''
+        # do not order by account if limit has been set
+        lim, order = (f"limit {int(limit)}", '') if limit else ('', 'account,')
+        order = f"order by {order} date desc, key desc"
 
         return [self.Transaction(*t)
-                for t in self._qry(f"select * from transactions {cond} "
-                                   f"order by account, date desc, key desc {lim}",
-                                   tuple(params))]
+                for t in self._qry(f"select * from transactions "
+                                   f"{cond} {order} {lim}", tuple(params))]
 
 
     def transactions_by_descr(self, pattern, datemin=None, datemax=None, limit=None):

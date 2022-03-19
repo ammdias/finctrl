@@ -11,8 +11,8 @@ START_SCRIPT = 'finctrl.py'
 LINK_NAME = 'finctrl'
 CONFIG_FILES = ()  # must be a tuple or list
 
-__version__ = '0.6'
-__date__ = '2022-03-01'
+__version__ = '0.7'
+__date__ = '2022-03-19'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = '''
 This program is free software: you can redistribute it and/or modify

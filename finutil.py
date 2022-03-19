@@ -2,8 +2,8 @@
 Finance Control command line interface utility functions
 """
 
-__version__ = '0.5'
-__date__ ='2021-10-06'
+__version__ = '0.7'
+__date__ ='2022-03-11'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __changes__ = """
+    0.7: Added parse_number()
     0.5: Blank input on multiple page listings will advance one page and quit
          on last page
     0.4: Add extra lines for better table visualization;
@@ -46,6 +47,17 @@ def yesno(question):
             break
 
     return answer in ('y', 'yes')
+
+
+def parse_number(number):
+    """Convert string to a positive integer, if possible.
+    """
+    if number.isdecimal():
+        number = int(number)
+        if number > 0:
+            return number
+    
+    raise ValueError(f'Invalid number: {number}')
 
 
 def parse_date(date):

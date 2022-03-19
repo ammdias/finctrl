@@ -2,8 +2,8 @@
 Finance Control command line interface
 """
 
-__version__ = '0.6'
-__date__ = '2022-03-01'
+__version__ = '0.7'
+__date__ = '2022-03-11'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __changes__ = """
+    0.7: Added 'top' keyword to 'list transactions', 'list parcels'
+         'find transactions' and 'find parcels' commands
     0.6: Add transfer completely fails if one of the transactions fails;
          Added 'find transactions' and 'find parcels' commands.
     0.5: Blank input on multiple page listings advances one page and quits
@@ -328,10 +330,12 @@ class FinCtrlCmd(cmd.Cmd):
         """List database records:
         > list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]
         > list|ls curr[encies] [NAME] [tofile FILE]
-        > list|ls parcels tagged LIST [from DATE] [to DATE] [tofile FILE]
+        > list|ls parcels tagged LIST [from DATE] [to DATE] \\
+                                      [top NUMBER] [tofile FILE]
         > list|ls tags [tofile FILE]
         > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
-        :                     [from DATE] [to DATE] [tofile FILE]
+        :                        [from DATE] [to DATE] \\
+                                 [top NUMBER] [tofile FILE]
         """
         if self._store:
             self._dispatch('list', arg)
@@ -344,8 +348,10 @@ class FinCtrlCmd(cmd.Cmd):
 
     def do_find(self, arg):
         """Find text in descriptions.
-        > find tr[ansactions] like TEXT [from DATE] [to DATE] [tofile FILE]
-        > find parcels like TEXT [from DATE] [to DATE] [tofile FILE]
+        > find tr[ansactions] like TEXT [from DATE] [to DATE] \\
+                                        [top NUMBER] [tofile FILE]
+        > find parcels like TEXT [from DATE] [to DATE] \\
+                                 [top NUMBER] [tofile FILE]
         """
         if self._store:
             self._dispatch('find', arg)
@@ -770,7 +776,7 @@ class FinCtrlCmd(cmd.Cmd):
             symb = kw.get('position', curr.symbol_pos).strip().lower()
             if symb not in ('left', 'right'):
                 raise ValueError("currency symbol must be 'left' or 'right'.")
-            curr.dec_places = int(kw.get('decplaces', curr.dec_places))
+            curr.dec_places = parse_number(kw.get('decplaces', curr.dec_places))
             curr.dec_sep = kw.get('decsep', curr.dec_sep)
             self._store.edt_currency(curr)
         except Exception as e:
@@ -1077,11 +1083,12 @@ class FinCtrlCmd(cmd.Cmd):
     def _list_transactions(self, args):
         """List transactions.
         """
-        pos, kw, mkw = parse_args(args, 'on', 'from', 'to', 'tofile')
+        pos, kw, mkw = parse_args(args, 'on', 'from', 'to', 'top', 'tofile')
         if pos or mkw:
             raise Exception("'list transactions' syntax:\n"
                   "    > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\\n"
-                  "    :                        [from DATE] [to DATE]")
+                  "    :                        [from DATE] [to DATE] \\\n"
+                  "    :                        [top NUMBER] [tofile FILE]")
         try:
             if 'on' in kw:
                 acckey = self._store.account_key(kw['on'])
@@ -1093,7 +1100,8 @@ class FinCtrlCmd(cmd.Cmd):
             datemax = parse_date(kw['to']) if 'to' in kw else None
             if datemin and datemax and datemin > datemax:
                 datemin, datemax = datemax, datemin
-            transactions = self._store.transactions(acckey, datemin, datemax)
+            limit = parse_number(kw['top']) if 'top' in kw else None
+            transactions = self._store.transactions(acckey, datemin, datemax, limit)
             data = []
             totals = {}
             for t in transactions:
@@ -1121,20 +1129,22 @@ class FinCtrlCmd(cmd.Cmd):
     def _list_parcels(self, args):
         """List parcels.
         """
-        pos, kw, mkw = parse_args(args, 'tagged', 'from', 'to', 'tofile')
+        pos, kw, mkw = parse_args(args, 'tagged', 'from', 'to', 'top', 'tofile')
         if pos or mkw or 'tagged' not in kw:
             raise Exception("'list parcels' syntax:\n"
-                  "    > list|ls parcels tagged <csl> [from <date] [to <date]")
+                  "    > list|ls parcels tagged LIST [from DATE] [to DATE] \\\n"
+                  "                                  [top NUMBER] [tofile FILE]")
 
         datemin = parse_date(kw.get('from')) if 'from' in kw else None
         datemax = parse_date(kw.get('to')) if 'to' in kw else None
         if datemin and datemax and datemin > datemax:
             datemin, datemax = datemax, datemin
+        limit = parse_number(kw['top']) if 'top' in kw else None
         data = []
         totals = {}
         try:
             for i in self._store.parcels_by_tag(parse_tags(kw['tagged']),
-                                                datemin, datemax):
+                                                datemin, datemax, limit):
                 acc = self._store.transaction_account(i[2])
                 curr = self._store.transaction_currency(i[2])
                 data.append((str(i[0]), i[1], acc.name, str(i[2]),
@@ -1173,19 +1183,20 @@ class FinCtrlCmd(cmd.Cmd):
     def _find_transactions(self, args):
         """Find transactions by text in their discription.
         """
-        pos, kw, mkw = parse_args(args, 'like', 'from', 'to', 'tofile')
+        pos, kw, mkw = parse_args(args, 'like', 'from', 'to', 'top', 'tofile')
         if pos or mkw:
             raise Exception("'find transactions' syntax:\n"
                   "    > find tr[ransactions] like TEXT [from DATE] [to DATE] \\\n"
-                  "    : [tofile FILE]")
+                  "    :                                [top NUMBER] [tofile FILE]")
 
         try:
             datemin = parse_date(kw['from']) if 'from' in kw else None
             datemax = parse_date(kw['to']) if 'to' in kw else None
             if datemin and datemax and datemin > datemax:
                 datemin, datemax = datemax, datemin
-            transactions = self._store.transactions_by_descr(kw['like'],
-                                                             datemin, datemax)
+            limit = parse_number(kw['top']) if 'top' in kw else None
+            transactions = \
+                self._store.transactions_by_descr(kw['like'], datemin, datemax, limit)
             data = []
             totals = {}
             for t in transactions:
@@ -1212,20 +1223,22 @@ class FinCtrlCmd(cmd.Cmd):
     def _find_parcels(self, args):
         """Find parcels by text in their discription.
         """
-        pos, kw, mkw = parse_args(args, 'like', 'from', 'to', 'tofile')
+        pos, kw, mkw = parse_args(args, 'like', 'from', 'to', 'top', 'tofile')
         if pos or mkw:
             raise Exception("'find parcels' syntax:\n"
                   "    > find parcels like TEXT [from DATE] [to DATE] \\\n"
-                  "    : [tofile FILE]")
+                  "    :                        [top NUMBER] [tofile FILE]")
 
         datemin = parse_date(kw.get('from')) if 'from' in kw else None
         datemax = parse_date(kw.get('to')) if 'to' in kw else None
         if datemin and datemax and datemin > datemax:
             datemin, datemax = datemax, datemin
+        limit = parse_number(kw['top']) if 'top' in kw else None
         data = []
         totals = {}
         try:
-            for i in self._store.parcels_by_descr(kw['like'], datemin, datemax):
+            for i in self._store.parcels_by_descr(kw['like'],
+                                                  datemin, datemax, limit):
                 acc = self._store.transaction_account(i[2])
                 curr = self._store.transaction_currency(i[2])
                 data.append((str(i[0]), i[1], acc.name, str(i[2]),
