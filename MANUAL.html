@@ -87,14 +87,14 @@
 <p>I assume that the user is familiarized with the <em>normal</em> way a command line interface works — basically, issuing commands at the prompt and reading the program’s answer, if any. Some notes:</p>
 <ol type="1">
 <li><p>Blank lines will have no effect (will just be ignored);</p></li>
-<li>If your system supports it, you will have command history in each session: press arrow up or <code>CTRL+P</code> for previous command / arrow down or <code>CTRL-N</code> for the next. The usual control key bindings may also work:
+<li><p>If your system supports it, you will have command history in each session: press arrow up or <code>CTRL+P</code> for previous command / arrow down or <code>CTRL-N</code> for the next. The usual control key bindings may also work:</p>
 <ul>
 <li><code>CTRL+A</code> to go to the beginning of the line;</li>
 <li><code>CTRL+E</code> to go to the end;</li>
 <li><code>CTRL+W</code> to delete previous word;</li>
 <li><code>CTRL+K</code> to delete from the cursor to the end of the line;</li>
 </ul></li>
-<li><p>When entering a command longer than a screen line, you may split it over several lines by ending each line (except the last) with a single backslash: “<code>\</code>”. The prompt after that will change to a single colon (<code>:</code>) until you end the command. If you make a mistake while entering a multi-line command, just finish the line with three consecutive backslashes (<code>\\\</code>) to discard the whole command.</p>
+<li><p>When entering a command longer than a screen line, you may split it over several lines by ending each line (except the last) with a single backslash: “<code>\</code>”. The prompt after that will change to a single colon (<code>:</code>) until you end the command. If you make a mistake while entering a multi-line command, just finish the line with three consecutive backslashes (<code>\\\</code>) to discard the whole command. The command will only be interpreted when complete, which means the program will not warn you of a mistake in a single line.</p>
 <pre><code>FinCtrl &gt; help bye
 Quit Finance Control.
 
@@ -135,7 +135,7 @@ Show a specific record&#39;s data:
 <p>The words <code>today</code> or <code>now</code> may be used in replacement of the current date.</p></li>
 <li><p>Text values with spaces must be enveloped by single- or double-quotes. If a text value has single-quotes, use double-quotes to envelop it and vice-versa.</p></li>
 <li><p>Number values must be positive integers (only decimal digits allowed).</p></li>
-<li>List values, used when entering tags, are text values separated by commas. Same rule applies as for text values: if any value of the list has spaces or quotes, the whole list must be enveloped by the other kind of quotes. Example:
+<li><p>List values, used when entering tags, are text values separated by commas. Same rule applies as for text values: if any value of the list has spaces or quotes, the whole list must be enveloped by the other kind of quotes. Example:</p>
 <ul>
 <li><code>food,vegetables</code></li>
 <li><code>'car, washing liquid'</code></li>
@@ -466,6 +466,19 @@ Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.
 
 Total amounts by currency:
     Euro: 4930.01</code></pre>
+<p>We may also list transactions on multiple accounts, although with only two it is the same as entering no account:</p>
+<pre><code>Test &gt; ls tr on bank,pocket
+
+Account | Id | Date       | Description           | Total amount | Account balance
+--------+----+------------+-----------------------+--------------+----------------
+Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.00
+
+Total amounts by currency:
+    Euro: 5063.46</code></pre>
 <p>Although there is no need with so few transactions, we may also set a date interval on the transactions listed:</p>
 <pre><code>Test &gt; ls tr on bank from 1/2 to today
 
@@ -747,7 +760,7 @@ Total amounts by currency:
 <pre><code>Test &gt; ls parcels tagged food tofile food.csv</code></pre>
 <p>After this you could open the file, for example, with a spreadsheet application like LibreOffice.org Calc, Microsoft Office or even Google Docs. When opening the file, don’t forget to choose the field separator character. For example, when opening the file with Calc I am presented with this dialog:</p>
 <figure>
-<img src="food.csv.png" alt="LibreOffice.org Calc Open CSV dialog" /><figcaption>LibreOffice.org Calc Open CSV dialog</figcaption>
+<img src="food.csv.png" alt="" /><figcaption>LibreOffice.org Calc Open CSV dialog</figcaption>
 </figure>
 <p>Notice that I changed the field separator to a semicolon (the default in this program) and cleared all other options. You may change the character used to separate the fields with the <a href="#set-csvsep">set csvsep</a> command. LibreOffice.org has the nice feature of previewing the content as it will be imported, that allows us check if everything seems ok.</p>
 <h3 id="advanced-usage">Advanced usage</h3>
@@ -793,6 +806,7 @@ Total amounts by currency:
     Euro: -10.90</code></pre>
 <p>You could also <a href="#show">show</a> any of the transactions to double-check their correctness.</p>
 <p>If there was an error in a command in the <em>script</em>, that particular command would not be executed and an error would be displayed in the program’s prompt. To fix that error you need to open the text file and correct it. Remember to remove all the other commands or they will be executed again.</p>
+<p>Instead of removing the commands you could also <em>comment them out</em> inserting a semicolon as the first character of each line that you don’t want to execute.</p>
 <p>The <a href="#source">source</a> command has an extra option, <code>edit</code>, that automatically opens the file in a text editor and executes it after you save the file and exit the editor. For this to work, the Finance Control program will scan the <code>VISUAL</code> and <code>EDITOR</code> environment variables to find your favorite text editor. If none of those variables are set, or if you’d rather use another editor, you may set the editor you prefer with the <a href="#set-editor">set editor</a> command. For example, if you want to use <em>gedit</em>, the <a href="https://wiki.gnome.org/Apps/Gedit">GNOME text editor</a>, you would enter:</p>
 <pre><code>Test &gt; set editor gedit</code></pre>
 <p>And, to edit and then execute the script above:</p>
@@ -1216,12 +1230,11 @@ Total amounts by currency:
 <h4 id="list-transactions">list transactions</h4>
 <p>(shortcuts: <code>list tr</code>; <code>ls transactions</code>; <code>ls tr</code>)</p>
 <p>Displays a list of transactions filtered by specific criteria.</p>
-<pre><code>&gt; list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \
-:                        [from DATE] [to DATE] \
+<pre><code>&gt; list|ls tr[ansactions] [on LIST] [from DATE] [to DATE] \
 :                        [top NUMBER] [tofile FILE]</code></pre>
 <p>Arguments:</p>
 <ul>
-<li><strong>on</strong> (<em>optional</em>): account identification of the transactions to be displayed. If no account is given, transactions from all accounts will be displayed, grouped by account.</li>
+<li><strong>on</strong> (<em>optional</em>): list of account identifications (ACCOUNT_NAME or ACCOUNT_ID) of the transactions to be displayed. If no account is given, transactions from all accounts will be displayed, grouped by account.</li>
 <li><strong>from</strong> (<em>optional</em>): lower date limit of the results to be displayed. If no date is given, the results will include all transactions from the first recorded to the upper limit.</li>
 <li><strong>to</strong> (<em>optional</em>): upper date limit of the results to be displayed. If no date is given, the results will include all transactions from the lower limit to the last recorded one.</li>
 <li><strong>top</strong> (<em>optional</em>): Maximum number of results to be displayed.</li>
@@ -1343,7 +1356,7 @@ Total amounts by currency:
 <li><strong>TRANSACTION_ID</strong> (<em>positional</em>): identification number of the transaction to be displayed.</li>
 </ul>
 <h3 id="source">source</h3>
-<p>Executes commands from an external text file. Optionally, opens an external text editor to edit the file prior to executing its commands.</p>
+<p>Executes commands from an external text file. Optionally, opens an external text editor to edit the file prior to executing its commands. The lines that start with a semicolon will be ignored by this command.</p>
 <pre><code>&gt; source [edit] FILE</code></pre>
 <p>Arguments:</p>
 <ul>

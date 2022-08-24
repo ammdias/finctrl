@@ -2,8 +2,8 @@
 Finance Control command line interface
 """
 
-__version__ = '0.7'
-__date__ = '2022-03-11'
+__version__ = '0.8'
+__date__ = '2022-08-24'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,9 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __changes__ = """
+    0.8: Source command now ignores lines started with semicolon;
+         List transactions now supports listing on  multiple accounts;
+         Set echo command now ignores argument case.
     0.7: Added 'top' keyword to 'list transactions', 'list parcels'
          'find transactions' and 'find parcels' commands
     0.6: Add transfer completely fails if one of the transactions fails;
@@ -216,6 +219,8 @@ class FinCtrlCmd(cmd.Cmd):
         echo, self.echo = self.echo, True
         try:
             for line in open(fname, 'r'):
+                if line.startswith(';'):  # ignore comment lines
+                    continue
                 line = self.precmd(line)
                 if line:
                     self.onecmd(line)
@@ -432,7 +437,7 @@ class FinCtrlCmd(cmd.Cmd):
     def _set_echo(self, args):
         """Set command echo print on or off.
         """
-        if len(args) != 1 or args[0] not in ('on', 'off'):
+        if len(args) != 1 or args[0].lower() not in ('on', 'off'):
             raise Exception("'set echo' command takes a single argument:\n"
                             "    > set echo ON|OFF")
 
@@ -1086,14 +1091,16 @@ class FinCtrlCmd(cmd.Cmd):
         pos, kw, mkw = parse_args(args, 'on', 'from', 'to', 'top', 'tofile')
         if pos or mkw:
             raise Exception("'list transactions' syntax:\n"
-                  "    > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\\n"
-                  "    :                        [from DATE] [to DATE] \\\n"
+                  "    > list|ls tr[ansactions] [on LIST] [from DATE] [to DATE] \\\n"
                   "    :                        [top NUMBER] [tofile FILE]")
         try:
             if 'on' in kw:
-                acckey = self._store.account_key(kw['on'])
-                if not acckey:
-                    raise ValueError("Account not found.")
+                acckey = []
+                for acc in kw['on'].split(','):
+                    key = self._store.account_key(acc)
+                    if not key:
+                        raise ValueError("Account not found: {acc}.")
+                    acckey.append(key)
             else:
                 acckey = None
             datemin = parse_date(kw['from']) if 'from' in kw else None

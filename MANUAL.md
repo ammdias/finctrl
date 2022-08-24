@@ -175,7 +175,8 @@ program's answer, if any.  Some notes:
    "`\`".  The prompt after that will change to a single colon (`:`) until you
    end the command.  If you make a mistake while entering a multi-line command,
    just finish the line with three consecutive backslashes (`\\\`) to discard
-   the whole command. 
+   the whole command. The command will only be interpreted when complete, which
+   means the program will not warn you of a mistake in a single line.
 
        FinCtrl > help bye
        Quit Finance Control.
@@ -869,6 +870,22 @@ we may do that:
     Total amounts by currency:
         Euro: 4930.01
 
+We may also list transactions on multiple accounts, although with only two it
+is the same as entering no account:
+
+    Test > ls tr on bank,pocket
+    
+    Account | Id | Date       | Description           | Total amount | Account balance
+    --------+----+------------+-----------------------+--------------+----------------
+    Pocket  |  5 | 2022-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Pocket  |  1 | 2022-01-01 | Initial amount        |       123.45 |          123.45
+    Bank    |  4 | 2022-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2022-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+    Bank    |  2 | 2022-01-01 | Deposit               |      5000.00 |         5000.00
+
+    Total amounts by currency:
+        Euro: 5063.46
+
 Although there is no need with so few transactions, we may also set
 a date interval on the transactions listed:
 
@@ -1377,6 +1394,9 @@ If there was an error in a command in the *script*, that particular command
 would not be executed and an error would be displayed in the program's prompt.
 To fix that error you need to open the text file and correct it.  Remember to
 remove all the other commands or they will be executed again.
+
+Instead of removing the commands you could also *comment them out* inserting a
+semicolon as the first character of each line that you don't want to execute.
 
 The [source] command has an extra option, `edit`, that automatically opens the
 file in a text editor and executes it after you save the file and exit the
@@ -2170,15 +2190,14 @@ Arguments:
 
 Displays a list of transactions filtered by specific criteria.
 
-    > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \
-    :                        [from DATE] [to DATE] \
+    > list|ls tr[ansactions] [on LIST] [from DATE] [to DATE] \
     :                        [top NUMBER] [tofile FILE]
 
 Arguments:
 
-- **on** (*optional*): account identification of the transactions to be
-  displayed.  If no account is given, transactions from all accounts will be
-  displayed, grouped by account.
+- **on** (*optional*): list of account identifications (ACCOUNT_NAME or
+  ACCOUNT_ID) of the transactions to be displayed.  If no account is given,
+  transactions from all accounts will be displayed, grouped by account.
 - **from** (*optional*): lower date limit of the results to be displayed.  If no
   date is given, the results will include all transactions from the first
   recorded to the upper limit.
@@ -2400,7 +2419,8 @@ Arguments:
 ### source
 
 Executes commands from an external text file.  Optionally, opens an external
-text editor to edit the file prior to executing its commands.
+text editor to edit the file prior to executing its commands.  The lines that
+start with a semicolon will be ignored by this command.
 
     > source [edit] FILE
 

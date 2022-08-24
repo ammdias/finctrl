@@ -2,8 +2,8 @@
 FinStore: class to store finance control data in a sqlite3 database.
 """
 
-__version__ = '0.7'
-__date__ = '2022-03-14'
+__version__ = '0.8'
+__date__ = '2022-08-24'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __changes__ = """
+    0.8: Changed transactions() to support listing on multiple accounts
     0.7: Changed transactions() to not order by account when limit is set
     0.6: Added transactions_by_descr(), parcels_by_descr()
 """
@@ -340,8 +341,10 @@ class FinStore(SQLiteStore):
         """
         conds, params = [], []
         if acckey:
-            conds.append("account=?")
-            params.append(acckey)
+            if not isinstance(acckey, (list, tuple)):
+                acckey = [acckey]
+            conds = [f"({' or '.join(['account=?']*len(acckey))})"]
+            params = acckey
         if datemin:
             conds.append("date>=?")
             params.append(datemin)
