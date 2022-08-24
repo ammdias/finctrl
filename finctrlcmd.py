@@ -2,7 +2,7 @@
 Finance Control command line interface
 """
 
-__version__ = '0.8'
+__version__ = '0.8.1'
 __date__ = '2022-08-24'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
@@ -20,6 +20,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __changes__ = """
+    0.8.1: Corrected bug that prevented account identification to be shown
+           on list transactions "Account not found" error.
     0.8: Source command now ignores lines started with semicolon;
          List transactions now supports listing on  multiple accounts;
          Set echo command now ignores argument case.
@@ -1099,7 +1101,7 @@ class FinCtrlCmd(cmd.Cmd):
                 for acc in kw['on'].split(','):
                     key = self._store.account_key(acc)
                     if not key:
-                        raise ValueError("Account not found: {acc}.")
+                        raise ValueError(f"Account not found: {acc}.")
                     acckey.append(key)
             else:
                 acckey = None
