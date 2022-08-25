@@ -2,8 +2,8 @@
 Finance Control command line interface
 """
 
-__version__ = '0.8.1'
-__date__ = '2022-08-24'
+__version__ = '0.8.2'
+__date__ = '2022-08-25'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -20,6 +20,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __changes__ = """
+    0.8.2: Corrected inline documentation.
     0.8.1: Corrected bug that prevented account identification to be shown
            on list transactions "Account not found" error.
     0.8: Source command now ignores lines started with semicolon;
@@ -338,11 +339,10 @@ class FinCtrlCmd(cmd.Cmd):
         > list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]
         > list|ls curr[encies] [NAME] [tofile FILE]
         > list|ls parcels tagged LIST [from DATE] [to DATE] \\
-                                      [top NUMBER] [tofile FILE]
+        :                             [top NUMBER] [tofile FILE]
         > list|ls tags [tofile FILE]
-        > list|ls tr[ansactions] [on ACCOUNT_NAME|ACCOUNT_ID] \\
-        :                        [from DATE] [to DATE] \\
-                                 [top NUMBER] [tofile FILE]
+        > list|ls tr[ansactions] [on LIST] [from DATE] [to DATE] \\
+        :                        [top NUMBER] [tofile FILE]
         """
         if self._store:
             self._dispatch('list', arg)
@@ -356,9 +356,9 @@ class FinCtrlCmd(cmd.Cmd):
     def do_find(self, arg):
         """Find text in descriptions.
         > find tr[ansactions] like TEXT [from DATE] [to DATE] \\
-                                        [top NUMBER] [tofile FILE]
+        :                               [top NUMBER] [tofile FILE]
         > find parcels like TEXT [from DATE] [to DATE] \\
-                                 [top NUMBER] [tofile FILE]
+        :                        [top NUMBER] [tofile FILE]
         """
         if self._store:
             self._dispatch('find', arg)
@@ -1142,7 +1142,7 @@ class FinCtrlCmd(cmd.Cmd):
         if pos or mkw or 'tagged' not in kw:
             raise Exception("'list parcels' syntax:\n"
                   "    > list|ls parcels tagged LIST [from DATE] [to DATE] \\\n"
-                  "                                  [top NUMBER] [tofile FILE]")
+                  "    :                             [top NUMBER] [tofile FILE]")
 
         datemin = parse_date(kw.get('from')) if 'from' in kw else None
         datemax = parse_date(kw.get('to')) if 'to' in kw else None

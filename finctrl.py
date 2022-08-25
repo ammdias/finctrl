@@ -6,8 +6,8 @@ Finance Control
 An application to control personal finances.
 """
 
-__version__ = '0.8.1'
-__date__ = '2022-08-24'
+__version__ = '0.8.2'
+__date__ = '2022-08-25'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -24,6 +24,7 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 __changes__ = """
+    0.8.2: Corrected inline documentation.
     0.8.1: Corrected bug in 'list transactions'
     0.8: Source command now ignores lines started with semicolon (;)
          List transactions now supports listing on multiple accounts
