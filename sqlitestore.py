@@ -25,7 +25,7 @@ import sqlite3
 
 #-----------------------------------------------------------------------------
 class SQLiteStore:
-    """Base storage classe to ease the use of sqlite3 databases
+    """Base storage class to ease the use of sqlite3 databases
     """
 
     def __init__(self, storepath, create=False, **metadata):

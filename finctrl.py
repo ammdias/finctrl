@@ -6,8 +6,8 @@ Finance Control
 An application to control personal finances.
 """
 
-__version__ = '0.8.2'
-__date__ = '2022-08-25'
+__version__ = '0.9'
+__date__ = '2022-09-24'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -22,26 +22,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-__changes__ = """
-    0.8.2: Corrected inline documentation.
-    0.8.1: Corrected bug in 'list transactions'
-    0.8: Source command now ignores lines started with semicolon (;)
-         List transactions now supports listing on multiple accounts
-    0.7: Added option 'top' to 'list transactions', 'list parcels tagged',
-         'find transactions' and 'find parcels' commands
-    0.6: New commands: find transactions and find parcels
-    0.5: Blank input on multiple page listings will advance page and quit
-         at last page.
-    0.4: List accounts, transactions and parcels now show total amounts;
-         Added extra lines in table printings for better presentation;
-         Navigation in multi-page listings may be done by page number.
-    0.3.1: Corrected bug in 'list transactions'.
-    0.3: Corrected bug in finutil.d2i() which prevented parsing of decimal
-         numbers without leading integer part.
-    0.2: Added 'edit' option to 'source' command (finctrlcmd.FinCtrlCmd)
-         Corrected bug in 'set csvsep' command (finctrlcmd.FinCtrlCmd)
-    0.1: Initial version.
 """
 
 
@@ -61,6 +41,12 @@ args = parser.parse_args()
 
 #------------------------------------------------------------------------------
 # Start application
+
+# Print application greeting
+print('Finance Control')
+print('Version:', __version__)
+print('Copyright (C) 2021', __author__)
+print(__license__)
 
 fincmd = FinCtrlCmd()
 

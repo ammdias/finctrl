@@ -2,8 +2,8 @@
 FinStore: class to store finance control data in a sqlite3 database.
 """
 
-__version__ = '0.8'
-__date__ = '2022-08-24'
+__version__ = '0.9'
+__date__ = '2023-08-27'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -18,11 +18,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-__changes__ = """
-    0.8: Changed transactions() to support listing on multiple accounts
-    0.7: Changed transactions() to not order by account when limit is set
-    0.6: Added transactions_by_descr(), parcels_by_descr()
 """
 
 from sqlitestore import SQLiteStore
@@ -353,13 +348,12 @@ class FinStore(SQLiteStore):
             params.append(datemax)
 
         cond = f"where {' and '.join(conds)}" if conds else ''
-        # do not order by account if limit has been set
-        lim, order = (f"limit {int(limit)}", '') if limit else ('', 'account,')
-        order = f"order by {order} date desc, key desc"
+        lim = f"limit {int(limit)}" if limit else ''
 
         return [self.Transaction(*t)
                 for t in self._qry(f"select * from transactions "
-                                   f"{cond} {order} {lim}", tuple(params))]
+                                   f"{cond} order by date desc, key desc {lim}",
+                                   tuple(params))]
 
 
     def transactions_by_descr(self, pattern, datemin=None, datemax=None, limit=None):
@@ -554,7 +548,8 @@ class FinStore(SQLiteStore):
                  for p in self._qry("select P.* "
                                     "from transactions as T, parcels as P "
                                     f"where P.trans=T.key {conds} "
-                                    f"group by T.key order by T.date desc, P.key {lim}",
+                                    f"group by T.key "
+                                    f"order by T.key desc, T.date desc, P.key desc {lim}",
                                     tuple(params))]
         self.fill_tags(plist)
 
@@ -595,7 +590,7 @@ class FinStore(SQLiteStore):
                 "select distinct P.key, T.date, T.key, P.descr, P.amount "
                 "from transactions as T, parcels as P, parceltags as PT "
                 f"where PT.parcel=P.key and P.trans=T.key and {tagcond} {cond} "
-                f"order by T.date desc, T.key desc, P.key {lim}",
+                f"order by T.date desc, T.key desc, P.key desc {lim}",
                          tuple(params))
 
     
@@ -621,7 +616,7 @@ class FinStore(SQLiteStore):
                 "select distinct P.key, T.date, T.key, P.descr, P.amount "
                 "from transactions as T, parcels as P "
                 f"where P.trans=T.key and {conds} "
-                f"order by T.date desc, T.key desc, P.key {lim}",
+                f"order by T.date desc, T.key desc, P.key desc {lim}",
                          tuple(params))
 
 

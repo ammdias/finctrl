@@ -19,16 +19,6 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
-__changes__ = """
-    0.7: Added parse_number()
-    0.5: Blank input on multiple page listings will advance one page and quit
-         on last page
-    0.4: Add extra lines for better table visualization;
-         paginate() now accepts page number.
-    0.3: Corrected bug in d2i() which prevented parsing of decimal numbers
-         without leading integer part.
-    0.1: Initial version.
-"""
 
 import sys
 import datetime

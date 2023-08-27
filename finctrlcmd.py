@@ -2,8 +2,8 @@
 Finance Control command line interface
 """
 
-__version__ = '0.8.2'
-__date__ = '2022-08-25'
+__version__ = '0.9'
+__date__ = '2023-08-27'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -18,28 +18,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-"""
-__changes__ = """
-    0.8.2: Corrected inline documentation.
-    0.8.1: Corrected bug that prevented account identification to be shown
-           on list transactions "Account not found" error.
-    0.8: Source command now ignores lines started with semicolon;
-         List transactions now supports listing on  multiple accounts;
-         Set echo command now ignores argument case.
-    0.7: Added 'top' keyword to 'list transactions', 'list parcels'
-         'find transactions' and 'find parcels' commands
-    0.6: Add transfer completely fails if one of the transactions fails;
-         Added 'find transactions' and 'find parcels' commands.
-    0.5: Blank input on multiple page listings advances one page and quits
-         on last page
-    0.4: List accounts, transactions and parcels now show amount totals;
-         Added extra lines in table printings for better presentation;
-         Navigation in multi-page listing may be done by page number.
-    0.3.1: Corrected bug in 'list transactions'.
-    0.3: Removed unused symbol in FinCtrlCmd.
-    0.2: Added 'edit' option to 'source' command.
-         Corrected bug in 'set csvsep' command.
-    0.1: Initial version.
 """
 
 import cmd
@@ -84,13 +62,18 @@ class FinCtrlCmd(cmd.Cmd):
         """
         self._saved_prompt = None
         self._multilncmd = []
+        self._sthist = []           # session transaction list
 
 
     def precmd(self, line):
         """Provide support for multiline commands.
         """
-        # check for multiline commands (last token is a single backslash)
+        # ignore comments and empty lines
+        if not line or line.startswith(';'):
+            return ''
+
         line = line.split()
+        # check for multiline commands (last token is a single backslash)
         if line and line[-1] == '\\':
             del line[-1]
             self._multilncmd += line
@@ -203,7 +186,12 @@ class FinCtrlCmd(cmd.Cmd):
         """Execute commands from a file.
         > source [edit] FILE
         """
-        args = shlex.split(arg)
+        try:
+            args = shlex.split(arg)
+        except Exceptions as e:
+            error(f"Could not parse the command. Reason:\n    {e}")
+            return
+
         if 'edit' in args:
             edit = True
             args.remove('edit')
@@ -222,8 +210,6 @@ class FinCtrlCmd(cmd.Cmd):
         echo, self.echo = self.echo, True
         try:
             for line in open(fname, 'r'):
-                if line.startswith(';'):  # ignore comment lines
-                    continue
                 line = self.precmd(line)
                 if line:
                     self.onecmd(line)
@@ -236,7 +222,7 @@ class FinCtrlCmd(cmd.Cmd):
     def do_set(self, arg):
         """Set metadata on the current database file:
         > set csvsep CHARACTER
-        > set curr[ency] NAME
+        > set curr[ency] CURR_NAME
         > set deposit descr[iption] TEXT
         > set echo ON|OFF
         > set editor TEXT
@@ -252,7 +238,7 @@ class FinCtrlCmd(cmd.Cmd):
 
     def do_add(self, arg):
         """Insert data or a record on the current database file:
-        > add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME]
+        > add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] CURR_NAME]
         > add curr[ency] TEXT [short TEXT] [symbol TEXT] [position LEFT|RIGHT] \\
         :                [decplaces NUMBER] [decsep CHARACTER]
         > add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
@@ -297,7 +283,7 @@ class FinCtrlCmd(cmd.Cmd):
         """Change a record in the current database file:
         > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID descr[iption] to TEXT
         > ch[ange] acc[ount] ACCOUNT_NAME|ACCOUNT_ID name to TEXT
-        > ch[ange] curr[ency] NAME [short TEXT] \\
+        > ch[ange] curr[ency] CURR_NAME [short TEXT] \\
         :                     [symbol TEXT] [position LEFT|RIGHT] \\
         :                     [decplaces NUMBER] [decsep CHARACTER]
         > ch[ange] parcel PARCEL_ID amount to AMOUNT
@@ -320,9 +306,10 @@ class FinCtrlCmd(cmd.Cmd):
     def do_show(self, arg):
         """Show a specific record's data:
         > sh[ow] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
-        > sh[ow] curr[ency] NAME
+        > sh[ow] curr[ency] CURR_NAME
         > sh[ow] settings|manual [inline]|copyright|license [inline]
         > sh[ow] tr[ansaction] TRANSACTION_ID
+        > sh[ow] last [NUMBER]
         """
         if self._store or \
                 'manual' in arg or 'copyright' in arg or 'license' in arg:
@@ -337,12 +324,12 @@ class FinCtrlCmd(cmd.Cmd):
     def do_list(self, arg):
         """List database records:
         > list|ls acc[ounts] [ACCOUNT_NAME] [tofile FILE]
-        > list|ls curr[encies] [NAME] [tofile FILE]
+        > list|ls curr[encies] [CURR_NAME] [tofile FILE]
         > list|ls parcels tagged LIST [from DATE] [to DATE] \\
-        :                             [top NUMBER] [tofile FILE]
+        :                             [top NUMBER] [rev] [tofile FILE]
         > list|ls tags [tofile FILE]
         > list|ls tr[ansactions] [on LIST] [from DATE] [to DATE] \\
-        :                        [top NUMBER] [tofile FILE]
+        :                        [top NUMBER] [rev] [tofile FILE]
         """
         if self._store:
             self._dispatch('list', arg)
@@ -356,9 +343,9 @@ class FinCtrlCmd(cmd.Cmd):
     def do_find(self, arg):
         """Find text in descriptions.
         > find tr[ansactions] like TEXT [from DATE] [to DATE] \\
-        :                               [top NUMBER] [tofile FILE]
+        :                               [top NUMBER] [rev] [tofile FILE]
         > find parcels like TEXT [from DATE] [to DATE] \\
-        :                        [top NUMBER] [tofile FILE]
+        :                        [top NUMBER] [rev] [tofile FILE]
         """
         if self._store:
             self._dispatch('find', arg)
@@ -479,7 +466,7 @@ class FinCtrlCmd(cmd.Cmd):
         """
         if len(args) != 1:
             raise Exception("'set currency syntax:\n"
-                            "    > set curr[ency] NAME")
+                            "    > set curr[ency] CURR_NAME")
 
         try:
             curr = self._store.currency(args[0])
@@ -558,7 +545,7 @@ class FinCtrlCmd(cmd.Cmd):
                                         'curr', 'currency')
         if len(pos) != 1 or mkw:
             raise Exception("'add account' syntax:\n"
-            "    > add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] NAME]")
+            "    > add acc[ount] TEXT [descr[iption] TEXT] [curr[ency] CURR_NAME]")
         try:
             curr = kw.get('curr', kw.get('currency',
                                          self._store.metadata('currency')))
@@ -729,7 +716,9 @@ class FinCtrlCmd(cmd.Cmd):
             raise Exception("'delete transaction' syntax:\n"
                             "    > del[ete] tr[ansaction] TRANSACTION_ID")
         try:
-            self._store.del_transaction(args[0])
+            key = args[0]
+            self._store.del_transaction(key)
+            self._delhist(key)
         except Exception as e:
             error(f"unable to delete transaction. Reason:\n    {e}")
 
@@ -773,7 +762,7 @@ class FinCtrlCmd(cmd.Cmd):
                                         'decplaces', 'decsep')
         if len(pos) != 1 or mkw:
             raise Exception("'change currency' syntax:\n"
-                  "    > change curr[ency] NAME [short TEXT] \\\n"
+                  "    > change curr[ency] CURR_NAME [short TEXT] \\\n"
                   "    :                   [symbol TEXT] [position LEFT|RIGHT] \\\n"
                   "    :                   [decplaces NUMBER] [decsep CHARACTER]")
         try:
@@ -783,7 +772,8 @@ class FinCtrlCmd(cmd.Cmd):
             symb = kw.get('position', curr.symbol_pos).strip().lower()
             if symb not in ('left', 'right'):
                 raise ValueError("currency symbol must be 'left' or 'right'.")
-            curr.dec_places = parse_number(kw.get('decplaces', curr.dec_places))
+            if 'decplaces' in kw:
+                curr.dec_places = parse_number(kw['decplaces'])
             curr.dec_sep = kw.get('decsep', curr.dec_sep)
             self._store.edt_currency(curr)
         except Exception as e:
@@ -841,6 +831,7 @@ class FinCtrlCmd(cmd.Cmd):
             else:  # pos[1] == 'date'
                 date = parse_date(kw['to'])
                 self._store.edt_transaction_date(pos[0], date)
+            self._addhist(pos[0])
         except Exception as e:
             error(f"unable to change transaction. Reason:\n    {e}")
 
@@ -909,7 +900,7 @@ class FinCtrlCmd(cmd.Cmd):
             raise Exception("'show copyright' takes no arguments.")
 
         print(f"Finance Control {__version__}")
-        print(f"(C) {__date__[:4]} {__author__}")
+        print(f"(C) 2021 {__author__}")
         print(__license__)
         
 
@@ -959,7 +950,7 @@ class FinCtrlCmd(cmd.Cmd):
         """
         if len(args) != 1:
             raise Exception("'show currency' syntax:\n"
-                            "    > sh[ow] curr[ency] CURRENCY_NAME")
+                            "    > sh[ow] curr[ency] CURR_NAME")
         try:
             curr = self._store.currency(args[0])
             data = []
@@ -1012,26 +1003,27 @@ class FinCtrlCmd(cmd.Cmd):
         if len(args) != 1:
             raise Exception("'show transaction' syntax:\n"
                             "    > sh[ow] tr[ansaction] TRANSACTION_ID")
-        try:
-            t = self._store.transaction(args[0])
-            acc = self._store.transaction_account(t.key)
-            curr = self._store.transaction_currency(t.key)
-            data= []
-            data.append(f"Account: {acc.name} (id: {acc.key})")
-            data.append(f"Description: {t.descr}")
-            data.append(f"Total amount: {i2d(t.amount, curr)}")
-            data.append(f"Date: {t.date}")
-            data.append("Parcels:")
-            for p in t.parcels:
-                amm = i2d(p.amount, curr)
-                tags = f" ({', '.join(p.tags)})" if p.tags else ''
-                data.append(f"  ({p.key}) {p.descr}: {amm}{tags}")
-            paginate(data=data)
-        except Exception as e:
-            error(f"unable to show transaction. Reason:\n    {e}")
+        self._showtr(args[0])
 
     # shortcut
     _show_tr = _show_transaction
+
+
+    def _show_last(self, args):
+        """Show last session transactions.
+        """
+        if len(args) > 1:
+            raise Exception("'show last' syntax:\n"
+                            "    > sh[ow] last [NUMBER]")
+        try:
+            number = int(args[0]) if args else 1
+        except:
+            raise Exception("'show last' syntax:\n"
+                            "    > sh[ow] last [NUMBER]")
+
+        for key in self._sthist[-number:]:
+            print(f"Transaction: {key}")
+            self._showtr(key)
 
 
     def _list_currencies(self, args):
@@ -1040,7 +1032,7 @@ class FinCtrlCmd(cmd.Cmd):
         pos, kw, mkw = parse_args(args, 'tofile')
         if len(pos) > 1 or mkw:
             raise Exception("'list currencies' syntax:\n"
-                            "    > list|ls curr[encies] [NAME] [tofile FILE]")
+                            "    > list|ls curr[encies] [CURR_NAME] [tofile FILE]")
         try:
             data = [(c.name, c.short_name, c.symbol, c.symbol_pos,
                      str(c.dec_places), c.dec_sep)
@@ -1091,10 +1083,14 @@ class FinCtrlCmd(cmd.Cmd):
         """List transactions.
         """
         pos, kw, mkw = parse_args(args, 'on', 'from', 'to', 'top', 'tofile')
+        rev = 'rev' in pos
+        if rev:
+            pos.remove('rev')
+
         if pos or mkw:
             raise Exception("'list transactions' syntax:\n"
                   "    > list|ls tr[ansactions] [on LIST] [from DATE] [to DATE] \\\n"
-                  "    :                        [top NUMBER] [tofile FILE]")
+                  "    :                        [top NUMBER] [rev] [tofile FILE]")
         try:
             if 'on' in kw:
                 acckey = []
@@ -1123,6 +1119,9 @@ class FinCtrlCmd(cmd.Cmd):
             error(f"unable to list transactions. Reason:\n    {e}")
             return
 
+        if rev:
+            data.reverse()
+
         headers = ['Account', 'Id', 'Date', 'Description',
                            'Total amount', 'Account balance']
         if 'tofile' in kw:
@@ -1139,10 +1138,14 @@ class FinCtrlCmd(cmd.Cmd):
         """List parcels.
         """
         pos, kw, mkw = parse_args(args, 'tagged', 'from', 'to', 'top', 'tofile')
+        rev = 'rev' in pos
+        if rev:
+            pos.remove('rev')
+
         if pos or mkw or 'tagged' not in kw:
             raise Exception("'list parcels' syntax:\n"
                   "    > list|ls parcels tagged LIST [from DATE] [to DATE] \\\n"
-                  "    :                             [top NUMBER] [tofile FILE]")
+                  "    :                             [top NUMBER] [rev] [tofile FILE]")
 
         datemin = parse_date(kw.get('from')) if 'from' in kw else None
         datemax = parse_date(kw.get('to')) if 'to' in kw else None
@@ -1161,6 +1164,9 @@ class FinCtrlCmd(cmd.Cmd):
                 totals[curr.name] = totals.get(curr.name, 0) + i[4]
         except Exception as e:
             error(f"unable to list parcels by tag. Reason:\n    {e}")
+
+        if rev:
+            data.reverse()
 
         headers = ['Id', 'Date', 'Account', 'Trans', 'Description', 'Amount']
         if 'tofile' in kw:
@@ -1193,10 +1199,14 @@ class FinCtrlCmd(cmd.Cmd):
         """Find transactions by text in their discription.
         """
         pos, kw, mkw = parse_args(args, 'like', 'from', 'to', 'top', 'tofile')
+        rev = 'rev' in pos
+        if rev:
+            pos.remove('rev')
+
         if pos or mkw:
             raise Exception("'find transactions' syntax:\n"
                   "    > find tr[ransactions] like TEXT [from DATE] [to DATE] \\\n"
-                  "    :                                [top NUMBER] [tofile FILE]")
+                  "    :                                [top NUMBER] [rev] [tofile FILE]")
 
         try:
             datemin = parse_date(kw['from']) if 'from' in kw else None
@@ -1218,6 +1228,9 @@ class FinCtrlCmd(cmd.Cmd):
             error(f"unable to find transactions. Reason:\n    {e}")
             return
 
+        if rev:
+            data.reverse()
+
         headers = ['Account', 'Id', 'Date', 'Description',
                            'Total amount', 'Account balance']
         if 'tofile' in kw:
@@ -1233,10 +1246,14 @@ class FinCtrlCmd(cmd.Cmd):
         """Find parcels by text in their discription.
         """
         pos, kw, mkw = parse_args(args, 'like', 'from', 'to', 'top', 'tofile')
+        rev = 'rev' in pos
+        if rev:
+            pos.remove('rev')
+
         if pos or mkw:
             raise Exception("'find parcels' syntax:\n"
                   "    > find parcels like TEXT [from DATE] [to DATE] \\\n"
-                  "    :                        [top NUMBER] [tofile FILE]")
+                  "    :                        [top NUMBER] [rev] [tofile FILE]")
 
         datemin = parse_date(kw.get('from')) if 'from' in kw else None
         datemax = parse_date(kw.get('to')) if 'to' in kw else None
@@ -1246,8 +1263,7 @@ class FinCtrlCmd(cmd.Cmd):
         data = []
         totals = {}
         try:
-            for i in self._store.parcels_by_descr(kw['like'],
-                                                  datemin, datemax, limit):
+            for i in self._store.parcels_by_descr(kw['like'], datemin, datemax, limit):
                 acc = self._store.transaction_account(i[2])
                 curr = self._store.transaction_currency(i[2])
                 data.append((str(i[0]), i[1], acc.name, str(i[2]),
@@ -1255,6 +1271,9 @@ class FinCtrlCmd(cmd.Cmd):
                 totals[curr.name] = totals.get(curr.name, 0) + i[4]
         except Exception as e:
             error(f"unable to list parcels by description. Reason:\n    {e}")
+
+        if rev:
+            data.reverse()
 
         headers = ['Id', 'Date', 'Account', 'Trans', 'Description', 'Amount']
         if 'tofile' in kw:
@@ -1328,9 +1347,48 @@ class FinCtrlCmd(cmd.Cmd):
                     plist.append(p)
             t.parcels = plist
             self._store.add_transaction(t)
+            self._addhist(t.key)
             return t.key
         except Exception as e:
             error(f"unable to add transaction. Reason:\n    {e}")
+
+
+    def _addhist(self, key):
+        """Add a transaction to the session transation history.
+        """
+        key = str(key)
+        if key in self._sthist:
+            self._sthist.remove(key)
+        self._sthist.append(key)
+
+
+    def _delhist(self, key):
+        """Remove a transaction from the session transaction history.
+        """
+        key = str(key)
+        self._sthist.remove(key)
+
+
+    def _showtr(self, key):
+        """Show a transaction.
+        """
+        try:
+            t = self._store.transaction(key)
+            acc = self._store.transaction_account(t.key)
+            curr = self._store.transaction_currency(t.key)
+            data= []
+            data.append(f"Account: {acc.name} (id: {acc.key})")
+            data.append(f"Description: {t.descr}")
+            data.append(f"Total amount: {i2d(t.amount, curr)}")
+            data.append(f"Date: {t.date}")
+            data.append("Parcels:")
+            for p in t.parcels:
+                amm = i2d(p.amount, curr)
+                tags = f" ({', '.join(p.tags)})" if p.tags else ''
+                data.append(f"  ({p.key}) {p.descr}: {amm}{tags}")
+            paginate(data=data)
+        except Exception as e:
+            error(f"unable to show transaction. Reason:\n    {e}")
 
     
     def _totals(self, totals, title):
