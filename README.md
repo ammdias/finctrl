@@ -1,6 +1,6 @@
 FINANCE CONTROL README
 ======================
-version 0.9
+version 0.10
 
 Copyright (C) 2021 António Manuel Dias
 

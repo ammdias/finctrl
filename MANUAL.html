@@ -1,5 +1,5 @@
 <h1 id="finance-control-manual">FINANCE CONTROL MANUAL</h1>
-<p>Manual for <strong>FinCtrl version 0.9, 2023-08-27</strong></p>
+<p>Manual for <strong>FinCtrl version 0.10, 2023-12-10</strong></p>
 <p>This is a very basic program to control personal finances. It depends on <a href="https://python.org">Python 3</a> and was thought to be <strong>used only from the command line</strong>. It supports multiple accounts with possibly different currencies and transactions composed of multiple parcels, each with its different tags. Check the <a href="#usage">USAGE</a> section for a more complete overview of the program.</p>
 <p>This is what the program IS NOT and CANNOT DO:</p>
 <ul>
@@ -20,7 +20,10 @@
 <p>website: <a href="https://github.com/ammdias/finctrl">AMMDIAS GitHub</a></p>
 <h2 id="contents">CONTENTS</h2>
 <ul>
-<li><a href="#installation">INSTALLATION</a></li>
+<li><a href="#installation">INSTALLATION</a>
+<ul>
+<li><a href="#uninstall-the-program">Uninstall the program</a></li>
+</ul></li>
 <li><a href="#usage">USAGE</a>
 <ul>
 <li><a href="#command-line-interface">Command line interface</a></li>
@@ -80,6 +83,12 @@
 <pre><code>FinCtrl &gt; bye</code></pre>
 <p>(the program should close; you may also use the end-of-file command – CTRL-D in Linux – to close the program)</p></li>
 </ol>
+<h3 id="uninstall-the-program">Uninstall the program</h3>
+<p>To uninstall the program, run it with the <code>--uninstall</code> option:</p>
+<pre><code>   $ finctrl --uninstall</code></pre>
+<p>or run the uninstall script in the directory where the program was installed:</p>
+<pre><code>   $ python3 UNINSTALL.py</code></pre>
+<p>Remember that you must use <code>sudo</code> if you installed the program for all the users.</p>
 <h2 id="usage">USAGE</h2>
 <p>The purpose of this program is to control a user’s personal finances by means of a simple command line interface. The user may configure several <em>accounts</em> (e.g. a bank account, a savings account, the credit card account, etc.), each with its own <em>currency</em>. All operations on the accounts are entered as <em>transactions</em>, each of which may be composed of several <em>parcels</em>. This way, a supermarket bill may be split on its items, so that the user may have a more fine control over one’s expenses. Each parcel may also be tagged with several tags, allowing the listing of the spendings (or earnings) by category.</p>
 <p>The data is stored in standard <a href="https://sqlite.org">SQLite</a> files (database structure documented in the <a href="#advanced-usage">Advanced Usage</a> section). One file should be fine for each user, but any number of them may be used if the user wants to split its accounts over several subjects.</p>
@@ -112,12 +121,12 @@ FinCtrl &gt;  </code></pre></li>
 <p>However, although the commands are case-sensitive, some arguments may be entered in any case, like account names or tags. Also, the answer to inline questions may be given in lower or upper case. Examples of those are given throughout this manual.</p></li>
 <li><p>Some commands or options have a shortcut version that may be used interchangeably. That will be indicated in the <a href="#reference">REFERENCE</a> section and in the online help by enveloping the optional characters in square brackets. For example, the <a href="#show-copyright">show copyright</a> command may be entered as <code>show</code> or <code>sh</code>:</p>
 <pre><code>FinCtrl &gt; show copyright
-Finance Control 0.9
+Finance Control 0.10
 (C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>or</p>
 <pre><code>FinCtrl &gt; sh copyright
-Finance Control 0.9
+Finance Control 0.10
 (C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>This is explicitly stated in <em>help</em> text of the command:</p>
@@ -164,7 +173,7 @@ FinCtrl &gt;</code></pre></li>
 <pre><code>$ finctrl</code></pre>
 <p>The prompt should display the welcome text with the version and copyright notice and change to the standard prompt:</p>
 <pre><code>Finance Control
-Version: 0.9
+Version: 0.10
 Copyright (C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
 
 This program is free software: you can redistribute it and/or modify
@@ -212,7 +221,7 @@ Show a specific record&#39;s data:
 <p>The third syntax line of the example above explains how to use the <a href="#show">show</a> command to display some information pertaining to the program. The command may be written as <code>show</code> or <code>sh</code> (the bracketed ‘<code>ow</code>’ is optional) and must be followed by only one of the options separated by vertical bars, <code>settings</code>, <code>manual</code>, <code>copyright</code> or <code>license</code>.</p>
 <p>For example, to show the program’s copyright information, as we have seen in previous section, we could type:</p>
 <pre><code>FinCtrl &gt; show copyright
-Finance Control 0.9
+Finance Control 0.10
 (C) 2021 António Manuel Dias &lt;ammdias@gmail.com&gt;
 (...)</code></pre>
 <p>Both the <code>manual</code> and <code>license</code> information will be shown on a new web browser window, assuming a browser is installed on your system:</p>

@@ -6,8 +6,8 @@ Finance Control
 An application to control personal finances.
 """
 
-__version__ = '0.9'
-__date__ = '2022-09-24'
+__version__ = '0.10'
+__date__ = '2023-12-10'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -36,11 +36,18 @@ from finctrlcmd import FinCtrlCmd
 parser = argparse.ArgumentParser()
 parser.add_argument("file", type=str, nargs='?', help="file to open.")
 parser.add_argument("-s", "--source", type=str, help="file to be executed.")
+parser.add_argument("--uninstall", action="store_true",
+                    help="uninstall application.")
 args = parser.parse_args()
 
 
 #------------------------------------------------------------------------------
 # Start application
+
+# Uninstall the application
+if args.uninstall:
+    from UNINSTALL import uninstall
+    uninstall()
 
 # Print application greeting
 print('Finance Control')

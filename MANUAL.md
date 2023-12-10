@@ -1,7 +1,7 @@
 FINANCE CONTROL MANUAL
 ======================
 
-Manual for **FinCtrl version 0.9, 2023-08-27**
+Manual for **FinCtrl version 0.10, 2023-12-10**
 
 This is a very basic program to control personal finances.  It depends on
 [Python 3](https://python.org) and was thought to be
@@ -39,6 +39,7 @@ CONTENTS
 --------
 
 * [INSTALLATION]
+  * [Uninstall the program]
 * [USAGE]
   * [Command line interface]
   * [Starting and quitting the program]
@@ -133,6 +134,19 @@ your own risk.  For MS Windows installation, refer to the section
    (the program should close; you may also use the end-of-file
    command -- CTRL-D in Linux -- to close the program)
 
+### Uninstall the program
+
+To uninstall the program, run it with the `--uninstall` option:
+
+       $ finctrl --uninstall
+
+or run the uninstall script in the directory where the program was installed:
+
+       $ python3 UNINSTALL.py
+
+Remember that you must use `sudo` if you installed the program for all the
+users.
+
 
 USAGE
 -----
@@ -209,14 +223,14 @@ program's answer, if any.  Some notes:
    For example, the [show copyright] command may be entered as `show` or `sh`:
 
        FinCtrl > show copyright
-       Finance Control 0.9
+       Finance Control 0.10
        (C) 2021 António Manuel Dias <ammdias@gmail.com>
        (...)
 
    or
 
        FinCtrl > sh copyright
-       Finance Control 0.9
+       Finance Control 0.10
        (C) 2021 António Manuel Dias <ammdias@gmail.com>
        (...)
 
@@ -308,7 +322,7 @@ The prompt should display the welcome text with the version and copyright notice
 and change to the standard prompt:
     
     Finance Control
-    Version: 0.9
+    Version: 0.10
     Copyright (C) 2021 António Manuel Dias <ammdias@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -387,7 +401,7 @@ For example, to show the program's copyright information, as we have seen in
 previous section, we could type:
 
     FinCtrl > show copyright
-    Finance Control 0.9
+    Finance Control 0.10
     (C) 2021 António Manuel Dias <ammdias@gmail.com>
     (...)
 
