@@ -1,14 +1,14 @@
 FINANCE CONTROL MANUAL
 ======================
 
-Manual for **FinCtrl version 0.10, 2023-12-10**
+Manual for **FinCtrl version 0.11, 2024-01-19**
 
 This is a very basic program to control personal finances.  It depends on
 [Python 3](https://python.org) and was thought to be
 **used only from the command line**.  It supports multiple accounts with
 possibly different currencies and transactions composed of multiple parcels,
-each with its different tags.  Check the [USAGE] section for a more complete
-overview of the program.
+each with its different tags.  Check the [USAGE](#USAGE) section for a more
+complete overview of the program.
 
 This is what the program IS NOT and CANNOT DO:
 
@@ -38,40 +38,40 @@ website: [AMMDIAS GitHub](https://github.com/ammdias/finctrl)
 CONTENTS
 --------
 
-* [INSTALLATION]
-  * [Uninstall the program]
-* [USAGE]
-  * [Command line interface]
-  * [Starting and quitting the program]
-  * [Getting help]
-  * [Creating and opening a file]
-  * [Default settings]
-  * [Currencies]
-  * [Accounts and Transactions]
-  * [Correcting mistakes]
-  * [Listing and exporting data]
-  * [Advanced usage]
-    * [Scripting]
-    * [Backup and trim the database]
-    * [Usage in MS Windows]
-* [REFERENCE]
-  * [Command's arguments reference]
-  * [add]
-  * [backup]
-  * [bye]
-  * [change]
-  * [close]
-  * [delete]
-  * [find]
-  * [help]
-  * [list]
-  * [open]
-  * [set]
-  * [show]
-  * [source]
-  * [trim]
-  * [Database structure]
-* [LICENSE]
+* [INSTALLATION](#installation)
+  * [Uninstall the program](#uninstall-the-program)
+* [USAGE](#usage)
+  * [Command line interface](#command-line-interface)
+  * [Starting and quitting the program](starting-and-quitting-the-program)
+  * [Getting help](#getting-help)
+  * [Creating and opening a file](#creating-and-opening-a-file)
+  * [Default settings](#default-settings)
+  * [Currencies](#currencies)
+  * [Accounts and Transactions](#accounts-and-transactions)
+  * [Correcting mistakes](#correcting-mistakes)
+  * [Listing and exporting data](#listing-and-exporting-data)
+  * [Advanced usage](#advanced-usage)
+    * [Scripting](#scripting)
+    * [Backup and trim the database](#backup-and-trim-the-database)
+    * [Usage in MS Windows](#usage-in-ms-windows)
+* [REFERENCE](#reference)
+  * [Command's arguments reference](#commands-arguments-reference)
+  * [add](#add)
+  * [backup](#backup)
+  * [bye](#bye)
+  * [change](#change)
+  * [close](#close)
+  * [delete](#delete)
+  * [find](#find)
+  * [help](#help)
+  * [list](#list)
+  * [open](#open)
+  * [set](#set)
+  * [show](#show)
+  * [source](#source)
+  * [trim](#trim)
+  * [Database structure](#database-structure)
+* [LICENSE](#license)
 
 
 INSTALLATION
@@ -81,7 +81,7 @@ The instructions below are for installation on a modern Linux system.  They
 may work on other modern Unix-like systems like BSD derivatives, including
 MacOS, but that has not been tested and may require some tweaking.  Try it at
 your own risk.  For MS Windows installation, refer to the section
-[Usage in MS Windows].
+[Usage in MS Windows](#usage-in-ms-windows).
 
 1. Download and unzip the program's compressed file in a directory of your
    choosing.  To download the most recent version, check the [AMMDIAS
@@ -99,11 +99,12 @@ your own risk.  For MS Windows installation, refer to the section
 
      The default directories will install the program for the current user only
      and are suited for single-user systems.  If you want to keep these
-     settings, just press ENTER when prompted.  The program will be installed in
-     the directory `$HOME/.local/lib/FinCtrl` and the symbolic link
+     settings, just press ENTER when prompted.  The program will be installed
+     in the directory `$HOME/.local/lib/FinCtrl` and the symbolic link
      `$HOME/.local/bin/finctrl` will be created.  On most Linux systems the
-     `$HOME/.local/bin` directory will be inserted in the execution PATH, if it
-     exists. If it doesn't, you will have to add it manually.
+     `$HOME/.local/bin` directory will be automatically inserted in the
+     execution PATH, if it exists. If it doesn't, you will have to add it
+     manually.
 
      If you want to install the program for all the users of the system, you
      should change the directories accordingly, e.g. `/usr/local/lib` for the
@@ -161,14 +162,15 @@ one's expenses.  Each parcel may also be tagged with several tags, allowing the
 listing of the spendings (or earnings) by category.
 
 The data is stored in standard [SQLite](https://sqlite.org) files (database
-structure documented in the [Advanced Usage] section).  One file should be fine
-for each user, but any number of them may be used if the user wants to split its
-accounts over several subjects.
+structure documented in the [Advanced Usage](#advanced-usage) section).  One
+file should be fine for each user, but any number of them may be used if the
+user wants to split its accounts over several subjects.
 
 In this section I will try to give an overview of the program usage and its
 possibilities.  I will do this in a *story-telling like* fashion, in each step
 describing a new feature and the way to use it.  For the complete command
-reference, you should then refer to the appropriate [REFERENCE] subsection.
+reference, you should then refer to the appropriate [REFERENCE](#reference)
+subsection.
 
 ### Command line interface
 
@@ -218,19 +220,20 @@ program's answer, if any.  Some notes:
    throughout this manual.
 
 5. Some commands or options have a shortcut version that may be used
-   interchangeably.  That will be indicated in the [REFERENCE] section and in
-   the online help by enveloping the optional characters in square brackets.
-   For example, the [show copyright] command may be entered as `show` or `sh`:
+   interchangeably.  That will be indicated in the [REFERENCE](#refence) section
+   and in the online help by enveloping the optional characters in square
+   brackets.  For example, the [show copyright] command may be entered as `show`
+   or `sh`:
 
        FinCtrl > show copyright
-       Finance Control 0.10
+       Finance Control 0.11
        (C) 2021 António Manuel Dias <ammdias@gmail.com>
        (...)
 
    or
 
        FinCtrl > sh copyright
-       Finance Control 0.10
+       Finance Control 0.11
        (C) 2021 António Manuel Dias <ammdias@gmail.com>
        (...)
 
@@ -245,8 +248,8 @@ program's answer, if any.  Some notes:
    following these general rules:
 
    * Positional arguments must follow the order they are listed in the command
-     help or [REFERENCE] page.  Keyword arguments may be entered in any order,
-     immediately after the key word.  Example:
+     help or [REFERENCE](#reference) page.  Keyword arguments may be entered in
+     any order, immediately after the key word.  Example:
             
          > command POS1 POS2 keyword_a ARG-A keyword_b ARG-B
          > command keyword_b ARG-B POS1 keyword_a ARG-A POS2 
@@ -259,17 +262,18 @@ program's answer, if any.  Some notes:
    * Monetary amounts must consist of positive or negative integer or decimal
      values, using the decimal separator configured in the account they belong
      to.  Examples:  `123`, `123.24`, `-123.5`.
+     
      Also, the decimal part may have at most the number of decimal places
      configured in the respective currency: the program will automatically
-     truncate the remaining decimal places.  See the [Currencies] section below
-     for details on how to find or change an account's decimal separator and
-     number of decimal places.
+     truncate the remaining decimal places.  See the [Currencies](#currencies)
+     section below for details on how to find or change an account's decimal
+     separator and number of decimal places.
      
    * Dates must be provided in the general form YEAR-MONTH-DAY.  The year may be
      omitted (the current year is implicit) or entered without the century (21st
      century is implicit).  The field separator may be a dash ('-') or a
-     forward slash ('/'). Example: `2023-01-12`, `23-1-12` and `1/12` all refer
-     to the January 12th of 2023 (assuming 2023 is the current year).
+     forward slash ('/'). Example: `2024-01-12`, `23-1-12` and `1/12` all refer
+     to the January 12th of 2024 (assuming 2024 is the current year).
 
      The words `today` or `now` may be used in replacement of the current date.
      
@@ -287,12 +291,12 @@ program's answer, if any.  Some notes:
      * `'car, washing liquid'`
 
 7. If a line of the output of a command is longer than the terminal width, it
-   will be truncated and end with an ellipsis (`...`).  If the output has more
-   lines than fit in the terminal height then the output will be split in pages
-   and at the end of each page you will have the option to go to the next page
-   (enter `next`, `n` or ENTER), go back to the previous (enter `previous` or `p`),
-   go to a specific page (enter its page number) or quit the presentation
-   (enter `quit` or `q`). 
+   will be truncated and terminated with an ellipsis (`...`).  If the output
+   has more lines than fit in the terminal height then the output will be split
+   in pages and at the end of each page you will have the option to go to the
+   next page (enter `next`, `n` or ENTER), go back to the previous (enter
+   `previous` or `p`), go to a specific page (enter its page number) or quit
+   the presentation (enter `quit` or `q`). 
 
        FinCtrl > show license inline
 
@@ -322,7 +326,7 @@ The prompt should display the welcome text with the version and copyright notice
 and change to the standard prompt:
     
     Finance Control
-    Version: 0.10
+    Version: 0.11
     Copyright (C) 2021 António Manuel Dias <ammdias@gmail.com>
 
     This program is free software: you can redistribute it and/or modify
@@ -368,7 +372,7 @@ available commands:
 
 
 We may also obtain help on a specific command by typing `help` followed by the
-name of the command.  For example, for the [show] command:
+name of the command.  For example, for the [show](#show) command:
 
     FinCtrl > help show
     Show a specific record's data:
@@ -388,8 +392,8 @@ apply to every command description:
 * Several options separated by vertical bars (the *pipe* character, '`|`') mean
   that one and only one of them must be chosen;
 * Finally, text in capital letters is information that must be provided or
-  chosen by the user --- check in the commands' [REFERENCE] section for the
-  precise type of information required.
+  chosen by the user --- check in the commands' [REFERENCE](#reference)
+  section for the precise type of information required.
 
 The third syntax line of the example above explains how to use the [show]
 command to display some information pertaining to the program.  The command may
@@ -401,7 +405,7 @@ For example, to show the program's copyright information, as we have seen in
 previous section, we could type:
 
     FinCtrl > show copyright
-    Finance Control 0.10
+    Finance Control 0.11
     (C) 2021 António Manuel Dias <ammdias@gmail.com>
     (...)
 
@@ -542,7 +546,7 @@ used, otherwise an error will be shown:
 
 In this program's context, a currency is just a collection of settings to
 correctly display and scan monetary amounts.  We can list the configured
-    currencies with the [list currencies] command:
+currencies with the [list currencies](#list-currencies) command:
 
     Test > list currencies
     
@@ -551,7 +555,7 @@ correctly display and scan monetary amounts.  We can list the configured
     default |            |        | left     | 2              | .                
 
 There is always at least one configured currency, named `default`.  We can
-check a currency settings with the [show currency] command:
+check a currency settings with the [show currency](#show-currency) command:
 
     Test > sh curr default
     Name: default
@@ -582,8 +586,9 @@ These are the properties of a currency:
 
 If all your accounts are in the same currency, you may use the default and just 
 change its settings as you desire.  If not or if you prefer to have the
-currency name correspond to its actual name, you must use the [add currency]
-command.  Let's add the Euro currency to the Test file:
+currency name correspond to its actual name, you must use the
+[add currency](#add-currency) command.  Let's add the Euro currency to the
+Test file:
 
     Test > add curr Euro short EUR symbol € position right
     Test > 
@@ -605,7 +610,8 @@ Notice that although the first letter of the actual name of the currency is in
 upper case we may use all lower case letters when identifying it to a command.
 The names of currencies and accounts are not case-sensitive.
 
-To change one of the values, we use the [change currency] command:
+To change one of the values, we use the [change currency](#change-currency)
+command:
 
     Test > ch curr euro decsep ,
     Test >
@@ -620,7 +626,7 @@ To change one of the values, we use the [change currency] command:
 The euro decimal separator was changed to a comma.
 
 Finally, we may want to make the Euro currency the default to be used on any
-new account.  For this we use the [set currency] command:
+new account.  For this we use the [set currency](#set-currency) command:
 
     Test > set curr euro
     Test > 
@@ -639,16 +645,18 @@ new account.  For this we use the [set currency] command:
 For the purpose of this program, accounts are the entities where money is
 stored.  They will always have a balance, which is the total amount available,
 and a *current* balance, which is the amount available at the current date.  We
-can list the available accounts with the [list accounts] command:
+can list the available accounts with the [list accounts](#list-accounts)
+command:
 
     Test > list accounts
     *** Error: Empty set
 
 Because none is configured yet, we get an error.  To add an account we use the
-appropriately named command [add account].  The only required argument to this
-command is the name of the account to be created, but we may also give it a
-description and the currency that the account is in.  Let's create two accounts,
-a *bank account* and a *pocket account*, for the hard currency we have with us:
+appropriately named command [add account](#add-account).  The only required
+argument to this command is the name of the account to be created, but we may
+also give it a description and the currency that the account is in.  Let's
+create two accounts, a *bank account* and a *pocket account*, for the hard
+currency we have with us:
 
     Test > add account Pocket
     Test > add acc Bank descr 'My bank account'
@@ -665,9 +673,9 @@ was created with no description, but for the *Bank* account (see that I used
 the short command form, `add acc`) I gave it a description.  Both accounts
 were created using the currency that we had set as default above, *Euro*.  One
 obvious hint of this is the decimal separator on the balances listed by the
-command `ls acc` (short for [list accounts]).  If we now change the *Euro*
-currency separator back to the decimal point symbol and list the accounts
-again, the balances will reflect this change:
+command `ls acc` (short for [list accounts](#list-accounts)).  If we now change
+the *Euro* currency separator back to the decimal point symbol and list the
+accounts again, the balances will reflect this change:
 
     Test > ch curr euro decsep .
     Test > ls acc
@@ -678,8 +686,8 @@ again, the balances will reflect this change:
      2 | Bank   | My bank account |    0.00
 
 Every change we make on a currency will be reflected on all accounts using
-that currency.  To find all the details about an account, we use the [show
-account] command:
+that currency.  To find all the details about an account, we use the
+[show account](#show-account) command:
 
     Test > show account bank
     Account ID: 2
@@ -717,20 +725,20 @@ using the program everything will become clear enough, so let's do that.
 The first thing we must do is insert the initial amounts of each account. 
 
     Test > add transaction on pocket description 'Initial amount' \
-         : date 2023-01-01 \
+         : date 2024-01-01 \
          : parcel "'Initial amount' 123.45 tags 'carry-over'"
     Transaction id: 1
     Test > 
 
-This is the use of the [add transaction] command in its full splendor, so let
-me explain it in detail.  The first thing to notice is that it is a multi-line
-command: by placing a backslash character at the end of the first two lines I
-tell the program that the command is not complete and carries on to the next.
+This is the use of the [add transaction](#add-transaction) command in its full
+splendor, so let me explain it in detail.  The first thing to notice is that it
+is a multi-line command: by placing a backslash character at the end of the
+first two lines I tell the program that the command is not complete and carries
+on to the next.
 
-Also of notice is that I used no *positional arguments*: all
-user-provided data was entered by means of *keyword arguments*, some of
-which are required and others optional.  The help page on this command is as
-follows:
+Also of notice is that I used no *positional arguments*: all user-provided data
+was entered by means of *keyword arguments*, some of which are required and
+others optional.  The help page on this command is as follows:
 
     > add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \
     :                   [neg] [descr[iption] TEXT] [date DATE] \
@@ -749,25 +757,25 @@ follows:
 - **parcel**: the data of the single parcel of this transaction.
 
 The **parcel** argument is a bit complex and deserves a detailed explanation of
-its own.  In fact, it is almost like a command within [add transaction] as its
-purpose is to add a parcel to it. If the transaction had multiple parcels, each
-one would have its own **parcel** argument. We wiil see examples of transactions
-with multiple parcels later.
+its own.  In fact, it is almost like a command within
+[add transaction](#add-transaction) as its purpose is to add a parcel to it.
+If the transaction had multiple parcels, each one would have its own **parcel**
+argument. We will see examples of transactions with multiple parcels later.
 
 This *pseudo-command* has two required positional arguments: `TEXT`, the
-description of the parcel (here the same as the transaction description,
+description of the parcel (here, the same as the transaction description,
 *Initial amount*), and `AMOUNT`, the amount of the parcel.  It may also have a
 keyword argument, `tags`, which must be a comma-separated list of the tags
 to add to this parcel.
 
-A very important fact to not forget when adding a parcel on the [add
-transaction] command is that the whole parcel data must be within quotes.  This
-is because the interpreter must perceive the complete data as a single argument.
-Forgetting the quotes will result in an error being reported.  Because of this,
-if the parcel description or any of the tags have spaces, they must also be
-enveloped in quotes --- the other kind of the quotes used for the complete
-parcel data.  That is why the parcel description above is within single-quotes
-and the parcel data within double-quotes.
+A very important fact to not forget when adding a parcel on the
+[add transaction](#add-transaction) command is that the whole parcel data must
+be within quotes.  This is because the interpreter must perceive the complete
+data as a single argument.  Forgetting the quotes will result in an error being
+reported.  Because of this, if the parcel description or any of the tags have
+spaces, they must also be enveloped in quotes --- the other kind of the quotes
+used for the complete parcel data.  That is why the parcel description above is
+within single-quotes and the parcel data within double-quotes.
 
 The optional arguments not used in this example were:
 
@@ -779,12 +787,12 @@ The optional arguments not used in this example were:
   the transaction has a single parcel that will be added automatically with the
   amount and description of the whole transaction.
 
-An easier way to add an amount to an account would be to use the [add deposit]
-command.  This is a shortcut to the previous command and takes this form:
-
+An easier way to add an amount to an account would be to use the
+[add deposit](#add-deposit) command.  This is a shortcut to the previous command
+and takes this form:
 
     > add deposit of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \
-    :             [descr TEXT] [date DATE] [tags LIST]
+    :             [descr[iption] TEXT] [date DATE] [tags LIST]
 
 Let's use it to add the initial amount to the *Bank* account:
         
@@ -794,40 +802,40 @@ Let's use it to add the initial amount to the *Bank* account:
 You should have noticed that each time we add a transaction, the program
 answers with the transaction identification.  We need this number every time
 we have to refer to the transaction, like when we want to see its details with
-the [show transaction] command:
+the [show transaction](#show-transaction) command:
 
     Test > sh tr 2
     Account: Bank (id: 2)
     Description: Deposit
     Total amount: 5000.00
-    Date: 2023-01-01
+    Date: 2024-01-01
     Parcels:
       (2) Deposit: 5000.00
 
 Note that the description of the transaction (and also the implied parcel) was
-set to *Deposit*.  This is due to one of the [default settings], the *default
-deposit text*.  We could have set a different transaction description with the
-`description` keyword and even add tags to the implied parcel using the `tags`
-keyword.
+set to *Deposit*.  This is due to one of the
+[default settings](#default-settings), the *default deposit text*.  We could
+have set a different transaction description with the `description` keyword and
+even add tags to the implied parcel using the `tags` keyword.
 
-Now that we have some transactions, we may list them all using the [list
-transactions] command:
+Now that we have some transactions, we may list them all using the
+[list transactions](#list-transactions) command:
 
     Test > ls tr
 
     Account | Id | Date       | Description    | Total amount | Account balance
     --------+----+------------+----------------+--------------+----------------
-    Bank    |  2 | 2023-01-01 | Deposit        |      5000.00 |         5000.00
-    Pocket  |  1 | 2023-01-01 | Initial amount |       123.45 |          123.45
+    Bank    |  2 | 2024-01-01 | Deposit        |      5000.00 |         5000.00
+    Pocket  |  1 | 2024-01-01 | Initial amount |       123.45 |          123.45
 
     Total amounts by currency:
         Euro: 5123.45
 
-There is also a shortcut command to take some amount from an account, [add
-withdrawal]:
+There is also a shortcut command to take some amount from an account,
+[add withdrawal](#add-withdrawal):
 
     Test > add withdrawal on bank of 59.99 date 1/2 \
-         : descr 'Phone bill, Jan. 2023' tags phone,comms
+         : descr 'Phone bill, Jan. 2024' tags phone,comms
     Transaction id: 3
 
 Some noteworthy things on this transaction:
@@ -844,37 +852,37 @@ of the transaction and have already seen in the full `add transaction` command:
 
     Test > sh tr 3
     Account: Bank (id: 2)
-    Description: Phone bill, Jan. 2023
+    Description: Phone bill, Jan. 2024
     Total amount: -59.99
-    Date: 2023-01-02
+    Date: 2024-01-02
     Parcels:
-      (3) Phone bill, Jan. 2023: -59.99 (comms, phone)
-
+      (3) Phone bill, Jan. 2024: -59.99 (comms, phone)
+      
 Here, we may also see that although the amount given to the command was
 positive (*59.99*), the transaction amount is negative.  This is the purpose of
 having a shortcut command to describe a *deposit* and another to describe a
 *withdrawal*.
 
-There is one final shortcut transaction command, [add transfer], that moves an
-amount from one account to another.  If I took 10 Euro from my bank account on
-a ATM I could use this command to describe the operation:
+There is one final shortcut transaction command, [add transfer](#add-transfer),
+that moves an amount from one account to another.  If I took 10 Euro from my
+bank account on a ATM I could use this command to describe the operation:
 
     Test > add transfer of 10 from bank to pocket date 1/3 \
          : descr 'ATM withdrawal'
     Transaction ids: 4, 5
 
 Wait! Why were two transactions added this time if I only issued one command?
-We may show the details of the transactions with the [show transaction] command,
-as we have done above, but there is another command specifically to show the
-details of the last transactions, [show last]. To show the last two transactions
-we do:
+We may show the details of the transactions with the
+[show transaction](#show-transaction) command, as we have done above, but there
+is another command specifically to show the details of the last transactions,
+[show last](#show-last). To show the last two transactions we do:
 
     Test > show last 2
     Transaction: 4
     Account: Bank (id: 2)
     Description: ATM withdrawal
     Total amount: -10.00
-    Date: 2023-01-03
+    Date: 2024-01-03
     Parcels:
       (4) ATM withdrawal: -10.00
 
@@ -882,16 +890,16 @@ we do:
     Account: Pocket (id: 1)
     Description: ATM withdrawal
     Total amount: 10.00
-    Date: 2023-01-03
+    Date: 2024-01-03
     Parcels:
       (5) ATM withdrawal: 10.00
 
     Test >
 
 As can be seen, there is a transaction on the *Bank* account and another on the
-*Pocket* account, which makes sense.  The [show last] command takes only one
-argument, the number of transactions to show.  If ommited, it will show just
-the last transaction.
+*Pocket* account, which makes sense.  The [show last](#show-last) command takes
+only one argument, the number of transactions to show.  If ommited, it will show
+just the last transaction.
 
 We could also have listed the transactions:
 
@@ -899,11 +907,11 @@ We could also have listed the transactions:
 
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Pocket  |  5 | 2023-01-03 | ATM withdrawal        |        10.00 |          133.45
-    Bank    |  4 | 2023-01-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2023-01-02 | Phone bill, Jan. 2023 |       -59.99 |         4940.01
-    Bank    |  2 | 2023-01-01 | Deposit               |      5000.00 |         5000.00
-    Pocket  |  1 | 2023-01-01 | Initial amount        |       123.45 |          123.45
+    Pocket  |  5 | 2024-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Bank    |  4 | 2024-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2024-01-02 | Phone bill, Jan. 2024 |       -59.99 |         4940.01
+    Bank    |  2 | 2024-01-01 | Deposit               |      5000.00 |         5000.00
+    Pocket  |  1 | 2024-01-01 | Initial amount        |       123.45 |          123.45
 
     Total amounts by currency:
         Euro: 5063.46
@@ -916,7 +924,7 @@ This listing also shows some important features of transaction listings:
 * The account balance is the amount available on each account after the
   operation has taken place.
 * The 'Total amounts by currency' is a list of the sum of the 'Total amount'
-  column by currency.  As all the transactions listed belong to accounts with
+  column, by currency.  As all the transactions listed belong to accounts with
   the same currency, Euro, only one value is listed.
 
 Probably it makes more sense to list the transactions on a single account, and
@@ -926,9 +934,9 @@ we may do that:
     
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Bank    |  4 | 2023-01-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2023-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
-    Bank    |  2 | 2023-01-01 | Deposit               |      5000.00 |         5000.00
+    Bank    |  4 | 2024-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2024-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+    Bank    |  2 | 2024-01-01 | Deposit               |      5000.00 |         5000.00
 
     Total amounts by currency:
         Euro: 4930.01
@@ -940,11 +948,11 @@ is the same as entering no account:
     
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Pocket  |  5 | 2023-01-03 | ATM withdrawal        |        10.00 |          133.45
-    Bank    |  4 | 2023-01-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2023-01-02 | Phone bill, Jan. 2023 |       -59.99 |         4940.01
-    Bank    |  2 | 2023-01-01 | Deposit               |      5000.00 |         5000.00
-    Pocket  |  1 | 2023-01-01 | Initial amount        |       123.45 |          123.45    
+    Pocket  |  5 | 2024-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Bank    |  4 | 2024-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2024-01-02 | Phone bill, Jan. 2024 |       -59.99 |         4940.01
+    Bank    |  2 | 2024-01-01 | Deposit               |      5000.00 |         5000.00
+    Pocket  |  1 | 2024-01-01 | Initial amount        |       123.45 |          123.45    
 
     Total amounts by currency:
         Euro: 5063.46
@@ -956,8 +964,8 @@ a date interval on the transactions listed:
     
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Bank    |  4 | 2023-01-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2023-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+    Bank    |  4 | 2024-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2024-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
 
     Total amounts by currency:
         Euro: -69.99
@@ -968,28 +976,55 @@ transaction. As we have seen earlier, if we give no date interval, all
 transactions are listed.  "`today`" (or "`now`") are just shortcuts for the
 present date (remember that you may add transactions for future dates).
 
-Finally, you may list the last *n* transactions with the `top` option:
+Or you may list the last *n* transactions with the `top` option:
 
     Test > ls tr top 3
 
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Pocket  |  5 | 2023-01-03 | ATM withdrawal        |        10.00 |          133.45
-    Bank    |  4 | 2023-01-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2023-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+    Pocket  |  5 | 2024-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Bank    |  4 | 2024-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2024-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
 
     Total amounts by currency:
         Euro: -59.99
-        
+
+Sometimes, it is more pratical to list the transactions from the most ancient to
+the most recent. You may do that with the `rev` option:
+
+    Test > ls tr on bank from 1/2 to today rev
+    
+    Account | Id | Date       | Description           | Total amount | Account balance
+    --------+----+------------+-----------------------+--------------+----------------
+    Bank    |  3 | 2024-01-02 | Phone bill, Jan. 2021 |       -59.99 |         4940.01
+    Bank    |  4 | 2024-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+
+    Total amounts by currency:
+        Euro: -69.99
+
+Finally, there is the option of listing all transactions with a certain amount,
+using the `of` argument. This option may be used with several accounts, as long
+as they all have the same currency. When the accounts have different currencies,
+an error will be displayed.
+
+Test > ls tr of -10
+
+Account | Id | Date       | Description    | Total amount | Account balance
+--------+----+------------+----------------+--------------+----------------
+Bank    |  4 | 2024-01-03 | ATM withdrawal |       -10.00 |         4930.01
+
+Total amounts by currency:
+    Euro: -10.00
+ 
 We now have seen all the shortcut commands that allow us to add a single parcel
 transaction.  To add transactions with multiple parcels we have two commands,
-[add expense] and the `add transaction` that we have covered above.  They are
-basically the same, the only difference being that the former will automatically
-turn all parcel amounts to negative values, which is handy when you are adding
-some kind of bill. Of course, you could do the same with the `add transaction`
-command together with the `neg` argument.  Let's add the bill from the
-supermarket trip to buy the ingredients for the chocolate cake mentioned
-earlier:
+[add expense](#add-expense) and the `add transaction` that we have covered
+above.  They are basically the same, the only difference being that the former
+will automatically turn all parcel amounts to negative values, which is handy
+when you are adding some kind of bill. Of course, you could do the same with the
+`add transaction` command together with the `neg` argument.  Let's add the bill
+from the supermarket trip to buy the ingredients for the chocolate cake
+mentioned earlier:
 
 * 6 eggs, 0.85€
 * 1Kg baking flour, 0.45€
@@ -1014,7 +1049,7 @@ last transaction of the corresponding account:
     
     Account | Id | Date       | Description | Total amount | Account balance
     --------+----+------------+-------------+--------------+----------------
-    Bank    |  6 | 2023-01-04 | Supermarket |        -4.87 |         4925.14
+    Bank    |  6 | 2024-01-04 | Supermarket |        -4.87 |         4925.14
 
     Total amounts by currency:
         Euro: -4.87
@@ -1026,7 +1061,7 @@ It seems alright, but we may also display the complete transaction:
     Account: Bank (id: 2)
     Description: Supermarket
     Total amount: -4.87
-    Date: 2023-01-04
+    Date: 2024-01-04
     Parcels:
       (6) eggs: -0.85 (food, grocery)
       (7) baking flour: -0.45 (food, grocery)
@@ -1039,14 +1074,14 @@ It seems alright, but we may also display the complete transaction:
 
 It is human to err and that will probably happen a lot if you use this program.
 Therefore, the program offers two general commands to correct the mistakes the
-user can make, [change] and [delete], and two special commands that allow us to
-expand some transaction already entered, [add parcel] and [add tag].  We'll
-start with these.
+user can make, [change](#change) and [delete](#delete), and two special commands
+that allow us to expand some transaction already entered,
+[add parcel](#add-parcel) and [add tag](#add-tag).  We'll start with these.
 
 If, when adding an expense, we forget a parcel it is possible to add it
-afterwards with the command [add parcel] --- we only need to know the
-transaction identification.  For example, when listing the last transaction of
-the section above we may notice that the total amount is different from the
+afterwards with the command [add parcel](#add-parcel) --- we only need to know
+the transaction identification.  For example, when listing the last transaction
+of the section above we may notice that the total amount is different from the
 amount on the receipt.  Double-checking this we find that we forgot to add the
 baking powder parcel.  Let's correct that adding that parcel to transaction 6:
 
@@ -1055,7 +1090,7 @@ baking powder parcel.  Let's correct that adding that parcel to transaction 6:
     Account: Bank (id: 2)
     Description: Supermarket
     Total amount: -4.02
-    Date: 2023-01-04
+    Date: 2024-01-04
     Parcels:
       (6) eggs: -0.85 (food, grocery)
       (7) baking flour: -0.45 (food, grocery)
@@ -1067,13 +1102,13 @@ baking powder parcel.  Let's correct that adding that parcel to transaction 6:
 Oops, it seems I forgot to add the parcel tags and that the value must be
 negative like the others.  No problem, we may also change that.  First, we add
 the missing tags to parcel 11 (the baking powder, as listed in the
-`show transaction` output) with the [add tag] command:
+`show transaction` output) with the [add tag](#add-tag) command:
 
     Test > add tag food to 11
     Test > add tag grocery to 11
 
-And now we use the [change parcel] command to change the amount of the same
-parcel:
+And now we use the [change parcel](#change-parcel) command to change the amount
+of the same parcel:
 
     Test > ch parcel 11 amount to -0.85
 
@@ -1083,7 +1118,7 @@ Printing the details on transaction 6 we can see that all is ok now:
     Account: Bank (id: 2)
     Description: Supermarket
     Total amount: -5.72
-    Date: 2023-01-04
+    Date: 2024-01-04
     Parcels:
       (6) eggs: -0.85 (food, grocery)
       (7) baking flour: -0.45 (food, grocery)
@@ -1092,14 +1127,15 @@ Printing the details on transaction 6 we can see that all is ok now:
       (10) chocolate: -1.49 (food, sweets)
       (11) baking powder: -0.85 (food, grocery)
 
-The [change parcel] command may also be used to change a parcel's description:
+The [change parcel](#change-parcel) command may also be used to change a
+parcel's description:
 
     Test > ch parcel 8 descr to 'refined sugar'
     Test > sh tr 6
     Account: Bank (id: 2)
     Description: Supermarket
     Total amount: -5.72
-    Date: 2023-01-04
+    Date: 2024-01-04
     Parcels:
       (6) eggs: -0.85 (food, grocery)
       (7) baking flour: -0.45 (food, grocery)
@@ -1116,7 +1152,7 @@ for all parcels!  Just for an example, let's change *breakfast* to *snacks*:
     Account: Bank (id: 2)
     Description: Supermarket
     Total amount: -5.72
-    Date: 2023-01-04
+    Date: 2024-01-04
     Parcels:
       (6) eggs: -0.85 (food, grocery)
       (7) baking flour: -0.45 (food, grocery)
@@ -1128,8 +1164,9 @@ for all parcels!  Just for an example, let's change *breakfast* to *snacks*:
 All parcels tagged with *breakfast* would now be tagged with *snacks* which may
 not be what you intended... If what you intended was to remove the tag
 *breakfast* from parcel 9 only and to replace it with the tag *snacks* you could
-have used the [delete tag] command and then [add tag]. Let's use this method to
-change the tag on the butter parcel from *snacks* to *dairy*:
+have used the [delete tag](#delete-tag) command and then [add tag](#add-tag).
+Let's use this method to change the tag on the butter parcel from *snacks*
+to *dairy*:
 
     Test > delete tag snacks from 9
     Test > add tag dairy to 9
@@ -1137,7 +1174,7 @@ change the tag on the butter parcel from *snacks* to *dairy*:
     Account: Bank (id: 2)
     Description: Supermarket
     Total amount: -5.72
-    Date: 2023-01-04
+    Date: 2024-01-04
     Parcels:
       (6) eggs: -0.85 (food, grocery)
       (7) baking flour: -0.45 (food, grocery)
@@ -1146,18 +1183,19 @@ change the tag on the butter parcel from *snacks* to *dairy*:
       (10) chocolate: -1.49 (food, sweets)
       (11) baking powder: -0.85 (food, grocery)
 
-[delete tag] without a parcel number will delete the referred tag from
-**all parcels**.
+[delete tag](#delete-tag) without a parcel number will delete the referred tag
+from **all parcels**.
 
-Another variant of the [change] command is [change transaction] and it may be
-used, for example, to change a transaction description:
+Another variant of the [change](#change) command is
+[change transaction](#change-transaction) and it may be used, for example, to
+change a transaction description:
 
     Test > ls tr
     
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     (...)
-    Bank    |  2 | 2023-01-01 | Deposit               |      5000.00 |         5000.00
+    Bank    |  2 | 2024-01-01 | Deposit               |      5000.00 |         5000.00
     (...)
     
     Test > change transaction 2 description to 'Initial amount'
@@ -1166,7 +1204,7 @@ used, for example, to change a transaction description:
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
     (...)
-    Bank    |  2 | 2023-01-01 | Initial amount        |      5000.00 |         5000.00
+    Bank    |  2 | 2024-01-01 | Initial amount        |      5000.00 |         5000.00
     (...)
 
 More useful is probably changing a transaction from one account to another.
@@ -1178,12 +1216,12 @@ account:
     
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Bank    |  6 | 2023-01-04 | Supermarket           |        -5.72 |         4924.29
-    Pocket  |  5 | 2023-01-03 | ATM withdrawal        |        10.00 |          133.45
-    Bank    |  4 | 2023-01-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2023-01-02 | Phone bill, Jan. 2023 |       -59.99 |         4940.01
-    Bank    |  2 | 2023-01-01 | Initial amount        |      5000.00 |         5000.00
-    Pocket  |  1 | 2023-01-01 | Initial amount        |       123.45 |          123.45
+    Bank    |  6 | 2024-01-04 | Supermarket           |        -5.72 |         4924.29
+    Pocket  |  5 | 2024-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Bank    |  4 | 2024-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2024-01-02 | Phone bill, Jan. 2024 |       -59.99 |         4940.01
+    Bank    |  2 | 2024-01-01 | Initial amount        |      5000.00 |         5000.00
+    Pocket  |  1 | 2024-01-01 | Initial amount        |       123.45 |          123.45
 
     Total amounts by currency:
         Euro: 5057.74
@@ -1194,25 +1232,26 @@ account:
  
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Pocket  |  6 | 2023-01-04 | Supermarket           |        -5.72 |          127.73
-    Pocket  |  5 | 2023-01-03 | ATM withdrawal        |        10.00 |          133.45
-    Bank    |  4 | 2023-01-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2023-01-02 | Phone bill, Jan. 2023 |       -59.99 |         4940.01
-    Bank    |  2 | 2023-01-01 | Initial amount        |      5000.00 |         5000.00
-    Pocket  |  1 | 2023-01-01 | Initial amount        |       123.45 |          123.45
+    Pocket  |  6 | 2024-01-04 | Supermarket           |        -5.72 |          127.73
+    Pocket  |  5 | 2024-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Bank    |  4 | 2024-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2024-01-02 | Phone bill, Jan. 2024 |       -59.99 |         4940.01
+    Bank    |  2 | 2024-01-01 | Initial amount        |      5000.00 |         5000.00
+    Pocket  |  1 | 2024-01-01 | Initial amount        |       123.45 |          123.45
 
     Total amounts by currency:
         Euro: 5057.74
 
 On the first listing, transaction 6 (the supermarket bill) was on the *Bank*
-account and, after the [change transaction] command it is now on the *Pocket*
-account --- all accounting operations were automatically done.  Changing the
-date would be done in the same way.
+account and, after the [change transaction](#change-transaction) command it is
+now on the *Pocket* account --- all accounting operations were automatically
+done.  Changing the date would be done in the same way.
 
-Changing accounts and currencies is similar, with the [change account] and
-[change currency] commands.  The only things that cannot be changed is a
-currency's name and an account's currency.  Here's an example on how to change
-an account's description:
+Changing accounts and currencies is similar, with the
+[change account](#change-account) and [change currency](#change-currency)
+commands.  The only things that cannot be changed is a currency's name and an
+account's currency.  Here's an example on how to change an account's
+description:
 
     Test > ch acc pocket descr to 'Money with me'
     Test > ls acc
@@ -1225,35 +1264,36 @@ an account's description:
     Total balances by currency:
         Euro: 5057.74
 
-The last general command to correct mistakes is the [delete] command.  We
-already covered both versions of the [delete tag] command above and although
-the remaining delete commands are very similar, there are some issues that must
-be mentioned for each one of them.
+The last general command to correct mistakes is the [delete](#delete) command.
+We already covered both versions of the [delete tag](#delete-tag) command above
+and although the remaining delete commands are very similar, there are some
+issues that must be mentioned for each one of them.
 
-[delete parcel] and [delete transaction] take the identification number of the
-item to remove and will remove it permanently from the database: there is no
-way to recover them other than entering all its data again!
+[delete parcel](#delete-parcel) and [delete transaction](#delete-transaction)
+take the identification number of the item to remove and will remove it
+permanently from the database: there is no way to recover them other than
+entering all its data again!
 
 Previously I said that every transaction must have at least one parcel: well,
 that is generally true and logic but you *can* remove the last parcel from a
-transaction with the `delete transaction` command.  The transaction will be
+transaction with the `delete parcel` command.  The transaction will be
 empty and its total amount zero:
 
     Test > sh tr 3
     Account: Bank (id: 2)
-    Description: Phone bill, Jan. 2023
+    Description: Phone bill, Jan. 2024
     Total amount: -59.99
-    Date: 2023-01-02
+    Date: 2024-01-02
     Parcels:
-      (3) Phone bill, Jan. 2023: -59.99 (comms, phone)
+      (3) Phone bill, Jan. 2024: -59.99 (comms, phone)
       
     Test > 
     Test > del parcel 3
     Test > sh tr 3
     Account: Bank (id: 2)
-    Description: Phone bill, Jan. 2023
+    Description: Phone bill, Jan. 2024
     Total amount: 0.00
-    Date: 2023-01-02
+    Date: 2024-01-02
     Parcels:
     
     Test >
@@ -1262,30 +1302,31 @@ I don't know how this could be useful, but... it's possible.  The only way to
 revert it now is to enter the data again.  Nevertheless, the parcel ID will be
 different --- it's a new parcel:
 
-    Test > add parcel 'Phone bill, Jan. 2023' \
+    Test > add parcel 'Phone bill, Jan. 2024' \
          : of -59.99 to 3 tags 'comms, phone'
     Test > sh tr 3
     Account: Bank (id: 2)
-    Description: Phone bill, Jan. 2023
+    Description: Phone bill, Jan. 2024
     Total amount: -59.99
-    Date: 2023-01-02
+    Date: 2024-01-02
     Parcels:
-      (12) Phone bill, Jan. 2023: -59.99 (comms, phone)
+      (12) Phone bill, Jan. 2024: -59.99 (comms, phone)
 
-[delete account] works in the same way, taking the account identification
-number or account name and removing the account permanently.  However, extra
-care should be taken when using this command, as it will also remove all of
-the account's transactions (and their parcels, of course).  If you really want
-to remove an account, be sure that you don't have any relevant information in
-its transactions!
+[delete account](#delete-account) works in the same way, taking the account
+identification number or account name and removing the account permanently.
+However, extra care should be taken when using this command, as it will also
+remove all of the account's transactions (and their parcels, of course).  If you
+really want to remove an account, be sure that you don't have any relevant
+information in its transactions!
 
 ### Listing and exporting data
 
 In the previous sections of this manual we already covered various forms of the
-[list] command, like [list currencies] and [list accounts].  There is only one
-detail we didn't mention: we may pass a currency or account name, respectively,
-to list only that currency or account instead of all of them.  In short, it's
-just an alternative way of visualizing the data to the [show] command:
+[list](#list) command, like [list currencies](#list-currencies) and
+[list accounts](#list-accounts).  There is only one detail we didn't mention:
+we may pass a currency or account name, respectively, to list only that currency
+or account instead of all of them.  In short, it's just an alternative way of
+visualizing the data to the [show](#show) command:
 
     Test > ls acc bank
     
@@ -1296,20 +1337,21 @@ just an alternative way of visualizing the data to the [show] command:
     Total balances by currency:
         Euro: 4930.01
 
-We also covered in some detail the [list transactions] command with both its
-filtering options, account and date.  The two remaining list commands are
-related to tags: [list parcels] and [list tags].  With the first you may
-list all parcels with certain tags:
+We also covered in some detail the [list transactions](#list-transactions)
+command with both its filtering options, account and date.  The two remaining
+list commands are related to tags: [list parcels](#list-parcels) and
+[list tags](#list-tags).  With the first you may list all parcels with certain
+tags:
 
     Test > ls parcels tagged grocery,dairy
     
     Id | Date       | Account | Trans | Description   | Amount
     ---+------------+---------+-------+---------------+-------
-    11 | 2023-01-04 | Pocket  |     6 | baking powder |  -0.85
-     9 | 2023-01-04 | Pocket  |     6 | butter        |  -1.39
-     8 | 2023-01-04 | Pocket  |     6 | refined sugar |  -0.69
-     7 | 2023-01-04 | Pocket  |     6 | baking flour  |  -0.45
-     6 | 2023-01-04 | Pocket  |     6 | eggs          |  -0.85
+    11 | 2024-01-04 | Pocket  |     6 | baking powder |  -0.85
+     9 | 2024-01-04 | Pocket  |     6 | butter        |  -1.39
+     8 | 2024-01-04 | Pocket  |     6 | refined sugar |  -0.69
+     7 | 2024-01-04 | Pocket  |     6 | baking flour  |  -0.45
+     6 | 2024-01-04 | Pocket  |     6 | eggs          |  -0.85
 
     Total amounts by currency:
         Euro: -4.23
@@ -1319,8 +1361,8 @@ This command may also be filtered by date, with the keywords `from`,
 amount for that listing -- and this is how we may find how much we are
 spending on certain items on a certain period of time.
 
-[list tags] lists all tags in use and their *frequency* --- the  number of
-parcels tagged with each particular tag:
+[list tags](#list-tags) lists all tags in use and their *frequency* --- the
+number of parcels tagged with each particular tag:
 
     Test > ls tags
     
@@ -1334,17 +1376,17 @@ parcels tagged with each particular tag:
     phone      |         1
     sweets     |         1
 
-The [find] command allows us to list transactions or parcels that contain a
-specific piece of text in their description.  For example, if we wanted to list
-all initial transactions in each account, we could search for the text 'initial' 
-in theie description:
+The [find](#find) command allows us to list transactions or parcels that contain
+a specific piece of text in their description.  For example, if we wanted to
+list all initial transactions in each account, we could search for the text
+'initial' in the description:
 
     Test > find transactions like initial
     
     Account | Id | Date       | Description    | Total amount | Account balance
     --------+----+------------+----------------+--------------+----------------
-    Bank    |  2 | 2023-01-01 | Initial amount |      5000.00 |         5000.00
-    Pocket  |  1 | 2023-01-01 | Initial amount |       123.45 |          123.45
+    Bank    |  2 | 2024-01-01 | Initial amount |      5000.00 |         5000.00
+    Pocket  |  1 | 2024-01-01 | Initial amount |       123.45 |          123.45
 
     Total amounts by currency:
         Euro: 5123.45
@@ -1355,20 +1397,20 @@ The command to list all parcels with sugar in their description is very similar:
 
     Id | Date       | Account | Trans | Description   | Amount
     ---+------------+---------+-------+---------------+-------
-     8 | 2023-01-04 | Pocket  |     6 | refined sugar |  -0.69
+     8 | 2024-01-04 | Pocket  |     6 | refined sugar |  -0.69
 
     Total amounts by currency:
         Euro: -0.69
 
-Like the previous commands, the listing of the [find] command may also be
+Like the previous commands, the listing of the [find](#find) command may also be
 filtered by date using the `from`, `to` and `top` keywords.  Also, the listings
 may be presented in reverse order with the `rev` keyword.
 
-Finally, all [list] and [find] commands accept one keyword argument, `tofile`,
-that directs the program to export the data to a 
+Finally, all [list](#list) and [find](#find) commands accept one keyword
+argument, `tofile`, that directs the program to export the data to a 
 [CSV file](https://en.wikipedia.org/wiki/Comma-separated_values).  The keyword
-must be followed by the file name (same rules apply as to the [open] command).
-CSV files are very portable and supported by several applications and
+must be followed by the file name (same rules apply as to the [open](#open)
+command).  CSV files are very portable and supported by several applications and
 programming languages, if you desire to process the exported data.  The command
 below will export a list of the parcels with tag `food` to the file `food.csv`
 in the current directory:
@@ -1384,9 +1426,9 @@ when opening the file with Calc I am presented with this dialog:
 
 Notice that I changed the field separator to a semicolon (the default in this
 program) and cleared all other options.  You may change the character used to
-separate the fields with the [set csvsep] command.  LibreOffice.org has the
-nice feature of previewing the content as it will be imported, that allows us
-check if everything seems ok.
+separate the fields with the [set csvsep](#set-csvsep) command.  LibreOffice.org
+has the nice feature of previewing the content as it will be imported, that
+allows us to check if everything seems ok.
 
 
 ### Advanced usage
@@ -1402,13 +1444,14 @@ entering multi-line commands.  Imagine someone inserting a transaction with
 a long list of parcels and, at the last, discovering that there's an error in
 the first that will stop the command to be recognized by the program.  It
 would be frustrating!  To stop that from happening the program accepts commands
-from a separate text file, using the [source] command.
+from a separate text file, using the [source](#source) command.
 
 The idea is simple: you prepare a simple-text file in your favourite editor,
 where you can review the commands and correct any mistake, and then use the
-[source] command to insert it into the database.  The commands in the text file
-must match **exactly** the commands you would enter at the program command line.
-This includes adding a backslash at the end of lines of a multi-line command.
+[source](#source) command to insert it into the database.  The commands in the
+text file must match **exactly** the commands you would enter at the program
+command line.  This includes adding a backslash at the end of lines of a
+multi-line command.
 
 Let's clarify this with a small example.  Create a text file with the content
 below and name it `test.txt`:
@@ -1429,7 +1472,7 @@ below and name it `test.txt`:
 As you can see, these are just two commands, adding the expense of another trip
 to the supermarket and an ATM withdrawal.  After saving the file, open the
 program and the `test.sqlite` file we have been working on and then execute the
-[source] command:
+[source](#source) command:
 
     Test > source test.txt
     
@@ -1451,14 +1494,15 @@ confirm list the transactions on the 12th of January:
     
     Account | Id | Date       | Description    | Total amount | Account balance
     --------+----+------------+----------------+--------------+----------------
-    Pocket  |  9 | 2023-01-12 | ATM withdrawal |        60.00 |          176.83
-    Bank    |  8 | 2023-01-12 | ATM withdrawal |       -60.00 |         4870.01
-    Pocket  |  7 | 2023-01-12 | Supermarket    |       -10.90 |          116.83
+    Pocket  |  9 | 2024-01-12 | ATM withdrawal |        60.00 |          176.83
+    Bank    |  8 | 2024-01-12 | ATM withdrawal |       -60.00 |         4870.01
+    Pocket  |  7 | 2024-01-12 | Supermarket    |       -10.90 |          116.83
 
     Total amounts by currency:
         Euro: -10.90
 
-You could also [show] any of the transactions to double-check their correctness.
+You could also [show](#show) any of the transactions to double-check their
+correctness.
 
 If there was an error in a command in the *script*, that particular command
 would not be executed and an error would be displayed in the program's prompt.
@@ -1468,14 +1512,14 @@ remove all the other commands or they will be executed again.
 Instead of removing the commands you could also *comment them out* inserting a
 semicolon as the first character of each line that you don't want to execute.
 
-The [source] command has an extra option, `edit`, that automatically opens the
-file in a text editor and executes it after you save the file and exit the
-editor.  For this to work, the Finance Control program will scan the `VISUAL`
-and `EDITOR` environment variables to find your favorite text editor.  If none
-of those variables are set, or if you'd rather use another editor, you may set
-the editor you prefer with the [set editor] command.  For example, if you want
-to use *gedit*, the [GNOME text editor](https://wiki.gnome.org/Apps/Gedit), you
-would enter:
+The [source](#source) command has an extra option, `edit`, that automatically
+opens the file in a text editor and executes it after you save the file and exit
+the editor.  For this to work, the Finance Control program will scan the
+`VISUAL` and `EDITOR` environment variables to find your favorite text editor.
+If none of those variables are set, or if you'd rather use another editor, you
+may set the editor you prefer with the [set editor](#set-editor) command.  For
+example, if you want to use *gedit*, the
+[GNOME text editor](https://wiki.gnome.org/Apps/Gedit), you would enter:
 
     Test > set editor gedit
 
@@ -1509,16 +1553,18 @@ to the file, if your operating system supports it:
 
 Passing the script this way would not print the executed commands on the
 terminal.  If you want that to happen, add "`set echo on`" to the top of the
-text file (see the [set echo] reference page for details on this command).
+text file (see the [set echo](#set-echo) reference page for details on this
+command).
 
 #### Backup and trim the database
 
 After a good amount of time using the program, a lot of data will be collected
 and that could become a nuisance.  For example, that means you always have
 to filter listings on starting date, to ignore old data.  To overcome this
-problem you may use the [trim] command to remove old, unnecessary data.  This
-command has two forms: [trim account], that operates on a single account, and
-[trim storage], which will trim the complete database.
+problem you may use the [trim](#trim) command to remove old, unnecessary data.
+This command has two forms: [trim account](#trim-account), that operates on a
+single account, and [trim storage](#trim-storage), which will trim the complete
+database.
 
 Trim will remove all transactions (and their parcels, of course) from the first
 up to (and including) the date the user indicates, preserving the affected
@@ -1528,17 +1574,17 @@ that date.
 
 A good practice before using the `trim` command is to backup the database.  The
 easiest way to do this is just copying the file using the operating system's
-tools, but you may also do it from inside the program, with the [backup]
-command.  Let's see a practical example of the usage of these two commands with
-our little database.
+tools, but you may also do it from inside the program, with the
+[backup](#backup) command.  Let's see a practical example of the usage of these
+two commands with our little database.
 
-    Test > backup test-20230115.sqlite
+    Test > backup test-20240115.sqlite
 
 This command will backup the current database to the file passed as argument
-(same rules for the file name as in the [open] command).  We may immediately
-test the backup, opening it in the program:
+(same rules for the file name as in the [open](#open) command).  We may
+immediately test the backup, opening it in the program:
 
-    Test > open test-20230115.sqlite
+    Test > open test-20240115.sqlite
     Test > ls acc
     
     ID | Name   | Description     | Balance
@@ -1553,26 +1599,26 @@ As this is a backup file, we should change its prompt so that when we open it
 we are immediately alerted that we are on the backup file and not in the main
 file.
 
-    Test > set prompt 'Test-20230115 > '
-    Test-20230115 > 
+    Test > set prompt 'Test-20240115 > '
+    Test-20240115 > 
 
 We can now return to the main file and trim the database.
 
-    Test-20230315 > open test.sqlite
+    Test-20240315 > open test.sqlite
     Test > ls tr
     
     Account | Id | Date       | Description           | Total amount | Account balance
     --------+----+------------+-----------------------+--------------+----------------
-    Bank    | 10 | 2023-01-15 | Lottery prize         |       150.00 |         5020.01
-    Pocket  |  9 | 2023-01-12 | ATM withdrawal        |        60.00 |          176.83
-    Bank    |  8 | 2023-01-12 | ATM withdrawal        |       -60.00 |         4870.01
-    Pocket  |  7 | 2023-01-12 | Supermarket           |       -10.90 |          116.83
-    Pocket  |  6 | 2023-01-04 | Supermarket           |        -5.72 |          127.73
-    Pocket  |  5 | 2023-01-03 | ATM withdrawal        |        10.00 |          133.45
-    Bank    |  4 | 2023-01-03 | ATM withdrawal        |       -10.00 |         4930.01
-    Bank    |  3 | 2023-01-02 | Phone bill, Jan. 2023 |       -59.99 |         4940.01
-    Bank    |  2 | 2023-01-01 | Initial amount        |      5000.00 |         5000.00
-    Pocket  |  1 | 2023-01-01 | Initial amount        |       123.45 |          123.45
+    Bank    | 10 | 2024-01-15 | Lottery prize         |       150.00 |         5020.01
+    Pocket  |  9 | 2024-01-12 | ATM withdrawal        |        60.00 |          176.83
+    Bank    |  8 | 2024-01-12 | ATM withdrawal        |       -60.00 |         4870.01
+    Pocket  |  7 | 2024-01-12 | Supermarket           |       -10.90 |          116.83
+    Pocket  |  6 | 2024-01-04 | Supermarket           |        -5.72 |          127.73
+    Pocket  |  5 | 2024-01-03 | ATM withdrawal        |        10.00 |          133.45
+    Bank    |  4 | 2024-01-03 | ATM withdrawal        |       -10.00 |         4930.01
+    Bank    |  3 | 2024-01-02 | Phone bill, Jan. 2024 |       -59.99 |         4940.01
+    Bank    |  2 | 2024-01-01 | Initial amount        |      5000.00 |         5000.00
+    Pocket  |  1 | 2024-01-01 | Initial amount        |       123.45 |          123.45
 
     Total amounts by currency:
         Euro: 5196.84
@@ -1586,8 +1632,8 @@ Look at the transactions and see that the first, on both accounts, is on January
 
     Account | Id | Date       | Description     | Total amount | Account balance
     --------+----+------------+-----------------+--------------+----------------
-    Bank    | 10 | 2023-01-15 | Lottery prize   |       150.00 |         5020.01
-    Pocket  | 11 | 2023-01-12 | Trim carry-over |       176.83 |          176.83
+    Bank    | 10 | 2024-01-15 | Lottery prize   |       150.00 |         5020.01
+    Pocket  | 11 | 2024-01-12 | Trim carry-over |       176.83 |          176.83
 
     Total amounts by currency:
         Euro: 326.83
@@ -1667,14 +1713,15 @@ REFERENCE
 
 The command's arguments must follow these general rules:
 
-- **ACCOUNT_ID**: account identification number (see [list accounts]).
+- **ACCOUNT_ID**: account identification number
+  (see [list accounts](#list-accounts)).
 
-- **ACCOUNT_NAME**: exact name of the account (see [list accounts]).  This
-  argument is *not* case-sensitive.
+- **ACCOUNT_NAME**: exact name of the account
+  (see [list accounts](#list-accounts)).  This argument is *not* case-sensitive.
 
 - **AMOUNT**: an integer or decimal number.  The decimal part should be
   separated from the integer by the decimal separator character configured in
-  the corresponding currency (see [show currency]).
+  the corresponding currency (see [show currency](#show-currency)).
 
 - **CHARACTER**: a single character.  This argument *is* case-sensitive and
   cannot be a decimal digit (0-9).
@@ -1695,7 +1742,8 @@ The command's arguments must follow these general rules:
   double).
 
 - **CURR_NAME**: exact name of an existing currency, as entered in the database.
-  (see [list currencies]).  This argument is *not* case-sensitive.
+  (see [list currencies](#list-currencies)).  This argument is *not*
+  case-sensitive.
 
 - **NUMBER**: integer number.
 
@@ -1703,9 +1751,10 @@ The command's arguments must follow these general rules:
   double) if it contains spaces or quotes.
 
 - **TRANSACTION_ID**: transaction identification number (see
-  [list transactions]).
+  [list transactions](#list-transactions)).
 
-- **PARCEL_ID**: parcel identification number (see [show transaction]).
+- **PARCEL_ID**: parcel identification number
+  (see [show transaction](#show-transaction)).
 
   
 ### add
@@ -1729,7 +1778,7 @@ Arguments:
 - **description** (*optional*): description of the new account.
 - **currency** (*optional*): name of the currency for the new account.  If not
   provided, the default currency of the database will be used
-  (see [show settings]).
+  (see [show settings](#show-settings)).
 
 
 #### add currency
@@ -1756,7 +1805,7 @@ Arguments:
   currency (all other digits will be discarded).
 - **decsep** (*optional*): character used to separate the integer from the
   decimal part of amounts in the currency.  It will be used to print currency
-  amounts as well to scan amounts input by the user.
+  amounts as well as to scan amounts input by the user.
 
 All optional arguments not provided, with the exception of the short name, will
 be copied from the currency named `default`.
@@ -1774,9 +1823,10 @@ Arguments:
 - **of**: total amount of the transaction.  Will be the amount of the single
   parcel.
 - **on**: account on which the transaction will be added (see
-  [list accounts]).
+  [list accounts](#list-accounts)).
 - **description** (*optional*): description of the transaction and parcel.  If
-  not provided the *default deposit text* will be used (see [show settings]).
+  not provided the *default deposit text* will be used
+  (see [show settings](#show-settings)).
 - **date** (*optional*): the date the transaction is effective.  If not
   provided, the current date will be used.
 - **tags** (*optional*): list of tags to be added to the single parcel.
@@ -1786,7 +1836,7 @@ Arguments:
 (shortcut: `add exp`)
 
 Adds a negative transaction to the database.  All amounts provided will be
-multiplied by `-1` before being added to the database.
+negated (multiplied by `-1`) before being added to the database.
 
     > add exp[ense] on ACCOUNT_NAME|ACCOUNT_ID \
     :     [descr[iption] TEXT] [date DATE] \
@@ -1795,7 +1845,7 @@ multiplied by `-1` before being added to the database.
 Arguments:
 
 - **on**: name or identification of the account on which the transaction will
-  be added (see [list accounts]).
+  be added (see [list accounts](#list-accounts)).
 - **description** (*optional*): description of the transaction.
 - **date** (*optional*): date on which the transaction will be effective. If
   not provided the current date will be used.
@@ -1821,7 +1871,7 @@ Arguments:
 - **TEXT** (*positional*): description of the parcel to be added.
 - **of**: amount of the parcel to be added.
 - **on**: identification of the transaction on which the parcel will be added
-  (see [list transactions]).
+  (see [list transactions](#list-transactions)).
 - **tags** (*optional*): list of tags to be added to this parcel.
 
 
@@ -1835,7 +1885,7 @@ Arguments:
 
 - **TEXT** (*positional*): the tag to add.
 - **to**: identification of the parcel to which the tag will be added (see
-  [show transaction]).
+  [show transaction](#show-transaction)).
 
 
 #### add transaction
@@ -1850,9 +1900,9 @@ Adds a transaction to the database.
 Arguments:
 
 - **on**: name or identification of the account on which the transaction will
-  be added (see [list accounts]).
+  be added (see [list accounts](#list-accounts)).
 - **neg** (*positional*, *optional*): indication that all amounts should be
-  multiplied by `-1` before being added to the database.
+  negated (multiplied by `-1`) before being added to the database.
 - **description** (*optional*): description of the transaction.
 - **date** (*optional*): date on which the transaction will be effective.  If
   not provided, the current date will be used.
@@ -1879,21 +1929,23 @@ it from one to the other.
 Arguments:
 
 - **of**: total amount of the transaction.  Will be the amount of the single
-  parcel of each transaction, being multiplied by `-1` on the first.
+  parcel of each transaction (being negated, multiplied by `-1` on the first).
 - **description** (*optional*): description of the transaction and parcels.  If
-  not provided the *default transfer text* will be used (see [show settings]).
+  not provided the *default transfer text* will be used
+  (see [show settings](#show-settings)).
 - **date** (*optional*): the date the transactions are effective.  If not
   provided, the current date will be used.
 - **tags** (*optional*): list of tags to be added to the parcels.
-- **from**: account from which the amount will be withdrawn (see
-  [list accounts]).
-- **to**: account on which the amount will be deposited (see [list accounts]).
+- **from**: account from which the amount will be withdrawn
+  (see [list accounts](#list-accounts)).
+- **to**: account on which the amount will be deposited
+  (see [list accounts](#list-accounts)).
 
 
 #### add withdrawal
 
 Adds a single-parcel negative transaction to the database.  The amount will be
-multiplied by `-1` before being added to the database.
+negated (multiplied by `-1`) before being added to the database.
 
     > add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \
     :     [descr[iption] TEXT] [date DATE] [tags LIST]
@@ -1901,11 +1953,13 @@ multiplied by `-1` before being added to the database.
 Arguments:
 
 - **of**: total amount of the transaction.  Will be the amount of the single
-  parcel.  Will be multiplied by `-1` before being added to the database.
-- **on**: account on which the transaction will be added (see
-  [list accounts]).
+  parcel.  Will be negated (multiplied by `-1`) before being added to the
+  database.
+- **on**: account on which the transaction will be added
+  (see [list accounts](#list-accounts)).
 - **description** (*optional*): description of the transaction and parcel.  If
-  not provided the *default withdrawal text* will be used (see [show settings]).
+  not provided the *default withdrawal text* will be used
+  (see [show settings](#show-settings)).
 - **date** (*optional*): the date the transaction is effective.  If not
   provided, the current date will be used.
 - **tags** (*optional*): list of tags to be added to the single parcel.
@@ -1989,13 +2043,13 @@ Arguments:
 #### change parcel
 (shortcut: `ch parcel`)
 
-Changes a parcel's description.
-
-    > ch[ange] parcel PARCEL_ID descr[iption] to TEXT
-
-Changes a parcel's amount.
+Changes a parcel's amount:
 
     > ch[ange] parcel PARCEL_ID amount to AMOUNT
+
+Or changes a parcel's description:
+
+    > ch[ange] parcel PARCEL_ID descr[iption] to TEXT
 
 Arguments:
 
@@ -2019,23 +2073,23 @@ Arguments:
 #### change transaction
 (shortcuts: `change tr`; `ch transaction`; `ch tr`)
 
-Moves a transaction to another account.
+Move a transaction to another account:
 
     > ch[ange] tr[ansaction] TRANSACTION_ID acc[ount] \
     :          to ACCOUNT_NAME|ACCOUNT_ID
 
-Changes a transaction's date.
+Change a transaction's date:
 
     > ch[ange] tr[ansaction] TRANSACTION_ID date to DATE
 
-Changes a transaction's description.
+Change a transaction's description:
 
     > ch[ange] tr[ansaction] TRANSACTION_ID descr[iption] to TEXT
     
 Arguments:
 
 - **TRANSACTION_ID** (*positional*): identification number of the transaction
-  to change.
+  to change (see [list transactions](#list-transactions)).
 - **to**: new transaction account, date or description.
 
 
@@ -2093,18 +2147,19 @@ Arguments:
 #### delete tag
 (shortcut: `del tag`)
 
-Removes a tag from a parcel.
-
-    > del[ete] tag TEXT from PARCEL_ID
-
-Removes a tag from all parcels.
+Remove a tag from all parcels:
 
     > del[ete] tag TEXT
+
+Remove a tag from a parcel:
+
+    > del[ete] tag TEXT from PARCEL_ID
 
 Arguments:
 
 - **TEXT** (*positional*): tag to be deleted.
 - *from*: identification of the parcel from which the tag will be deleted.
+  (see [show transaction](#show-transaction))
 
 
 ### find
@@ -2268,7 +2323,7 @@ Arguments:
 
 Displays a list of transactions filtered by specific criteria.
 
-    > list|ls tr[ansactions] [on LIST] [from DATE] [to DATE] \
+    > list|ls tr[ansactions] [on LIST] [of AMOUNT] [from DATE] [to DATE] \
     :                        [top NUMBER] [rev] [tofile FILE]
 
 Arguments:
@@ -2276,6 +2331,9 @@ Arguments:
 - **on** (*optional*): list of account identifications (ACCOUNT_NAME or
   ACCOUNT_ID) of the transactions to be displayed.  If no account is given,
   transactions from all accounts will be displayed.
+- **of** (*optional*): amount of the transactions to be displayed --- only
+  transactions of this specific amount will be listed. When using this option,
+  all acounts searched must have the same currency.
 - **from** (*optional*): lower date limit of the results to be displayed.  If no
   date is given, the results will include all transactions from the first
   recorded to the upper limit.
@@ -2361,7 +2419,8 @@ Arguments:
 
 #### set editor
 
-Sets the external text editor to open the files passed to the [source] command.
+Sets the external text editor to open the files passed to the [source](#source)
+command.
 
     > set editor TEXT
 
@@ -2508,11 +2567,11 @@ Arguments:
 
 - **edit** (*positional*, *optional*): instructs the program to open the file
   on an external text editor before executing the commands.  If no editor is
-  explicitly configured, via the [set editor] command, the program will scan
-  the `VISUAL` and `EDITOR` environment variables to discover the editor to
-  launch. If no editor is configured on those variables, an error will be
-  output and no editor will be launched.  The commands in the text file will be
-  executed after closing the editor (remember to save the file).
+  explicitly configured, via the [set editor](#set-editor) command, the program
+  will scan the `VISUAL` and `EDITOR` environment variables to discover the
+  editor to launch. If no editor is configured on those variables, an error will
+  be output and no editor will be launched.  The commands in the text file will
+  be executed after closing the editor (do remember to save the file!).
 - **FILE** (*positional*): path to the file to be executed.  May be an absolute
   or relative path (relative to the directory the application was started).
   The tilde ('`~`') may be used in substitution of the users' absolute home
@@ -2521,7 +2580,7 @@ Arguments:
 
 ### trim
 
-`trim` is a *meta-command* with several available forms.  Below are their
+`trim` is a *meta-command* with two available forms.  Below are their
 descriptions:
 
 

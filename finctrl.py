@@ -6,8 +6,8 @@ Finance Control
 An application to control personal finances.
 """
 
-__version__ = '0.10'
-__date__ = '2023-12-10'
+__version__ = '0.11'
+__date__ = '2024-01-19'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -25,6 +25,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 """
 
 
+import sys
+import os.path
 import argparse
 
 from finctrlcmd import FinCtrlCmd
@@ -50,8 +52,12 @@ if args.uninstall:
     uninstall()
 
 # Print application greeting
+try:
+    appver = open(os.path.join(sys.path[0], '__version__')).read().strip()
+except:
+    appver = __version__
 print('Finance Control')
-print('Version:', __version__)
+print('Version:', appver)
 print('Copyright (C) 2021', __author__)
 print(__license__)
 

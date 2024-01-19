@@ -3,8 +3,8 @@
 
 DOC = 'Installation script for Finance Control.'''
 COPYRIGHT_YEAR = '2021'
-VERSION = '0.10'
-DATE = ''
+VERSION = '0.11'
+DATE = '2024-01-19'
 AUTHOR = 'António Manuel Dias <ammdias@gmail.com>'
 LICENSE = '''
 This program is free software: you can redistribute it and/or modify

@@ -2,8 +2,8 @@
 FinStore: class to store finance control data in a sqlite3 database.
 """
 
-__version__ = '0.9'
-__date__ = '2023-08-27'
+__version__ = '0.11'
+__date__ = '2024-01-19'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -331,7 +331,7 @@ class FinStore(SQLiteStore):
         return t
 
 
-    def transactions(self, acckey=None, datemin=None, datemax=None, limit=None):
+    def transactions(self, acckey=None, amount=None, datemin=None, datemax=None, limit=None):
         """Return list of transactions.
         """
         conds, params = [], []
@@ -346,6 +346,9 @@ class FinStore(SQLiteStore):
         if datemax:
             conds.append("date<=?")
             params.append(datemax)
+        if amount:
+            conds.append("amount=?")
+            params.append(amount)
 
         cond = f"where {' and '.join(conds)}" if conds else ''
         lim = f"limit {int(limit)}" if limit else ''
@@ -530,7 +533,7 @@ class FinStore(SQLiteStore):
         return p
 
 
-    def parcels(self, datemin=None, datemax=None, limit=None):
+    def parcels(self, datemin=None, datemax=None, amount=None, limit=None):
         """Return list of parcels according to preset conditions.
         """
         conds, params = [], []
@@ -540,6 +543,9 @@ class FinStore(SQLiteStore):
         if datemax:
             conds.append("T.date<=?")
             params.append(datemax)
+        if amount:
+            conds.append("amount=?")
+            params.append(amount)
 
         conds = "and " + " and ".join(conds) if conds else ''
         lim = f"limit {int(limit)}" if limit else ''

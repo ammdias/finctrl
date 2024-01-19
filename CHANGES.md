@@ -4,6 +4,8 @@ FINANCE CONTROL
 (C) 2021 António Manuel Dias
 
 Changes List:
+    * 0.11: Added option to list transactions of a certain amount.
+
     * 0.10: Added uninstall option.
             Updated install script and manual.
 

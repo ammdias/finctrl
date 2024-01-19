@@ -2,8 +2,8 @@
 Finance Control command line interface
 """
 
-__version__ = '0.9'
-__date__ = '2023-08-27'
+__version__ = '0.11'
+__date__ = '2024-01-19'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -266,8 +266,8 @@ class FinCtrlCmd(cmd.Cmd):
         """Remove data or a record from the current database file:
         > de[lete] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
         > de[lete] parcel PARCEL_ID
-        > de[lete] tag TEXT from PARCEL_ID
         > de[lete] tag TEXT
+        > de[lete] tag TEXT from PARCEL_ID
         > de[lete] tr[ansaction] TRANSACTION_ID
         """
         if self._store:
@@ -328,7 +328,7 @@ class FinCtrlCmd(cmd.Cmd):
         > list|ls parcels tagged LIST [from DATE] [to DATE] \\
         :                             [top NUMBER] [rev] [tofile FILE]
         > list|ls tags [tofile FILE]
-        > list|ls tr[ansactions] [on LIST] [from DATE] [to DATE] \\
+        > list|ls tr[ansactions] [on LIST] [of AMOUNT] [from DATE] [to DATE] \\
         :                        [top NUMBER] [rev] [tofile FILE]
         """
         if self._store:
@@ -342,10 +342,10 @@ class FinCtrlCmd(cmd.Cmd):
 
     def do_find(self, arg):
         """Find text in descriptions.
-        > find tr[ansactions] like TEXT [from DATE] [to DATE] \\
-        :                               [top NUMBER] [rev] [tofile FILE]
         > find parcels like TEXT [from DATE] [to DATE] \\
         :                        [top NUMBER] [rev] [tofile FILE]
+        > find tr[ansactions] like TEXT [from DATE] [to DATE] \\
+        :                               [top NUMBER] [rev] [tofile FILE]
         """
         if self._store:
             self._dispatch('find', arg)
@@ -1082,14 +1082,14 @@ class FinCtrlCmd(cmd.Cmd):
     def _list_transactions(self, args):
         """List transactions.
         """
-        pos, kw, mkw = parse_args(args, 'on', 'from', 'to', 'top', 'tofile')
+        pos, kw, mkw = parse_args(args, 'on', 'of', 'from', 'to', 'top', 'tofile')
         rev = 'rev' in pos
         if rev:
             pos.remove('rev')
 
         if pos or mkw:
             raise Exception("'list transactions' syntax:\n"
-                  "    > list|ls tr[ansactions] [on LIST] [from DATE] [to DATE] \\\n"
+                  "    > list|ls tr[ansactions] [on LIST] [of AMOUNT] [from DATE] [to DATE] \\\n"
                   "    :                        [top NUMBER] [rev] [tofile FILE]")
         try:
             if 'on' in kw:
@@ -1101,12 +1101,20 @@ class FinCtrlCmd(cmd.Cmd):
                     acckey.append(key)
             else:
                 acckey = None
+            if 'of' in kw:
+                curr = self._common_currency(acckey)
+                if not curr:
+                    raise Exception("Accounts must have a common currency to "
+                                    "list transactions of a certain amount.")
+                amount = d2i(kw['of'], self._store.currency(curr))
+            else:
+                amount = None
             datemin = parse_date(kw['from']) if 'from' in kw else None
             datemax = parse_date(kw['to']) if 'to' in kw else None
             if datemin and datemax and datemin > datemax:
                 datemin, datemax = datemax, datemin
             limit = parse_number(kw['top']) if 'top' in kw else None
-            transactions = self._store.transactions(acckey, datemin, datemax, limit)
+            transactions = self._store.transactions(acckey, amount, datemin, datemax, limit)
             data = []
             totals = {}
             for t in transactions:
@@ -1137,10 +1145,12 @@ class FinCtrlCmd(cmd.Cmd):
     def _list_parcels(self, args):
         """List parcels.
         """
-        pos, kw, mkw = parse_args(args, 'tagged', 'from', 'to', 'top', 'tofile')
-        rev = 'rev' in pos
-        if rev:
+        pos, kw, mkw = parse_args(args, 'tagged', 'of', 'from', 'to', 'top', 'tofile')
+        if 'rev' in pos:
+            rev = True
             pos.remove('rev')
+        else:
+            rev = False
 
         if pos or mkw or 'tagged' not in kw:
             raise Exception("'list parcels' syntax:\n"
@@ -1399,4 +1409,14 @@ class FinCtrlCmd(cmd.Cmd):
             print(f'    {curr}: {i2d(totals[curr], self._store.currency(curr))}')
         print()
 
+
+    def _common_currency(self, acclist):
+        """Return the common currency of a list of accounts.
+        """
+        if acclist:
+            currencies = [ self._store.account(a).currency for a in acclist ]
+        else:
+            currencies = [ a.currency for a in self._store.accounts() ]
+
+        return currencies[0] if len(set(currencies)) == 1 else None
 
