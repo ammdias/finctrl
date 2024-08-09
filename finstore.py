@@ -2,8 +2,8 @@
 FinStore: class to store finance control data in a sqlite3 database.
 """
 
-__version__ = '0.11'
-__date__ = '2024-01-19'
+__version__ = '0.12'
+__date__ = '2024-07-31'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -31,34 +31,56 @@ class FinStore(SQLiteStore):
     """
     
     class Currency:
-        (name, short_name, symbol, symbol_pos, dec_places, dec_sep) = \
-                (None, '', '', 'left', 2, '.' )
         def __init__(self, *params):
-            if len(params):
-                (self.name, self.short_name, self.symbol, self.symbol_pos,
-                 self.dec_places, self.dec_sep) = params
+            if (p := len(params)) not in (0, 6):
+                raise ValueError("Wrong number of Currency parameters.")
+
+            (self.name,
+             self.short_name,
+             self.symbol,
+             self.symbol_pos,
+             self.dec_places,
+             self.dec_sep) = \
+                 params if p else (None, '', '', 'left', 2, '.' )
 
     class Account:
-        key, name, balance, descr, currency = (None, '', 0, '', '')
         def __init__(self, *params):
-            if len(params):
-                (self.key, self.name, self.balance,
-                 self.descr, self.currency) = params
+            if (p := len(params)) not in (0, 5):
+                raise ValueError("Wrong number of Account parameters.")
+
+            (self.key,
+             self.name,
+             self.balance,
+             self.descr,
+             self.currency) = \
+                 params if p else (None, '', 0, '', '')
 
     class Transaction:
-        key, account, date, descr, amount, accbalance = (None, None, '', '', 0, 0)
         def __init__(self, *params):
-            if len(params):
-                (self.key, self.account, self.date, self.descr,
-                 self.amount, self.accbalance) = params
+            if (p := len(params)) not in (0, 6):
+                raise ValueError("Wrong number of Transaction parameters.")
+
+            (self.key,
+             self.account,
+             self.date,
+             self.descr,
+             self.amount,
+             self.accbalance) = \
+                 params if p else (None, None, '', '', 0, 0)
             self.parcels = []
 
     class Parcel:
-        key, trans, descr, amount = (None, None, '', 0)
         def __init__(self, *params):
-            if len(params):
-                (self.key, self.trans, self.descr, self.amount) = params
+            if (p := len(params)) not in (0, 4):
+                raise ValueError("Wrong number of Parcel parameters.")
+
+            (self.key,
+             self.trans,
+             self.descr,
+             self.amount) = \
+                params if p else (None, None, '', 0)
             self.tags = []
+
 
     #--------------------------------------------------------------------------
 
@@ -248,9 +270,8 @@ class FinStore(SQLiteStore):
             transaction.key = c.lastrowid
 
             for p in transaction.parcels:
-                p.trans = transaction.key
                 c = self._exec("insert into parcels values(null,?,?,?)",
-                               (p.trans, p.descr, p.amount))
+                               (transaction.key, p.descr, p.amount))
                 p.key = c.lastrowid
                 for t in p.tags:
                     self._exec("insert into parceltags values(?,?)", (p.key, t))
@@ -331,7 +352,8 @@ class FinStore(SQLiteStore):
         return t
 
 
-    def transactions(self, acckey=None, amount=None, datemin=None, datemax=None, limit=None):
+    def transactions(self, acckey=None, amount=None, to_amount=None,
+                           datemin=None, datemax=None, limit=None):
         """Return list of transactions.
         """
         conds, params = [], []
@@ -346,9 +368,20 @@ class FinStore(SQLiteStore):
         if datemax:
             conds.append("date<=?")
             params.append(datemax)
-        if amount:
-            conds.append("amount=?")
-            params.append(amount)
+        match amount, to_amount:
+            case None, None:
+                pass
+            case None, t:
+                raise ValueError("Upper amount set without lower amount.")
+            case a, None:
+                conds.append("amount=?")
+                params.append(a)
+            case a, t:
+                if a > t:
+                    a, t = t, a
+                conds.append("amount>=? and amount<=?")
+                params.append(a)
+                params.append(t)
 
         cond = f"where {' and '.join(conds)}" if conds else ''
         lim = f"limit {int(limit)}" if limit else ''
@@ -363,7 +396,7 @@ class FinStore(SQLiteStore):
         """Return list of transactions in which the description includes pattern.
         """
         if not str(pattern):
-            raise ValueError('Pattern is empty')
+            raise ValueError('Pattern is empty.')
 
         conds, params = ["descr like ?"], [f'%{pattern}%']
 
@@ -508,19 +541,29 @@ class FinStore(SQLiteStore):
             self._upd_trans_accbalance(transkey, acckey, -amount, date)
 
 
-    def add_parcel_tag(self, parcelkey, tag):
-        """Add tag to a parcel.
+    def add_parcel_tags(self, parcelkey, tags):
+        """Add a tag or list of tags to a parcel.
         """
         if not self._exists("parcels", "key", parcelkey):
             raise ValueError("Parcel not found.")
-        self._do("insert into parceltags values (?, ?)", (parcelkey, tag))
+        
+        if type(tags) is str:
+            tags = [tags]
+        with self._db:
+            for t in tags:
+                self._exec("insert into parceltags values (?, ?)",
+                            (parcelkey, t))
 
 
-    def del_parcel_tag(self, parcelkey, tag):
-        """Remove tag from a parcel.
+    def del_parcel_tags(self, parcelkey, tags):
+        """Remove a list of tags from a parcel.
         """
-        self._do("delete from parceltags where parcel=? and tag=?",
-                 (parcelkey, tag))
+        if type(tags) is str:
+            tags = [tags]
+        with self._db:
+            for t in tags:
+                self._exec("delete from parceltags where parcel=? and tag=?",
+                          (parcelkey, t))
 
 
     def parcel(self, parcelkey):
@@ -661,10 +704,14 @@ class FinStore(SQLiteStore):
         self._do("update parceltags set tag=? where tag=?", (newtag, oldtag))
 
 
-    def del_tag(self, tag):
-        """Delete a tag.
+    def del_tags(self, tags):
+        """Delete a list of tags.
         """
-        self._do("delete from parceltags where tag=?", (tag,))
+        if type(tags) is str:
+            tags = [tags]
+        with self._db:
+            for t in tags:
+                self._exec("delete from parceltags where tag=?", (t,))
 
 
     def taglist(self):

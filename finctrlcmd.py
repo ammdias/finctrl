@@ -2,8 +2,8 @@
 Finance Control command line interface
 """
 
-__version__ = '0.11'
-__date__ = '2024-01-19'
+__version__ = '0.12'
+__date__ = '2024-07-31'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -57,6 +57,7 @@ class FinCtrlCmd(cmd.Cmd):
 
     #-------------------------------------------------------------------------
     # Setup and configuration methods
+
     def preloop(self):
         """Reset multiline command state before starting the command loop.
         """
@@ -68,20 +69,22 @@ class FinCtrlCmd(cmd.Cmd):
     def precmd(self, line):
         """Provide support for multiline commands.
         """
-        # ignore comments and empty lines
-        if not line or line.startswith(';'):
+        line = line.strip()
+
+        # ignore comments
+        if line.startswith(';'):
             return ''
 
         line = line.split()
         # check for multiline commands (last token is a single backslash)
         if line and line[-1] == '\\':
-            del line[-1]
-            self._multilncmd += line
+            self._multilncmd += line[:-1]
             if not self._saved_prompt:
                 self._saved_prompt = self.prompt
                 self.prompt = ' ' * (len(self.prompt)-2) + ': '
             line = ''
         else:
+            # check for 'ignore this line' (last token is 3 backslashes)
             if line and line[-1] == '\\\\\\':
                 line = ''
             else:
@@ -92,8 +95,9 @@ class FinCtrlCmd(cmd.Cmd):
                 self._saved_prompt = None
                 self._multilncmd = []
 
-        if self.echo:
+        if self.echo and (line or self._saved_prompt is None):
             print(line)
+
         return line
 
 
@@ -247,10 +251,10 @@ class FinCtrlCmd(cmd.Cmd):
         :               [descr[iption] TEXT] [date DATE] \\
         :               of AMOUNT | parcel "TEXT AMOUNT [tags LIST]" ...
         > add parcel TEXT of AMOUNT to TRANSACTION_ID [tags LIST]
-        > add tag TEXT to PARCEL_ID
+        > add tag[s] LIST to PARCEL_ID
         > add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \\
         :                   [neg] [descr[iption] TEXT] [date DATE] \\
-        :                   of AMOUNT | parcel "TEXT AMOUNT [tags LIST]" ...
+        :                   of AMOUNT [tags LIST]|parcel "TEXT AMOUNT [tags LIST]" ...
         > add transfer of AMOUNT [descr[iption] TEXT] [date DATE] [tags LIST]
         :              from ACCOUNT_NAME|ACCOUNT_ID to ACCOUNT_NAME|ACCOUNT_ID
         > add withdrawal of AMOUNT on ACCOUNT_NAME|ACCOUNT_ID \\
@@ -266,8 +270,8 @@ class FinCtrlCmd(cmd.Cmd):
         """Remove data or a record from the current database file:
         > de[lete] acc[ount] ACCOUNT_NAME|ACCOUNT_ID
         > de[lete] parcel PARCEL_ID
-        > de[lete] tag TEXT
-        > de[lete] tag TEXT from PARCEL_ID
+        > de[lete] tag[s] LIST
+        > de[lete] tag[s] LIST from PARCEL_ID
         > de[lete] tr[ansaction] TRANSACTION_ID
         """
         if self._store:
@@ -328,7 +332,8 @@ class FinCtrlCmd(cmd.Cmd):
         > list|ls parcels tagged LIST [from DATE] [to DATE] \\
         :                             [top NUMBER] [rev] [tofile FILE]
         > list|ls tags [tofile FILE]
-        > list|ls tr[ansactions] [on LIST] [of AMOUNT] [from DATE] [to DATE] \\
+        > list|ls tr[ansactions] [on LIST] [of AMOUNT[:AMOUNT]] \\
+        :                        [from DATE] [to DATE] \\
         :                        [top NUMBER] [rev] [tofile FILE]
         """
         if self._store:
@@ -573,7 +578,8 @@ class FinCtrlCmd(cmd.Cmd):
                   "    :             [descr[iption] TEXT] [date DATE] [tags LIST]")
 
         t = self._addtr(kw, descr=self._store.metadata('deposit'), mul=1)
-        print(f"Transaction id: {t}")
+        if t:
+            print(f"Transaction id: {t}")
 
 
     def _add_withdrawal(self, args):
@@ -587,7 +593,8 @@ class FinCtrlCmd(cmd.Cmd):
                   "    :                [descr[iption] TEXT] [date DATE] [tags LIST]")
 
         t = self._addtr(kw, descr=self._store.metadata('withdrawal'), mul=-1)
-        print(f"Transaction id: {t}")
+        if t:
+            print(f"Transaction id: {t}")
 
 
     def _add_transfer(self, args):
@@ -617,7 +624,8 @@ class FinCtrlCmd(cmd.Cmd):
             except Exception as e:
                 error(f"unable to delete transaction. Reason:\n    {e}")
         else:
-            print(f"Transaction ids: {t1}, {t2}")
+            if t1 and t2:
+                print(f"Transaction ids: {t1}, {t2}")
 
 
     def _add_transaction(self, args):
@@ -636,13 +644,14 @@ class FinCtrlCmd(cmd.Cmd):
             raise Exception("'add transaction' syntax:\n"
                   "    > add tr[ansaction] on ACCOUNT_NAME|ACCOUNT_ID \\\n"
                   "    :     [neg] [descr[iption] TEXT] [date DATE] \\\n"
-                  '    :     of AMOUNT | parcel "TEXT AMOUNT [tags LIST]" ... ')
+                  '    :     of AMOUNT [tags LIST]|parcel "TEXT AMOUNT [tags LIST]" ...')
 
         if 'of' not in kw:
             parcels = [kw['parcel']] if 'parcel' in kw else mkw['parcel']
 
         t = self._addtr(kw, parcels=parcels, mul=mul)
-        print(f"Transaction id: {t}")
+        if t:
+            print(f"Transaction id: {t}")
 
     # shortcut
     _add_tr = _add_transaction
@@ -678,16 +687,18 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def _add_tag(self, args):
-        """Add tag to an existing parcel.
+        """Add tag list to an existing parcel.
         """
         pos, kw, mkw = parse_args(args, 'to')
         if len(pos) != 1 or 'to' not in kw or mkw:
             raise Exception("'add parcel' syntax:\n"
-                            "    > add tag TEXT to PARCEL_ID")
+                            "    > add tag[s] LIST to PARCEL_ID")
         try:
-            self._store.add_parcel_tag(kw['to'], pos[0])
+            self._store.add_parcel_tags(kw['to'], parse_tags(pos[0]))
         except Exception as e:
             error(f"unable to add tag. Reason:\n    {e}")
+
+    _add_tags = _add_tag
 
 
     def _delete_account(self, args):
@@ -739,20 +750,24 @@ class FinCtrlCmd(cmd.Cmd):
 
 
     def _delete_tag(self, args):
-        """Delete tag.
+        """Delete tag or list of tags.
         """
         pos, kw, mkw = parse_args(args, 'from')
         if len(pos) != 1 or mkw:
             raise Exception("'delete tag' syntax\n"
-                            "    > del[ete] tag TEXT from PARCEL_ID\n"
-                            "    > del[ete] tag TEXT")
+                            "    > del[ete] tag[s] LIST from PARCEL_ID\n"
+                            "    > del[ete] tag[s] LIST")
         try:
+            tags = parse_tags(pos[0])
             if 'from' in kw:
-                self._store.del_parcel_tag(kw['from'], pos[0])
+                self._store.del_parcel_tags(kw['from'], tags)
             else:
-                self._store.del_tag(pos[0])
+                self._store.del_tags(tags)
         except Exception as e:
             error(f"unable to delete parcel. Reason:\n    {e}")
+
+    # alternate form
+    _delete_tags = _delete_tag
 
 
     def _change_currency(self, args):
@@ -1089,32 +1104,21 @@ class FinCtrlCmd(cmd.Cmd):
 
         if pos or mkw:
             raise Exception("'list transactions' syntax:\n"
-                  "    > list|ls tr[ansactions] [on LIST] [of AMOUNT] [from DATE] [to DATE] \\\n"
+                  "    > list|ls tr[ansactions] [on LIST] [of AMOUNT[:AMOUNT]]\\\n"
+                  "                             [from DATE] [to DATE] \\\n"
                   "    :                        [top NUMBER] [rev] [tofile FILE]")
         try:
-            if 'on' in kw:
-                acckey = []
-                for acc in kw['on'].split(','):
-                    key = self._store.account_key(acc)
-                    if not key:
-                        raise ValueError(f"Account not found: {acc}.")
-                    acckey.append(key)
-            else:
-                acckey = None
-            if 'of' in kw:
-                curr = self._common_currency(acckey)
-                if not curr:
-                    raise Exception("Accounts must have a common currency to "
-                                    "list transactions of a certain amount.")
-                amount = d2i(kw['of'], self._store.currency(curr))
-            else:
-                amount = None
+            limit = parse_number(kw['top']) if 'top' in kw else None
+            acckeys = self._account_keys(kw['on']) if 'on' in kw else None
+            amount, to_amount = self._amount_range(kw['of'], acckeys) if 'of' in kw \
+                                else (None, None)
             datemin = parse_date(kw['from']) if 'from' in kw else None
             datemax = parse_date(kw['to']) if 'to' in kw else None
             if datemin and datemax and datemin > datemax:
                 datemin, datemax = datemax, datemin
-            limit = parse_number(kw['top']) if 'top' in kw else None
-            transactions = self._store.transactions(acckey, amount, datemin, datemax, limit)
+
+            transactions = self._store.transactions(acckeys, amount, to_amount,
+                                                    datemin, datemax, limit)
             data = []
             totals = {}
             for t in transactions:
@@ -1145,7 +1149,7 @@ class FinCtrlCmd(cmd.Cmd):
     def _list_parcels(self, args):
         """List parcels.
         """
-        pos, kw, mkw = parse_args(args, 'tagged', 'of', 'from', 'to', 'top', 'tofile')
+        pos, kw, mkw = parse_args(args, 'tagged', 'from', 'to', 'top', 'tofile')
         if 'rev' in pos:
             rev = True
             pos.remove('rev')
@@ -1376,7 +1380,8 @@ class FinCtrlCmd(cmd.Cmd):
         """Remove a transaction from the session transaction history.
         """
         key = str(key)
-        self._sthist.remove(key)
+        if key in self._sthist:
+            self._sthist.remove(key)
 
 
     def _showtr(self, key):
@@ -1420,3 +1425,33 @@ class FinCtrlCmd(cmd.Cmd):
 
         return currencies[0] if len(set(currencies)) == 1 else None
 
+
+    def _account_keys(self, acclist):
+        """Return list of account keys corresponding to the list of account
+           names passed as parameter (comma separated string).
+        """
+        acckeys = []
+        for acc in acclist.split(','):
+            key = self._store.account_key(acc)
+            if not key:
+                raise ValueError(f"Account not found: {acc}.")
+            acckeys.append(key)
+
+        return acckeys
+
+
+    def _amount_range(self, arange, acckeys):
+        """Return amount start and end tuple from amount range passed
+           as parameter (colon separated string).
+        """
+        curr = self._common_currency(acckeys)
+        if not curr:
+            raise Exception("Accounts must have a common currency to "
+                            "list transactions of a certain amount.")
+        else:
+            curr = self._store.currency(curr)
+        start, _, end = arange.partition(':')
+        start = d2i(start, curr) if start else None
+        end = d2i(end, curr) if end else None
+
+        return start, end

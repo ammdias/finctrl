@@ -2,8 +2,8 @@
 Finance Control command line interface utility functions
 """
 
-__version__ = '0.7'
-__date__ ='2022-03-11'
+__version__ = '0.12'
+__date__ ='2024-07-31'
 __author__ = 'António Manuel Dias <ammdias@gmail.com>'
 __license__ = """
 This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 import sys
 import datetime
 import shutil
+import string   # for string.whitespace and string.digits
 
 
 def yesno(question):
@@ -42,12 +43,10 @@ def yesno(question):
 def parse_number(number):
     """Convert string to a positive integer, if possible.
     """
-    if number.isdecimal():
-        number = int(number)
-        if number > 0:
-            return number
-    
-    raise ValueError(f'Invalid number: {number}')
+    if not number.isdecimal() or (n:=int(number)) < 1:
+        raise ValueError(f'Invalid number: {number}')
+
+    return n
 
 
 def parse_date(date):
@@ -58,23 +57,24 @@ def parse_date(date):
 
     try:
         d = tuple(map(int, date.replace('/', '-').split('-')))
-        if len(d) == 3:
-            month = d[1]
-            # check if year is last element, assume it's the first if not
-            (year, day) = (d[2], d[0]) if d[2] > 2000 else (d[0], d[2])
-            if year < 100:
-                year += 2000
-        elif len(d) == 2:
-            year = datetime.date.today().year
-            # check if month is last element, assume it's the first if not
-            (day, month) = (d[0], d[1]) if d[0] > 12 else (d[1], d[0])
-        else:
-            raise ValueError('Could not correctly parse date.')
-        date = datetime.date(year, month, day)
+        match len(d):
+            case 3:
+                month = d[1]
+                # check if year is last element, assume it's the first if not
+                (year, day) = (d[2], d[0]) if d[2] > 31 else (d[0], d[2])
+                if year < 100:
+                    year += 2000
+            case 2:
+                year = datetime.date.today().year
+                # check if month is last element, assume it's the first if not
+                (day, month) = (d[0], d[1]) if d[0] > 12 else (d[1], d[0])
+            case _:
+                raise ValueError(f'Invalid date: {date}.')
+        date = datetime.date(year, month, day).isoformat()
     except:
-        raise ValueError('Could not correctly parse date.')
+        raise ValueError(f'Invalid date: {date}.')
 
-    return date.isoformat()
+    return date
 
 
 def parse_args(args, *keywords):
@@ -107,42 +107,40 @@ def parse_tags(tags):
 
 
 def i2d(value, curr): 
-    """Returns string representation of integer value with given decimal places. 
+    """Returns string representation of integer value according to currency
+       decimal places.
     """ 
-    neg = '-' if value < 0 else '' 
-    value = str(abs(value)) 
-    if len(value) > curr.dec_places: 
-        i, d = value[:-curr.dec_places], value[-curr.dec_places:] 
-    else: 
-        i, d = '0', '0' * (curr.dec_places-len(value)) + value 
-    return neg + i + curr.dec_sep + d
+    result = '{c} {v}' if curr.symbol_pos == 'left' else '{v} {c}'
+    sign = '-' if value < 0 else '' 
+    ival, dval = divmod(abs(value), 10 ** curr.dec_places)
+    value = f"{sign}{ival}{curr.dec_sep}{dval:0{curr.dec_places}}"
+
+    return result.format(c=curr.symbol, v=value)
 
 
 def d2i(value, curr):
-    """Converts float string representation of given decimal places to integer
-       with no conversion to float, avoiding float binary representation errors.
+    """Converts float string representation of currency to number with no
+       decimal places, avoiding float binary representation errors.
     """
     def valid_number(s):
-        vd = f'0123456789{curr.dec_sep}'
-        for c in s:
-            if c not in vd: return False
+        valid_digits = string.digits + curr.dec_sep
+        for c in (s[1:] if s[0] in '-+' else s):
+            if c not in valid_digits:
+                return False
+
+        if value.count(curr.dec_sep) > 1: # no multiple decimal separators
+            return False
+
         return True
 
-    value = value.strip()
-    if value[0] == '-':
-        mul = -1
-        value = value[1:]
-    else:
-        mul = 1
+    # remove currency symbol and whitespace from start/end of value
+    value = value.strip(curr.symbol + string.whitespace)
+
     if not value or not valid_number(value):
         raise ValueError('Invalid number.')
 
-    value = value.split(curr.dec_sep)
-    i, d = (int(value[0]) * 10 ** curr.dec_places) if value[0] else 0, 0
-    if len(value) == 2:
-        d = int(value[1][:curr.dec_places] + '0' * (curr.dec_places-len(value[1])))
-
-    return (i + d) * mul
+    ival, _, dval = value.partition(curr.dec_sep)
+    return int(ival + dval.ljust(curr.dec_places, '0')[:curr.dec_places])
 
 
 def print_table(data, headers=[], hints=None):
